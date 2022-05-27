@@ -18,7 +18,6 @@ use array_const_fn_init::array_const_fn_init;
     Copy,
     Clone,
     FromRepr,
-    EnumIter,
     EnumCount,    
 )]
 #[repr(u8)]

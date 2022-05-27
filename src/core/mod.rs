@@ -8,6 +8,7 @@ mod moves;
 mod definitions;
 mod corner_position;
 mod edge_position;
+mod basic_cubes;
 
 
 pub mod prelude {
@@ -21,4 +22,5 @@ pub mod prelude {
     pub use crate::core::definitions::*;
     pub use crate::core::corner_position::*;
     pub use crate::core::edge_position::*;
+    pub use crate::core::basic_cubes::*;
 }

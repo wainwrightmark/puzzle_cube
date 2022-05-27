@@ -37,7 +37,7 @@ pub fn app() -> Html {
 
         <div id="buttons">
             <div class="row">
-            <RandomizeButton/><ResetButton/>
+            <RandomizeButton/><ResetButton/><InvertButton/>
             </div>
             <div class="row">
         {move_buttons}
@@ -57,11 +57,20 @@ pub fn randomize_button() -> Html {
 }
 
 #[function_component(ResetButton)]
-pub fn randomize_button() -> Html {
+pub fn reset_button() -> Html {
     let onclick: Option<Callback<MouseEvent>> =
         Some(Dispatch::new().apply_callback(|_| ResetMsg {}));
 
     html!(<button {onclick} > {"Reset"} </button>)
+}
+
+
+#[function_component(InvertButton)]
+pub fn invert_button() -> Html {
+    let onclick: Option<Callback<MouseEvent>> =
+        Some(Dispatch::new().apply_callback(|_| InvertMsg {}));
+
+    html!(<button {onclick} > {"Invert"} </button>)
 }
 
 #[derive(PartialEq, Eq, Properties)]
@@ -87,7 +96,7 @@ pub fn cube() -> Html {
     let edges = EdgePosition::iter()
         .map(|edge| html!(<Edge {edge} />))
         .collect::<Html>();
-    let corners = CornerPosition::iter()
+    let corners = CornerPosition::DEFAULT_ARRAY.into_iter()
         .map(|corner| html!(<Corner {corner} />))
         .collect::<Html>();
 

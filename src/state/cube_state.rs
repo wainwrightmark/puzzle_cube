@@ -35,6 +35,16 @@ impl Reducer<CubeState> for ResetMsg {
     }
 }
 
+pub struct InvertMsg{}
+
+impl Reducer<CubeState> for InvertMsg {
+    fn apply(&self, state: Rc<CubeState>) -> Rc<CubeState> {    
+        let cube = state.cube.clone().invert();
+
+        CubeState{cube}.into()
+    }
+}
+
 pub struct MoveMsg{pub my_move: Move}
 
 impl Reducer<CubeState> for MoveMsg{

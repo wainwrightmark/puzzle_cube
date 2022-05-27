@@ -3,6 +3,8 @@ use array_const_fn_init::array_const_fn_init;
 use strum::{EnumCount, IntoEnumIterator};
 use strum_macros::*;
 
+use super::edge_position;
+
 #[derive(Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize, Clone)]
 pub struct CubieCube {
     pub edge_positions: [EdgePosition; 12],
@@ -29,16 +31,35 @@ impl CubieCube {
     }
 
     const ARRAYEIGHT: [usize; 8] = [0, 1, 2, 3, 4, 5, 6, 7];
-    const ARRAYTWELVE: [usize; 12] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
 
     ///Multiply this cube with another cube.
-    fn corner_multiply(self, other: &Self) -> Self {
-        let corner_positions = CubieCube::ARRAYEIGHT.map(|c| {
+    const fn corner_multiply(self, other: &Self) -> Self {
+        let mut corner_positions = [CornerPosition::Urf; CornerPosition::COUNT];
+        let mut corner_orientations = [CornerOrientation::Zero; CornerPosition::COUNT];
+        let mut c = 0;
+
+        while c < CornerPosition::COUNT {
             let other_c = other.corner_positions[c] as usize;
-            self.corner_positions[other_c]
-        });
-        let corner_orientations =
-            CubieCube::ARRAYEIGHT.map(|c| self.calc_corner_multiply_orientation(c, other)); //defaults
+            corner_positions[c] = self.corner_positions[other_c];
+
+            let ori_a = self.corner_orientations[other_c] as u8;
+            let ori_b = other.corner_orientations[c] as u8;
+
+            let ori = if ori_a < 3 {
+                if ori_b < 3 {
+                    (ori_a + ori_b) % 3
+                } else {
+                    ((ori_a + ori_b - 3) % 3) + 3
+                }
+            } else if ori_b < 3 {
+                ((ori_a - ori_b) % 3) + 3
+            } else {
+                ((3 + ori_a - ori_b) % 3)
+            };
+            corner_orientations[c] = CornerOrientation::from_repr(ori).unwrap();
+
+            c += 1;
+        }
 
         Self {
             corner_orientations,
@@ -47,39 +68,24 @@ impl CubieCube {
         }
     }
 
-    const fn calc_corner_multiply_orientation(&self, c: usize, other: &Self) -> CornerOrientation {
-        let other_c = other.corner_positions[c] as usize;
-        let ori_a = self.corner_orientations[other_c] as u8;
-        let ori_b = other.corner_orientations[c] as u8;
 
-        let ori = if ori_a < 3 {
-            if ori_b < 3 {
-                (ori_a + ori_b) % 3
-            } else {
-                ((ori_a + ori_b - 3) % 3) + 3
-            }
-        } else if ori_b < 3 {
-            ((ori_a - ori_b) % 3) + 3
-        } else {
-            ((3 + ori_a - ori_b) % 3)
-        };
-        CornerOrientation::from_repr(ori).unwrap()
-    }
+    const fn edge_multiply(self, other: &Self) -> Self {
+        let mut edge_positions = [EdgePosition::Ur; EdgePosition::COUNT];
+        let mut edge_orientations = [EdgeOrientation::Zero; EdgePosition::COUNT];
+        let mut e = 0;
 
-    fn edge_multiply(self, other: &Self) -> Self {
-        let edge_positions = CubieCube::ARRAYTWELVE.map(|e| {
+        while e < EdgePosition::COUNT {
             let other_e = other.edge_positions[e] as usize;
-            self.edge_positions[other_e]
-        });
+            edge_positions[e] = self.edge_positions[other_e];
 
-        let edge_orientations = CubieCube::ARRAYTWELVE.map(|e| {
-            let other_e = other.edge_positions[e] as usize;
             let ori_a = self.edge_orientations[other_e] as u8;
             let ori_b = other.edge_orientations[e] as u8;
 
-            let ori =( ori_a + ori_b) % 2;
-            EdgeOrientation::from_repr(ori).unwrap()
-        });
+            let ori = (ori_a + ori_b) % 2;
+            edge_orientations[e] = EdgeOrientation::from_repr(ori).unwrap();
+
+            e += 1;
+        }
 
         Self {
             edge_orientations,
@@ -87,25 +93,28 @@ impl CubieCube {
             ..self
         }
     }
-    pub fn multiply(self, other: &Self) -> Self {
+    pub const  fn multiply(self, other: &Self) -> Self {
         self.corner_multiply(other).edge_multiply(other)
     }
 
-
-    pub fn invert(self) -> Self {
+    pub const fn invert(self) -> Self {
         let mut edge_positions = [EdgePosition::Ur; EdgePosition::COUNT];
         let mut edge_orientations = [EdgeOrientation::Zero; EdgePosition::COUNT];
         let mut corner_positions = [CornerPosition::Urf; CornerPosition::COUNT];
         let mut corner_orientations = [CornerOrientation::Zero; CornerPosition::COUNT];
 
-        for e in EdgePosition::iter() {
-            let i = self.edge_positions[e as usize] as usize;
+        let mut e = 0;
+        while (e < EdgePosition::COUNT) {
+            let i = self.edge_positions[e] as usize;
             let ori = self.edge_orientations[i];
-            edge_positions[i] = e;
+            edge_positions[i] = EdgePosition::from_repr(e as u8).unwrap();
             edge_orientations[e as usize] = ori;
+            e += 1;
         }
 
-        for c in CornerPosition::iter() {
+        let mut c = 0;
+
+        while (c < CornerPosition::COUNT) {
             let i = self.corner_positions[c as usize] as usize;
             let ori = self.corner_orientations[i] as u8;
             let new_ori = match ori {
@@ -113,8 +122,9 @@ impl CubieCube {
                 _ => ori,
             };
 
-            corner_positions[i] = c;
+            corner_positions[i] = CornerPosition::from_repr(c as u8).unwrap();
             corner_orientations[c as usize] = CornerOrientation::from_repr(new_ori).unwrap();
+            c += 1;
         }
 
         CubieCube {
@@ -125,8 +135,6 @@ impl CubieCube {
         }
     }
 }
-
-
 
 impl Into<FaceletCube> for CubieCube {
     fn into(self) -> FaceletCube {

@@ -50,11 +50,23 @@ fn test_make_random_cube(seed: u64) {
 
 
 #[test_case(0)]
+#[test_case(1)]
+#[test_case(2)]
 #[test_case(3)]
+#[test_case(4)]
+#[test_case(5)]
 #[test_case(6)]
+#[test_case(7)]
+#[test_case(8)]
 #[test_case(9)]
+#[test_case(10)]
+#[test_case(11)]
 #[test_case(12)]
+#[test_case(13)]
+#[test_case(14)]
 #[test_case(15)]
+#[test_case(16)]
+#[test_case(17)]
 fn any_move_four_times_returns_same(u: u8){
 
     let m = Move::from_repr(u).unwrap();
