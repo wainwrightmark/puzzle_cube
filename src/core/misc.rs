@@ -37,8 +37,8 @@ pub fn reorder_to_permutation<T, const N: usize>( slice: &mut [T; N], mut permut
 pub fn calculate_number_representation<T : Copy + Into<usize>, const N: usize>(slice:  &[T; N], num_values: usize ) -> usize{
 let mut a:usize = 0;
     
-    for x in slice.into_iter().take(N - 1) { //Do not take the last element - it is controlled by parity
-        a = (num_values * a) + x.clone().into();
+    for x in slice.iter().take(N - 1) { //Do not take the last element - it is controlled by parity
+        a = (num_values * a) + (*x).into();
     }
     a
 }

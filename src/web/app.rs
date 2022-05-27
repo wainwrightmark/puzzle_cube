@@ -64,7 +64,7 @@ pub fn randomize_button() -> Html {
     html!(<button {onclick} > {"Reset"} </button>)
 }
 
-#[derive(PartialEq, Properties)]
+#[derive(PartialEq, Eq, Properties)]
 pub struct MoveButtonProperties {
     pub my_move: Move,
 }
@@ -100,7 +100,7 @@ pub fn cube() -> Html {
     )
 }
 
-#[derive(PartialEq, Properties)]
+#[derive(PartialEq, Eq, Properties)]
 pub struct EdgeProperties {
     pub edge: EdgePosition,
 }
@@ -127,7 +127,7 @@ fn edge(properties: &EdgeProperties) -> Html {
     )
 }
 
-#[derive(PartialEq, Properties)]
+#[derive(PartialEq, Eq, Properties)]
 pub struct CornerProperties {
     //pub corner: CornerPosition,
     pub corner: CornerPosition,
@@ -184,7 +184,7 @@ fn corner(properties: &CornerProperties) -> Html {
     // )
 }
 
-#[derive(PartialEq, Properties)]
+#[derive(PartialEq, Eq, Properties)]
 pub struct CenterProperties {
     pub face: FaceColor,
 }

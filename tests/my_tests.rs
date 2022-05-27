@@ -1,9 +1,9 @@
-use std::default;
 
-use puzzle_cube::{core::prelude::{CubieCube, Move}, web::prelude::Cube};
+
+use puzzle_cube::{core::prelude::{CubieCube, Move}};
 
 use ntest::test_case;
-use rand::{SeedableRng, prelude::StdRng, Rng};
+use rand::{prelude::StdRng, Rng};
 
 #[test_case(1)]
 #[test_case(2)]

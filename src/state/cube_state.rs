@@ -6,7 +6,7 @@ use serde::*;
 use std::rc::Rc;
 use yewdux::prelude::*;
 
-#[derive(PartialEq, Store, Clone, Default, Serialize, Deserialize)]
+#[derive(PartialEq, Eq, Store, Clone, Default, Serialize, Deserialize)]
 #[store(storage = "local")] // can also be "session"
 pub struct CubeState{
     pub cube : CubieCube
