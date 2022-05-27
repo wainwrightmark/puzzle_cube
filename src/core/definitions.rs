@@ -44,6 +44,12 @@ pub enum HorizontalPosition {
     Right = 2,
 }
 
+impl From<HorizontalPosition> for usize{
+    fn from(ep: HorizontalPosition) -> Self {
+        ep as usize
+    }
+}
+
 #[derive(
     Debug,
     Display,
@@ -66,10 +72,11 @@ pub enum VerticalPosition {
     Bottom = 2,
 }
 
-
-
-
-
+impl From<VerticalPosition> for usize{
+    fn from(ep: VerticalPosition) -> Self {
+        ep as usize
+    }
+}
 
 #[derive(
     Debug,
@@ -91,6 +98,19 @@ pub enum EdgeOrientation {
     Zero = 0,
     One = 1,
 }
+
+impl From<EdgeOrientation> for usize{
+    fn from(ep: EdgeOrientation) -> Self {
+        ep as usize
+    }
+}
+
+impl From<usize> for EdgeOrientation {
+    fn from(x: usize) -> Self {
+        EdgeOrientation::from_repr(x as u8).unwrap()
+    }
+}
+
 
 #[derive(
     Debug,
@@ -120,6 +140,12 @@ pub enum CornerOrientation {
 impl From<CornerOrientation> for usize{
     fn from(ep: CornerOrientation) -> Self {
         ep as usize
+    }
+}
+
+impl From<usize> for CornerOrientation {
+    fn from(x: usize) -> Self {
+        CornerOrientation::from_repr(x as u8).unwrap()
     }
 }
 

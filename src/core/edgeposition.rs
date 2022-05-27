@@ -44,15 +44,25 @@ impl From<EdgePosition> for usize{
 }
 
 
-const fn get_edge_position(i: usize) -> EdgePosition {
-    EdgePosition::from_repr(0).unwrap()
+const fn get_edge_position_offset0(i: usize) -> EdgePosition {
+    EdgePosition::from_repr((i) as u8).unwrap()
+}
+
+const fn get_edge_position_offset4(i: usize) -> EdgePosition {
+    EdgePosition::from_repr((i + 4) as u8).unwrap()
+}
+const fn get_edge_position_offset8(i: usize) -> EdgePosition {
+    EdgePosition::from_repr((i + 8) as u8).unwrap()
 }
 
 
 impl EdgePosition {
-    pub const fn default_array() -> [Self; 12] {
-        array_const_fn_init![get_edge_position; 12]
-    }
+    pub const DEFAULT_ARRAY: [Self; 12] = array_const_fn_init![get_edge_position_offset0; 12];
+
+    pub const DEFAULT_NON_SLICE_EDGES: [Self; 8] = array_const_fn_init![get_edge_position_offset4; 8];
+    pub const DEFAULT_SLICE_EDGES: [Self; 4] = array_const_fn_init![get_edge_position_offset8; 4];
+    pub const DEFAULT_UP_EDGES: [Self; 4] = array_const_fn_init![get_edge_position_offset0; 4];
+    pub const DEFAULT_DOWN_EDGES: [Self; 4] = array_const_fn_init![get_edge_position_offset4; 4];
 
     ///The positions of each edge facelet
 pub const EDGEFACELETS:[[FaceletPosition;2];12] =[

@@ -41,13 +41,11 @@ impl From<CornerPosition> for usize{
 
 
 const fn get_corner_position(i: usize) -> CornerPosition {
-    CornerPosition::from_repr(0).unwrap()
+    CornerPosition::from_repr(i as u8).unwrap()
 }
 
 impl CornerPosition {
-    pub const fn default_array() -> [Self; 8] {
-        array_const_fn_init![get_corner_position; 8]
-    }
+    pub const DEFAULT_ARRAY: [Self; 8] = array_const_fn_init![get_corner_position; 8];
 
 
     ///The positions of each corner facelet

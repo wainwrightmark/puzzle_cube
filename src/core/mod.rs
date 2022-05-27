@@ -1,5 +1,6 @@
 mod cube;
-mod cubehelpers;
+mod cube_invariant_getters;
+mod cube_invariant_setters;
 mod facelet_position;
 mod facelet_cube;
 mod misc;
@@ -10,7 +11,8 @@ mod edgeposition;
 
 pub mod prelude {
     pub use crate::core::cube::*;
-    pub use crate::core::cubehelpers::*;
+    pub use crate::core::cube_invariant_getters::*;
+    pub use crate::core::cube_invariant_setters::*;
     pub use crate::core::facelet_position::*;
     pub use crate::core::facelet_cube::*;
     pub use crate::core::misc::*;

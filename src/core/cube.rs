@@ -21,8 +21,8 @@ impl Default for CubieCube {
 impl CubieCube {
     pub const fn default() -> Self {
         Self {
-            edge_positions: EdgePosition::default_array(),
-            corner_positions: CornerPosition::default_array(),
+            edge_positions: EdgePosition::DEFAULT_ARRAY,
+            corner_positions: CornerPosition::DEFAULT_ARRAY,
             edge_orientations: [EdgeOrientation::Zero; 12],
             corner_orientations: [CornerOrientation::Zero; 8],
         }
@@ -91,31 +91,6 @@ impl CubieCube {
         self.corner_multiply(other).edge_multiply(other)
     }
 
-    pub fn set_twist(&mut self, mut twist: usize) {
-        let mut twist_parity = 0;
-
-        for i in (0..7).rev() {
-            self.corner_orientations[i] = CornerOrientation::from_repr((twist % 3) as u8).unwrap();
-            twist_parity += twist % 3;
-            twist /= 3;
-        }
-
-        self.corner_orientations[7] =
-            CornerOrientation::from_repr(((3 - (twist_parity % 3)) % 3) as u8).unwrap();
-    }
-
-    pub fn set_flip(&mut self, mut flip: usize) {
-        let mut flip_parity = 0;
-
-        for i in (0..11).rev() {
-            self.edge_orientations[i] = EdgeOrientation::from_repr((flip % 2) as u8).unwrap();
-            flip_parity += flip % 2;
-            flip /= 2;
-        }
-
-        self.edge_orientations[11] =
-            EdgeOrientation::from_repr(((2 - (flip_parity % 2)) % 2) as u8).unwrap();
-    }
 
     pub fn invert(self) -> Self {
         let mut edge_positions = [EdgePosition::Ur; EdgePosition::COUNT];
