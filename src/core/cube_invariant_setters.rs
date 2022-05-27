@@ -1,7 +1,6 @@
 use crate::core::prelude::*;
-use chrono::offset;
 use num::ToPrimitive;
-use rand::{SeedableRng, prelude::StdRng, Rng};
+
 use strum::{EnumCount, IntoEnumIterator};
 impl CubieCube {
 
@@ -69,25 +68,61 @@ impl CubieCube {
         self.edge_positions.copy_from_slice(&edge_positions);
     }
 
-    pub fn random_cube(seed: u64) -> Self{
-        let mut cube = CubieCube::default();
-        
-        let mut rng: StdRng = rand::SeedableRng::seed_from_u64(seed);
-        
-        cube.set_edges(rng.gen_range(0..479001600));
-        let edge_parity = cube.get_edge_parity();
-        loop {
-            cube.set_corners(rng.gen_range(0..40320));
-            let corner_parity = cube.get_corner_parity();
-            if edge_parity == corner_parity{
-                break;
-            }            
+    pub fn set_u_edges(&mut self, edges: u16){
+        let mut a = edges.to_i32().unwrap() / 24;
+        let permutation = edges % 24;
+
+        let mut edges: [EdgePosition; 4] = [EdgePosition::Ur, EdgePosition::Uf, EdgePosition::Ul, EdgePosition::Ub];
+        reorder_to_permutation::<EdgePosition, 4> (&mut edges, permutation  as usize);
+
+        let mut slice_x = 4;
+        let mut other_x = 0;
+
+        for j in 0..EdgePosition::COUNT{
+            let a1: i32 = a - (binomial(11 - j, slice_x) as i32);
+
+            if a1 >= 0{
+                self.edge_positions[j] = edges[4 - slice_x];
+                slice_x -= 1;
+                a = a1;
+            }
+            else {
+                self.edge_positions[j] = EdgePosition::DEFAULT_ARRAY[other_x + 4];
+                other_x +=1;
+            }
         }
 
-        cube.set_flip(rng.gen_range(0..2048));
-        cube.set_twist(rng.gen_range(0..2187));
-
-        cube
+        self.edge_positions.rotate_left(4);
     }
+    
+    pub fn set_d_edges(&mut self, edges: u16){
+        let mut a = edges.to_i32().unwrap() / 24;
+        let permutation = edges % 24;
+
+        let mut edges: [EdgePosition; 4] = [EdgePosition::Dr, EdgePosition::Df, EdgePosition::Dl, EdgePosition::Db];
+        reorder_to_permutation::<EdgePosition, 4> (&mut edges, permutation  as usize);
+
+        let mut slice_x = 4;
+        let mut other_x = 0;
+
+        for j in 0..EdgePosition::COUNT{
+            let a1: i32 = a - (binomial(11 - j, slice_x) as i32);
+
+            if a1 >= 0{
+                self.edge_positions[j] = edges[4 - slice_x];
+                slice_x -= 1;
+                a = a1;
+            }
+            else {
+                let other_index = if(other_x <4){other_x}else{other_x+ 4};
+                self.edge_positions[j] = EdgePosition::DEFAULT_ARRAY[other_index];
+                other_x +=1;
+            }
+        }
+
+        self.edge_positions.rotate_left(4);
+    }
+
+    
 
 }

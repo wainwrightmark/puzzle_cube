@@ -18,7 +18,7 @@ fn test_make_random_cube(seed: u64) {
 
     cube.set_edges(expected_edges);
     let edge_parity = cube.get_edge_parity();
-    let mut expected_corners:u16 = Default::default();
+    let mut expected_corners:u16;
 
     loop {
         expected_corners =rng.gen_range(0..40320);
@@ -45,6 +45,9 @@ fn test_make_random_cube(seed: u64) {
     assert_eq!(actual_flip, expected_flip);
     assert_eq!(actual_twist, expected_twist);
 
+
+    let verify_result = cube.verify();
+    assert_eq!(verify_result, Ok(()));
     
 }
 

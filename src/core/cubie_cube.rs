@@ -1,9 +1,9 @@
 use crate::core::prelude::*;
 use array_const_fn_init::array_const_fn_init;
+use itertools::Itertools;
 use strum::{EnumCount, IntoEnumIterator};
 use strum_macros::*;
-
-use super::edge_position;
+use rand::{SeedableRng, prelude::StdRng, Rng};
 
 #[derive(Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize, Clone)]
 pub struct CubieCube {
@@ -133,6 +133,58 @@ impl CubieCube {
             edge_orientations,
             corner_orientations,
         }
+    }
+
+    pub fn verify(&self)->Result<(), &str>{
+        let unique_edges = self.edge_positions.into_iter().dedup().count();
+        if unique_edges < EdgePosition::COUNT{
+            return Err("There are duplicate edges");
+        }
+        
+        let unique_corners = self.corner_positions.into_iter().dedup().count();
+        if unique_corners < CornerPosition::COUNT{
+            return Err("There are duplicate corners");
+        }
+        
+        let edge_flip:u8 = self.edge_orientations.into_iter().map(|x|x as u8) .sum();
+        if edge_flip % 2 != 0{
+            return Err("Total Edge flip is wrong");
+        }
+
+        let corner_twist:u8 = self.corner_orientations.into_iter().map(|x|x as u8).sum();
+        if corner_twist % 3 != 0{
+            return Err("Total Corner twist is wrong");
+        }
+
+        let edge_parity = self.get_edge_parity();
+        let corner_parity = self.get_corner_parity();
+
+        if edge_parity != corner_parity{
+            return Err("Edge and corner parities are not equal");
+        }
+
+        Ok(())
+    }
+
+    pub fn random_cube(seed: u64) -> Self{
+        let mut cube = CubieCube::default();
+        
+        let mut rng: StdRng = rand::SeedableRng::seed_from_u64(seed);
+        
+        cube.set_edges(rng.gen_range(0..479001600));
+        let edge_parity = cube.get_edge_parity();
+        loop {
+            cube.set_corners(rng.gen_range(0..40320));
+            let corner_parity = cube.get_corner_parity();
+            if edge_parity == corner_parity{
+                break;
+            }            
+        }
+
+        cube.set_flip(rng.gen_range(0..2048));
+        cube.set_twist(rng.gen_range(0..2187));
+
+        cube
     }
 }
 
