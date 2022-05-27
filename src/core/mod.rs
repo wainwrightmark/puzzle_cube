@@ -9,6 +9,8 @@ mod definitions;
 mod corner_position;
 mod edge_position;
 mod basic_cubes;
+mod coordinate_cube;
+mod data_source;
 
 
 pub mod prelude {
@@ -23,4 +25,6 @@ pub mod prelude {
     pub use crate::core::corner_position::*;
     pub use crate::core::edge_position::*;
     pub use crate::core::basic_cubes::*;
+    pub use crate::core::coordinate_cube::*;
+    pub use crate::core::data_source::*;
 }

@@ -6,20 +6,20 @@ use strum::IntoEnumIterator;
 use strum_macros::*;
 use array_const_fn_init::array_const_fn_init;
 
-pub const NPERM4: usize = 24;
-pub const NCHOOSE84: usize = 70;
-pub const NMOVE: usize = 18;
-pub const NTWIST: usize = 2187;
-pub const NFLIP: usize = 2048;
-pub const NSLICESORTED: usize = 11880;
-pub const NSLICE: usize = NSLICESORTED / NPERM4;
-pub const NFLIPSLICECLASS: usize = 64430;
-pub const NUEDGESPHASE2: usize = 1680;
-pub const NCORNERS: usize = 40320;
-pub const NCORNERSCLASS: usize = 2768;
-pub const NUDEDGES: usize = 40320;
-pub const NSYM: usize = 48;
-pub const NSYMD4H: usize = 16;
+pub const NPERM4: u16 = 24;
+pub const NCHOOSE84: u8 = 70;
+pub const NMOVE: u16 = 18;
+pub const NTWIST: u16 = 2187;
+pub const NFLIP: u16 = 2048;
+pub const NSLICESORTED: u16 = 11880;
+pub const NSLICE: u16 = NSLICESORTED / NPERM4;
+pub const NFLIPSLICECLASS: u16 = 64430;
+pub const NUEDGESPHASE2: u16 = 1680;
+pub const NCORNERS: u16 = 40320;
+pub const NCORNERSCLASS: u16 = 2768;
+pub const NUDEDGES: u16 = 40320;
+pub const NSYM: u8 = 48;
+pub const NSYMD4H: u8 = 16;
 
 
 
