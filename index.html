@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no target-densitydpi=device-dpi" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+
+    <title>Puzzle Cube</title>
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Puzzle Cube" />
+    <meta property="og:url" content="https://wainwrightmark.github.io/puzzle_cube/" />
+    <meta property="og:site_name" content="Puzzle Cube" />
+    <meta property="og:description" content="Rubix Cube Solver" />
+
+    
+
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
+    
+    <link data-trunk href="styles.css" rel="css" />    
+</head>
+
+<body></body>
+
+</html>
+
+<style>
+    body {
+        touch-action: manipulation;
+        overscroll-behavior-x: none;
+        overscroll-behavior-y: none;
+
+    }
+
+    body.dark {
+        --bg-color: #000;
+        --bg-secondary-color: #131316;
+        --font-color: #f5f5f5;
+        --color-grey: #ccc;
+        --color-darkGrey: #777;
+    }
+</style>
+<script>
+    if (window.matchMedia &&
+        window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+</script>
