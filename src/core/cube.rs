@@ -38,7 +38,7 @@ impl CubieCube {
             self.corner_positions[other_c]
         });
         let corner_orientations =
-            CubieCube::ARRAYEIGHT.map(|c| self.calc_corner_multiply_orientation(c, &other)); //defaults
+            CubieCube::ARRAYEIGHT.map(|c| self.calc_corner_multiply_orientation(c, other)); //defaults
 
         Self {
             corner_orientations,
@@ -58,12 +58,10 @@ impl CubieCube {
             } else {
                 ((ori_a + ori_b - 3) % 3) + 3
             }
+        } else if ori_b < 3 {
+            ((ori_a - ori_b) % 3) + 3
         } else {
-            if ori_b < 3 {
-                ((ori_a - ori_b) % 3) + 3
-            } else {
-                ((3 + ori_a - ori_b) % 3)
-            }
+            ((3 + ori_a - ori_b) % 3)
         };
         CornerOrientation::from_repr(ori).unwrap()
     }

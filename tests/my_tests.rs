@@ -1,6 +1,5 @@
-#[cfg(test)]
-use itertools::Itertools;
-use puzzle_cube::core::prelude::*;
+
+
 
 macro_rules! board_tests {
     ($($name:ident: $value:expr,)*) => {
@@ -28,7 +27,7 @@ t11: "/3+421+58",
 
 );
 
-fn test_cube(letters: &str, expected_count: usize) {
+fn test_cube(_letters: &str, _expected_count: usize) {
     todo!()
 }
 

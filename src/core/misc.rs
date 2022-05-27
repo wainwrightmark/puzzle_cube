@@ -37,8 +37,8 @@ pub const fn binomial(mut n: u16, k: u16) -> u16 {
             break;
         }
         r = (r * n) / d;
-        n = n - 1;
-        d = d + 1;
+        n -= 1;
+        d += 1;
     }
     r
 }

@@ -131,6 +131,6 @@ impl CubieCube {
     /// 0 for solved cube
     pub fn get_corners(&self) -> u16 {
 
-        calculate_permutation(self.corner_positions.clone(), 0) as u16
+        calculate_permutation(self.corner_positions, 0) as u16
     }
 }
