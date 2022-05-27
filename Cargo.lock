@@ -586,9 +586,9 @@ checksum = "eb9f9e6e233e5c4a35559a617bf40a4ec447db2e84c20b55a6f83167b7e57872"
 
 [[package]]
 name = "prettyplease"
-version = "0.1.10"
+version = "0.1.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d9e07e3a46d0771a8a06b5f4441527802830b43e679ba12f44960f48dd4c6803"
+checksum = "f28f53e8b192565862cf99343194579a022eb9c7dd3a8d03134734803c7b3125"
 dependencies = [
  "proc-macro2",
  "syn",
@@ -1007,7 +1007,7 @@ checksum = "712e227841d057c1ee1cd2fb22fa7e5a5461ae8e48fa2ca79ec42cfc1931183f"
 [[package]]
 name = "yew"
 version = "0.19.3"
-source = "git+https://github.com/yewstack/yew.git#e68060afa7421149f2d6aacace67c65c33e81fe5"
+source = "git+https://github.com/yewstack/yew.git#7dc7195da8521bdcb91b4fef054c35898c136831"
 dependencies = [
  "console_error_panic_hook",
  "gloo",
@@ -1026,7 +1026,7 @@ dependencies = [
 [[package]]
 name = "yew-macro"
 version = "0.19.3"
-source = "git+https://github.com/yewstack/yew.git#e68060afa7421149f2d6aacace67c65c33e81fe5"
+source = "git+https://github.com/yewstack/yew.git#7dc7195da8521bdcb91b4fef054c35898c136831"
 dependencies = [
  "boolinator",
  "lazy_static",
@@ -1041,7 +1041,7 @@ dependencies = [
 [[package]]
 name = "yewdux"
 version = "0.8.0"
-source = "git+https://github.com/intendednull/yewdux.git#8e775e3d374105a7a39b8abfc5597bd0582f272a"
+source = "git+https://github.com/intendednull/yewdux.git#4fbafcf03e75918961dbf6ec00a4ac0a756de4d1"
 dependencies = [
  "anymap",
  "log",
@@ -1058,7 +1058,7 @@ dependencies = [
 [[package]]
 name = "yewdux-macros"
 version = "0.8.0"
-source = "git+https://github.com/intendednull/yewdux.git#8e775e3d374105a7a39b8abfc5597bd0582f272a"
+source = "git+https://github.com/intendednull/yewdux.git#4fbafcf03e75918961dbf6ec00a4ac0a756de4d1"
 dependencies = [
  "darling",
  "proc-macro-error",

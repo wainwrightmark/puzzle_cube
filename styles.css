@@ -1,0 +1,33 @@
+.face{
+    stroke: black;
+    stroke-width: 0.3;
+    transform: translate(var(--xpos), var(--ypos));
+    transition: all 1s;
+}
+
+.color-Up{
+    fill: yellow;
+}
+
+.color-Down{
+    fill: white;
+}
+
+.color-Left{
+    fill: blue;
+}
+
+.color-Right{
+    fill: green;
+}
+.color-Front{
+    fill: red;
+}
+.color-Back{
+    fill: orange;
+}
+
+.cubesvg{
+    max-width: 500px;
+    max-height: 500px;
+}

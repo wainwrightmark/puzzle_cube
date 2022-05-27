@@ -20,7 +20,7 @@ impl CubieCube {
     /// 0..2186 in phase 1
     /// 0 in phase 2 - this means that all corners are in the solved orientation
     pub fn get_twist(&self) -> u16 {
-        calculate_number_representation::<CornerOrientation, 8>(&self.corner_orientations, 2) as u16
+        calculate_number_representation::<CornerOrientation, 8>(&self.corner_orientations, 3) as u16
     }
 
     /// Gets the flip of the 12 edges

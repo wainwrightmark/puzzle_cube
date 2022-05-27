@@ -2,6 +2,7 @@ use crate::core::prelude::*;
 use crate::core::prelude::FaceletPosition::*;
 use crate::core::prelude::FaceColor::*;
 use strum::EnumCount;
+use strum::IntoEnumIterator;
 use strum_macros::*;
 use array_const_fn_init::array_const_fn_init;
 
@@ -172,6 +173,30 @@ pub enum FaceColor {
     Down = 3,
     Left = 4,
     Back = 5,
+}
+
+impl FaceColor {
+    pub const fn get_x(self)-> usize{
+        match self {
+            Up => 1,
+            Right => 2,
+            Front => 1,
+            Down => 1,
+            Left => 0,
+            Back => 3,
+        }
+    }
+
+    pub const fn get_y(self)-> usize{
+        match self {
+            Up => 0,
+            Right => 1,
+            Front => 1,
+            Down => 2,
+            Left => 1,
+            Back => 1,
+        }
+    }
 }
 
 impl From<FaceColor> for usize{

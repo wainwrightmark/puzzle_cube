@@ -47,6 +47,14 @@ const fn get_corner_position(i: usize) -> CornerPosition {
 impl CornerPosition {
     pub const DEFAULT_ARRAY: [Self; 8] = array_const_fn_init![get_corner_position; 8];
 
+    pub fn get_color(self, index : usize)-> FaceColor{
+        CornerPosition::CORNERCOLORS[self as usize][index]
+    }
+
+    pub fn get_location(self, index : usize, orientation:  CornerOrientation )-> FaceletPosition{
+        CornerPosition::CORNERFACELETS[self as usize][(index + (orientation as usize)) % 3]
+    }
+
 
     ///The positions of each corner facelet
 pub const CORNERFACELETS: [[FaceletPosition; 3];8 ] = [
@@ -57,7 +65,7 @@ pub const CORNERFACELETS: [[FaceletPosition; 3];8 ] = [
     [D3, F9, R7, ],
     [D1, L9, F7, ],
     [D7, B9, L7, ],
-    [B9, R9, B7, ],
+    [D9, R9, B7, ],
     ];
     
     ///The colors of each of the corner pieces

@@ -64,6 +64,14 @@ impl EdgePosition {
     pub const DEFAULT_UP_EDGES: [Self; 4] = array_const_fn_init![get_edge_position_offset0; 4];
     pub const DEFAULT_DOWN_EDGES: [Self; 4] = array_const_fn_init![get_edge_position_offset4; 4];
 
+    pub fn get_color(self, index : usize)-> FaceColor{
+        EdgePosition::EDGECOLORS[self as usize][index]
+    }
+
+    pub fn get_location(self, index : usize, orientation:  EdgeOrientation )-> FaceletPosition{
+        EdgePosition::EDGEFACELETS[self as usize][(index + (orientation as usize)) % 2]
+    }
+
     ///The positions of each edge facelet
 pub const EDGEFACELETS:[[FaceletPosition;2];12] =[
     [U6, R2],
@@ -81,6 +89,7 @@ pub const EDGEFACELETS:[[FaceletPosition;2];12] =[
     [B6, L4],
     [B4, R6],
     ];
+    
     
     
     

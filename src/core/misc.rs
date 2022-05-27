@@ -54,7 +54,8 @@ pub fn set_from_number_representation<T : Copy + From<usize>, const N:usize, con
     }
 
     //Set the last element from parity
-    arr[N- 1] = (MOD - (parity % MOD) % MOD).into();
+    let last =  ((MOD - (parity % MOD)) % MOD);
+    arr[N- 1] = last.into();
 
 }
 

@@ -1,6 +1,34 @@
 use crate::core::prelude::*;
 use strum_macros::*;
 
+
+impl From<(FaceColor, HorizontalPosition, VerticalPosition)> for FaceletPosition {
+    fn from(g: (FaceColor, HorizontalPosition, VerticalPosition)) -> Self {
+        let s = (g.0 as u8 * 9) + (g.1 as u8) + (g.2 as u8 * 3);
+        FaceletPosition::from_repr(s).unwrap()
+    }
+}
+
+impl FaceletPosition{    
+
+    pub const fn get_face(self)-> FaceColor{
+        let fc = self as u8 / 9;        
+        FaceColor::from_repr(fc).unwrap()
+    }
+
+    pub const fn get_horizontal_position(self)-> HorizontalPosition{
+        let hp = (self as u8) %3;
+        HorizontalPosition::from_repr(hp).unwrap()
+    }
+    
+    pub const fn get_vertical_position(self)-> VerticalPosition{
+        let vp = (self as u8 % 9) / 3;
+        VerticalPosition::from_repr(vp).unwrap()
+    }
+    
+    
+}
+
 #[derive(
     Debug,
     Display,

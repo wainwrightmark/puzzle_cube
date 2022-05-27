@@ -74,10 +74,10 @@ impl CubieCube {
 
         let edge_orientations = CubieCube::ARRAYTWELVE.map(|e| {
             let other_e = other.edge_positions[e] as usize;
-            let ori_a = self.corner_orientations[other_e] as u8;
-            let ori_b = other.corner_orientations[e] as u8;
+            let ori_a = self.edge_orientations[other_e] as u8;
+            let ori_b = other.edge_orientations[e] as u8;
 
-            let ori = ori_a + ori_b % 2;
+            let ori =( ori_a + ori_b) % 2;
             EdgeOrientation::from_repr(ori).unwrap()
         });
 
