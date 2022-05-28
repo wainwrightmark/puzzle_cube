@@ -1,6 +1,7 @@
 use crate::core::prelude::*;
 use array_const_fn_init::array_const_fn_init;
 use itertools::Itertools;
+use serde::__private::de;
 use strum::{EnumCount, IntoEnumIterator};
 use strum_macros::*;
 use rand::{SeedableRng, prelude::StdRng, Rng};
@@ -10,7 +11,8 @@ use rand::{SeedableRng, prelude::StdRng, Rng};
 //#[derive(BorshSerialize, BorshDeserialize)]
 pub struct DataSource{
 
-    pub cornslice_depth: Vec<u8>,
+    ///Indicates the minimum number of phase 2 moves required to solve the corners and slice. Indexed by corners * 24 + slice
+    pub corner_slice_depth: Vec<u8>,
     pub u_d_edges_conjugation: Vec<u16>,
     pub phase_2_pruning: Vec<u32>,
     pub phase_2_edge_merge: Vec<u16>,
@@ -30,33 +32,42 @@ pub struct DataSource{
     pub moves_source: MovesSource
 }
 
-//#[derive(BorshSerialize, BorshDeserialize)]
-pub struct MovesSource{
-    pub twist_move : [u16; Move::COUNT * 2187],
-    pub flip_move :  [u16; Move::COUNT * 2048],
-    pub slice_sorted_move :  [u16; Move::COUNT * 11880],
-    pub u_edges_move :  [u16; Move::COUNT * 11880],
-    pub d_edges_move :  [u16; Move::COUNT * 11880],
-    pub u_d_edges_move :  [u16; 10 * 40320],
-    pub corners_move :  [u16; Move::COUNT * 40320],
-}
+impl DataSource{
+    pub fn create_corner_slice_depth(moves_source: &MovesSource)-> Vec<u8>
+    {
+        let mut table: [u8; 40320 * 24] = [u8::MAX; 40320 * 24]; //fill with 255 to indicate uncomplete data
 
-impl MovesSource{
-    pub fn create()-> Self{
-        let twist_move = TwistProperty::create(&TwistProperty{});
-        let flip_move = FlipProperty::create(&FlipProperty{});
-        let slice_sorted_move = SliceSortedProperty::create(&SliceSortedProperty{});
-        let u_edges_move = UpEdgesProperty::create(&UpEdgesProperty{});
-        let d_edges_move = DownEdgesProperty::create(&DownEdgesProperty{});
-        let u_d_edges_move = UpDownEdgesProperty::create(&UpDownEdgesProperty{});
-        let corners_move = CornersProperty::create(&CornersProperty{});
+        table[0] = 0;
+        let mut done = 1;
+        let mut depth = 0;
 
-        Self { twist_move, flip_move, slice_sorted_move, u_edges_move, d_edges_move, u_d_edges_move, corners_move }        
+        while done < 40320 * 24 {
+            for corners in 0..40320{
+                for slice in 0..24{
+                    if(table[24 * corners + slice] == depth){
+                        for m in Move::PHASE2MOVES{
+                            let corners1 = moves_source.corners_move [(18 * corners) + m as usize];
+                            let slice1 = moves_source.slice_sorted_move [(18 * slice) + m as usize];
+                            let idx1 = (NPERM4 * corners1 + slice1) as usize;
+
+                            if table[idx1] == u8::MAX{//this is the first time we have reached this point
+                                table[idx1] = depth + 1;
+                                done+=1;
+                            }
+
+                        }
+                    }
+                }
+            }
+            depth+=1;
+        }
+
+
+
+        table.into()
     }
-
-
-
 }
+
 
 
 impl DataSource{
@@ -109,8 +120,38 @@ impl DataSource{
 
     pub fn get_cornslice_depth(&self, corners: u16, slice_sorted: u16)-> u8{
         let index = (24 * corners + slice_sorted) as usize;
-        let r = self.cornslice_depth[index];
+        let r = self.corner_slice_depth[index];
 
         r
     }
+}
+
+
+
+//#[derive(BorshSerialize, BorshDeserialize)]
+pub struct MovesSource{
+    pub twist_move : [u16; Move::COUNT * 2187],
+    pub flip_move :  [u16; Move::COUNT * 2048],
+    pub slice_sorted_move :  [u16; Move::COUNT * 11880],
+    pub u_edges_move :  [u16; Move::COUNT * 11880],
+    pub d_edges_move :  [u16; Move::COUNT * 11880],
+    pub u_d_edges_move :  [u16; 10 * 40320],
+    pub corners_move :  [u16; Move::COUNT * 40320],
+}
+
+impl MovesSource{
+    pub fn create()-> Self{
+        let twist_move = TwistProperty::create(&TwistProperty{});
+        let flip_move = FlipProperty::create(&FlipProperty{});
+        let slice_sorted_move = SliceSortedProperty::create(&SliceSortedProperty{});
+        let u_edges_move = UpEdgesProperty::create(&UpEdgesProperty{});
+        let d_edges_move = DownEdgesProperty::create(&DownEdgesProperty{});
+        let u_d_edges_move = UpDownEdgesProperty::create(&UpDownEdgesProperty{});
+        let corners_move = CornersProperty::create(&CornersProperty{});
+
+        Self { twist_move, flip_move, slice_sorted_move, u_edges_move, d_edges_move, u_d_edges_move, corners_move }        
+    }
+
+
+
 }

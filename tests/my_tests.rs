@@ -1,6 +1,6 @@
 
 
-use puzzle_cube::{core::prelude::{CubieCube, Move}};
+use puzzle_cube::{core::prelude::*};
 
 use ntest::test_case;
 use rand::{prelude::StdRng, Rng};
@@ -105,3 +105,16 @@ fn test_ud_edges(seed: u8){
         assert!(new_actual.is_some());
     }
 }
+
+// #[test]
+// fn test_corner_slice_depth(){
+//     let moves_source = MovesSource::create();
+
+//     // moves_source.corners_move.
+
+//     // let csd = DataSource::create_corner_slice_depth(&moves_source);
+
+//     // for c in csd{
+//     //     assert_ne!(c, u8::MAX)
+//     // }
+// }
