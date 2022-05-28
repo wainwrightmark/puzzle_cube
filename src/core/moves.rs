@@ -64,6 +64,32 @@ impl Move {
         Move::from_repr(m).unwrap()
     }
 
+    pub const ALLMOVES: [Move; 18] = [
+        Move::U1,
+        Move::U2,
+        Move::U3,
+
+        Move::R1,
+        Move::R2,
+        Move::R3,
+
+        Move::F1,
+        Move::F2,
+        Move::F3,
+
+        Move::D1,
+        Move::D2,
+        Move::D3,
+
+        Move::L1,
+        Move::L2,
+        Move::L3,
+
+        Move::B1,
+        Move::B2,
+        Move::B3,
+    ];
+
     pub const PHASE2MOVES: [Move; 10] = [
         Move::U1,
         Move::U2,
@@ -95,6 +121,14 @@ impl Move {
 
     pub fn apply(self, cube: &CubieCube)-> CubieCube{
         cube.clone().multiply(&MOVE_CUBES[self as usize])
+    }
+    
+    pub fn apply_edges(self, cube: &CubieCube)-> CubieCube{
+        cube.clone().edge_multiply(&MOVE_CUBES[self as usize])
+    }
+    
+    pub fn apply_corners(self, cube: &CubieCube)-> CubieCube{
+        cube.clone().corner_multiply(&MOVE_CUBES[self as usize])
     }
 }
 

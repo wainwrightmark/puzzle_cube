@@ -5,8 +5,11 @@ use strum::{EnumCount, IntoEnumIterator};
 use strum_macros::*;
 use rand::{SeedableRng, prelude::StdRng, Rng};
 
-#[derive(serde::Serialize, serde::Deserialize)]
+
+
+//#[derive(BorshSerialize, BorshDeserialize)]
 pub struct DataSource{
+
     pub cornslice_depth: Vec<u8>,
     pub u_d_edges_conjugation: Vec<u16>,
     pub phase_2_pruning: Vec<u32>,
@@ -24,16 +27,37 @@ pub struct DataSource{
     pub corner_symmetry : Vec<u8>,
     pub corner_rep : Vec<u16>,
 
-    pub twist_move : Vec<u16>,
-    pub flip_move : Vec<u16>,
-    pub slice_sorted_move : Vec<u16>,
-    pub u_edges_move : Vec<u16>,
-    pub d_edges_move : Vec<u16>,
-    pub u_d_edges_move : Vec<u16>,
-    pub corners_move : Vec<u16>,
+    pub moves_source: MovesSource
+}
+
+//#[derive(BorshSerialize, BorshDeserialize)]
+pub struct MovesSource{
+    pub twist_move : [u16; Move::COUNT * 2187],
+    pub flip_move :  [u16; Move::COUNT * 2048],
+    pub slice_sorted_move :  [u16; Move::COUNT * 11880],
+    pub u_edges_move :  [u16; Move::COUNT * 11880],
+    pub d_edges_move :  [u16; Move::COUNT * 11880],
+    pub u_d_edges_move :  [u16; 10 * 40320],
+    pub corners_move :  [u16; Move::COUNT * 40320],
+}
+
+impl MovesSource{
+    pub fn create()-> Self{
+        let twist_move = TwistProperty::create(&TwistProperty{});
+        let flip_move = FlipProperty::create(&FlipProperty{});
+        let slice_sorted_move = SliceSortedProperty::create(&SliceSortedProperty{});
+        let u_edges_move = UpEdgesProperty::create(&UpEdgesProperty{});
+        let d_edges_move = DownEdgesProperty::create(&DownEdgesProperty{});
+        let u_d_edges_move = UpDownEdgesProperty::create(&UpDownEdgesProperty{});
+        let corners_move = CornersProperty::create(&CornersProperty{});
+
+        Self { twist_move, flip_move, slice_sorted_move, u_edges_move, d_edges_move, u_d_edges_move, corners_move }        
+    }
+
 
 
 }
+
 
 impl DataSource{
     pub fn get_flip_slice_twist_depth_mod_3(&self, flip: u16, twist: u16, slice_sorted: u16,) -> u8{

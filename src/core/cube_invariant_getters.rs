@@ -97,7 +97,7 @@ impl CubieCube {
     /// Gets a number representing the permutation of the U and D edges
     /// None in phase 1
     /// 0..40320
-    fn get_ud_edges(&self) -> Option<u16> {
+    pub fn get_ud_edges(&self) -> Option<u16> {
         if self
             .edge_positions
             .into_iter()

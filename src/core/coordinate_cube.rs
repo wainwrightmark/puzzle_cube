@@ -7,7 +7,7 @@ use array_const_fn_init::array_const_fn_init;
 use strum::EnumCount;
 use strum_macros::*;
 
-#[derive(Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize, Clone, Default)]
+#[derive(Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize, Clone, Default, Hash)]
 pub struct CoordinateCube {
     pub flip: u16,
     pub twist: u16,
@@ -18,7 +18,7 @@ pub struct CoordinateCube {
     pub phase: PhaseData,
 }
 
-#[derive(Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize, Clone, Default)]
+#[derive(Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize, Clone, Default, Hash)]
 pub enum PhaseData {
     Phase1 {
         flip_slice_twist_depth_mod3: u8,
@@ -30,6 +30,7 @@ pub enum PhaseData {
     #[default]
     Solved,
 }
+
 
 impl CoordinateCube {
     pub fn create(
@@ -78,16 +79,20 @@ impl CoordinateCube {
     }
 
 
-    pub fn after_move(&self, m: Move, data_source: &DataSource)-> Self{
+    pub fn after_move(&self, m: Move, data_source: &DataSource,)-> Self{
         let mu = m as usize;
 
-        let flip = data_source.flip_move[(NMOVE * self.flip) as usize + mu];
-        let twist  = data_source.twist_move[(NMOVE * self.twist) as usize + mu];
-        let slice_sorted  = data_source.slice_sorted_move[(NMOVE * self.slice_sorted) as usize + mu];
-        let corners  = data_source.corners_move[(NMOVE * self.corners) as usize + mu];
-        let u_edges  = data_source.u_edges_move[(NMOVE * self.u_edges) as usize + mu];
-        let d_edges  = data_source.d_edges_move[(NMOVE * self.d_edges) as usize + mu];
+        let flip = data_source.moves_source.flip_move[(NMOVE * self.flip) as usize + mu];
+        let twist  = data_source.moves_source.twist_move[(NMOVE * self.twist) as usize + mu];
+        let slice_sorted  = data_source.moves_source.slice_sorted_move[(NMOVE * self.slice_sorted) as usize + mu];
+        let corners  = data_source.moves_source.corners_move[(NMOVE * self.corners) as usize + mu];
+        let u_edges  = data_source.moves_source.u_edges_move[(NMOVE * self.u_edges) as usize + mu];
+        let d_edges  = data_source.moves_source.d_edges_move[(NMOVE * self.d_edges) as usize + mu];
 
         CoordinateCube::create(flip, twist, slice_sorted, corners, u_edges, d_edges, data_source)
     }
+
+
+
+    
 }

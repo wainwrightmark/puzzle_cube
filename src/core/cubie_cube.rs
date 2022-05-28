@@ -33,7 +33,7 @@ impl CubieCube {
     const ARRAYEIGHT: [usize; 8] = [0, 1, 2, 3, 4, 5, 6, 7];
 
     ///Multiply this cube with another cube.
-    const fn corner_multiply(self, other: &Self) -> Self {
+    pub const fn corner_multiply(self, other: &Self) -> Self {
         let mut corner_positions = [CornerPosition::Urf; CornerPosition::COUNT];
         let mut corner_orientations = [CornerOrientation::Zero; CornerPosition::COUNT];
         let mut c = 0;
@@ -69,7 +69,7 @@ impl CubieCube {
     }
 
 
-    const fn edge_multiply(self, other: &Self) -> Self {
+    pub const fn edge_multiply(self, other: &Self) -> Self {
         let mut edge_positions = [EdgePosition::Ur; EdgePosition::COUNT];
         let mut edge_orientations = [EdgeOrientation::Zero; EdgePosition::COUNT];
         let mut e = 0;

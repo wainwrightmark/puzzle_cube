@@ -2,16 +2,17 @@
 extern crate bencher;
 
 use bencher::Bencher;
+use puzzle_cube::core::prelude::MovesSource;
 
 
-benchmark_group!(benches, bench_solve);
+benchmark_group!(benches, bench_create_move_table);
 benchmark_main!(benches);
 
-fn bench_solve(bench: &mut Bencher) {
-    bench.iter(solve);
+fn bench_create_move_table(bench: &mut Bencher) {
+    bench.iter(create_move_table);    
 }
 
 
-fn solve() {
-    
+fn create_move_table() {
+    MovesSource::create();
 }

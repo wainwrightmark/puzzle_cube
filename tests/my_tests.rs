@@ -81,3 +81,27 @@ fn any_move_four_times_returns_same(u: u8){
 
     assert_eq!(base_cube, current, "Move {}", m);
 }
+
+#[test_case(0)]
+#[test_case(1)]
+#[test_case(2)]
+#[test_case(3)]
+fn test_ud_edges(seed: u8){
+    let mut cube = CubieCube::default();
+
+    let mut rng: StdRng = rand::SeedableRng::seed_from_u64(seed);
+    let expected_edges = rng.gen_range(0..40320);
+
+    cube.set_ud_edges(expected_edges);
+
+    let actual = cube.get_ud_edges();
+    assert!(actual.is_some());
+    assert_eq!(actual.unwrap_or_default(), expected_edges);
+
+    for m in Move::PHASE2MOVES{
+        let new_cube = m.apply(&cube);
+
+        let new_actual = new_cube.get_ud_edges();
+        assert!(new_actual.is_some());
+    }
+}
