@@ -9,7 +9,7 @@ jobs:
     steps:
       - uses: actions-rs/toolchain@v1
         with:
-          toolchain: nightly
+          profile: minimal
           target: wasm32-unknown-unknown
 
       - uses: jetli/trunk-action@v0.1.0

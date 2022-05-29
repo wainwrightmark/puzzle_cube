@@ -1,0 +1,4 @@
+[toolchain]
+channel = "nightly-2022-28-05"
+targets = [ "wasm32-unknown-unknown" ]
+profile = "minimal"
