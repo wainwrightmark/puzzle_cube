@@ -84,7 +84,7 @@ fn move_button(properties: &MoveButtonProperties) -> Html {
     let onclick: Option<Callback<MouseEvent>> =
         Some(Dispatch::new().apply_callback(move |_| MoveMsg { my_move }));
 
-    html!(<button {onclick} class="sm-4 col btn-small"> {my_move.to_string()}  </button>)
+    html!(<button {onclick} class="size-4 col btn-small"> {my_move.to_string()}  </button>)
 }
 
 #[function_component(Cube)]

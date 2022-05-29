@@ -31,3 +31,9 @@
     max-width: 500px;
     max-height: 500px;
 }
+
+.size-4{
+    flex: 0 0 33.33%;
+    max-width: 0 0 33.33%
+
+}
