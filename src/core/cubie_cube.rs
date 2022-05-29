@@ -33,7 +33,7 @@ impl CubieCube {
     const ARRAYEIGHT: [usize; 8] = [0, 1, 2, 3, 4, 5, 6, 7];
 
     ///Multiply this cube with another cube.
-    pub const fn corner_multiply(self, other: &Self) -> Self {
+    const fn multiply_corners(&self, other: &Self) -> ([CornerPosition; CornerPosition::COUNT], [CornerOrientation; CornerPosition::COUNT]) {
         let mut corner_positions = [CornerPosition::Urf; CornerPosition::COUNT];
         let mut corner_orientations = [CornerOrientation::Zero; CornerPosition::COUNT];
         let mut c = 0;
@@ -61,15 +61,12 @@ impl CubieCube {
             c += 1;
         }
 
-        Self {
-            corner_orientations,
-            corner_positions,
-            ..self
-        }
+        (corner_positions,
+            corner_orientations)
     }
 
 
-    pub const fn edge_multiply(self, other: &Self) -> Self {
+    const fn multiply_edges(&self, other: &Self) -> ([EdgePosition; EdgePosition::COUNT], [EdgeOrientation; EdgePosition::COUNT]) {
         let mut edge_positions = [EdgePosition::Ur; EdgePosition::COUNT];
         let mut edge_orientations = [EdgeOrientation::Zero; EdgePosition::COUNT];
         let mut e = 0;
@@ -87,17 +84,38 @@ impl CubieCube {
             e += 1;
         }
 
-        Self {
-            edge_orientations,
-            edge_positions,
+        (edge_positions,
+            edge_orientations)
+    }
+
+    pub const fn corner_multiply(self, other: &Self) -> Self {
+        let (corner_positions, corner_orientations) = self.multiply_corners(other);
+        Self{
+            corner_positions,
+            corner_orientations,
             ..self
         }
     }
-    pub const  fn multiply(self, other: &Self) -> Self {
-        self.corner_multiply(other).edge_multiply(other)
+    
+    pub const fn edge_multiply(self, other: &Self) -> Self {
+        let (edge_positions, edge_orientations) = self.multiply_edges(other);
+        Self{
+            edge_positions,
+            edge_orientations,
+            ..self
+        }
     }
 
-    pub const fn invert(self) -> Self {
+
+    pub const fn multiply(&self, other: &Self) -> Self {
+
+        let (corner_positions, corner_orientations) = self.multiply_corners(other);
+        let (edge_positions, edge_orientations) = self.multiply_edges(other);
+
+        Self { edge_positions, corner_positions, edge_orientations, corner_orientations }
+    }
+
+    pub const fn invert(&self) -> Self {
         let mut edge_positions = [EdgePosition::Ur; EdgePosition::COUNT];
         let mut edge_orientations = [EdgeOrientation::Zero; EdgePosition::COUNT];
         let mut corner_positions = [CornerPosition::Urf; CornerPosition::COUNT];
