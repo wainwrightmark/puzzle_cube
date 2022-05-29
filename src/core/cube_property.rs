@@ -1,4 +1,5 @@
 use std::default;
+use std::vec;
 
 use crate::core::prelude::FaceColor::*;
 use crate::core::prelude::FaceletPosition::*;
@@ -14,9 +15,11 @@ pub trait CubeProperty<const NMOVES:usize, const NVALUES: usize> {
     fn get_value(&self, cube: &CubieCube)-> u16;
     fn set_value(&self, cube: &mut CubieCube, value: u16);
 
-    fn create(&self)-> [u16; NVALUES * NMOVES]{
+    fn create(&self)-> Vec<u16>{
 
-        let mut array: [u16; NVALUES * NMOVES] = [u16::default(); NVALUES * NMOVES];
+        //let mut array: [u16; NVALUES * NMOVES] = [u16::default(); NVALUES * NMOVES];
+        let mut v = Vec::<u16>::new();
+        v.reserve_exact(NVALUES * NMOVES);
 
         for value in 0..NVALUES{
 
@@ -34,13 +37,22 @@ pub trait CubeProperty<const NMOVES:usize, const NVALUES: usize> {
 
                 let new_value = self.get_value(&applied);
 
-                let index = value * NMOVES  + m_index;
-                array[index] = new_value;
+                v.push(new_value);
+                //let index = value * NMOVES  + m_index;
+                //v[index] = new_value;
             }
         }
 
-        array
+        v
+        //array.into()
     }
+    
+    // fn create2(&self)-> [u16; NVALUES * NMOVES]{
+
+    //     let mut array: [u16; NVALUES * NMOVES] = [u16::default(); NVALUES * NMOVES];
+
+    //     array
+    // }
 }
 
 pub struct SliceProperty {}

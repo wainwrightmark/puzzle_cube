@@ -35,36 +35,39 @@ pub struct DataSource{
 impl DataSource{
     pub fn create_corner_slice_depth(moves_source: &MovesSource)-> Vec<u8>
     {
-        let mut table: [u8; 40320 * 24] = [u8::MAX; 40320 * 24]; //fill with 255 to indicate uncomplete data
+        let mut table = vec![u8::MAX;40320 * 24];
+                    
 
         table[0] = 0;
         let mut done = 1;
         let mut depth = 0;
 
-        while done < 40320 * 24 {
-            for corners in 0..40320{
-                for slice in 0..24{
-                    if(table[24 * corners + slice] == depth){
-                        for m in Move::PHASE2MOVES{
-                            let corners1 = moves_source.corners_move [(18 * corners) + m as usize];
-                            let slice1 = moves_source.slice_sorted_move [(18 * slice) + m as usize];
-                            let idx1 = (NPERM4 * corners1 + slice1) as usize;
+        let mut next:Vec<(usize, usize)> = vec![(0,0)];
 
-                            if table[idx1] == u8::MAX{//this is the first time we have reached this point
-                                table[idx1] = depth + 1;
-                                done+=1;
-                            }
+        while(done < 40320 * 24) {
 
-                        }
+            let mut next_next:Vec<(usize, usize)> = Vec::new();
+            for (corners, slice) in next {
+                for m in Move::PHASE2MOVES{
+                    let corners1 = moves_source.corners_move [(18 * corners) + m as usize] as usize;
+                    let slice1 = moves_source.slice_sorted_move [(18 * slice) + m as usize] as usize;
+                    let idx1 = (24 * corners1 + slice1) ;
+
+                    assert!(idx1 < 40320 * 24);
+        
+                    if table[idx1] == u8::MAX{//this is the first time we have reached this point
+                        table[idx1] = depth + 1;
+                        next_next.push((corners1, slice1));
+                        done+=1;
                     }
+        
                 }
             }
             depth+=1;
-        }
+            next= next_next;            
+        }       
 
-
-
-        table.into()
+        table
     }
 }
 
@@ -130,24 +133,26 @@ impl DataSource{
 
 //#[derive(BorshSerialize, BorshDeserialize)]
 pub struct MovesSource{
-    pub twist_move : [u16; Move::COUNT * 2187],
-    pub flip_move :  [u16; Move::COUNT * 2048],
-    pub slice_sorted_move :  [u16; Move::COUNT * 11880],
-    pub u_edges_move :  [u16; Move::COUNT * 11880],
-    pub d_edges_move :  [u16; Move::COUNT * 11880],
-    pub u_d_edges_move :  [u16; 10 * 40320],
-    pub corners_move :  [u16; Move::COUNT * 40320],
+    pub twist_move : Vec<u16>,
+    pub flip_move :  Vec<u16>,
+    pub slice_sorted_move :  Vec<u16>,
+    pub u_edges_move : Vec<u16>,
+    pub d_edges_move :  Vec<u16>,
+    pub u_d_edges_move :  Vec<u16>,
+    pub corners_move :  Vec<u16>,
 }
 
 impl MovesSource{
     pub fn create()-> Self{
-        let twist_move = TwistProperty::create(&TwistProperty{});
-        let flip_move = FlipProperty::create(&FlipProperty{});
-        let slice_sorted_move = SliceSortedProperty::create(&SliceSortedProperty{});
-        let u_edges_move = UpEdgesProperty::create(&UpEdgesProperty{});
-        let d_edges_move = DownEdgesProperty::create(&DownEdgesProperty{});
-        let u_d_edges_move = UpDownEdgesProperty::create(&UpDownEdgesProperty{});
-        let corners_move = CornersProperty::create(&CornersProperty{});
+
+        let corners_move = CornersProperty::create(&CornersProperty{}).into();
+        let twist_move = TwistProperty::create(&TwistProperty{}).into();
+        let flip_move = FlipProperty::create(&FlipProperty{}).into();
+        let slice_sorted_move = SliceSortedProperty::create(&SliceSortedProperty{}).into();
+        let u_edges_move = UpEdgesProperty::create(&UpEdgesProperty{}).into();
+        let d_edges_move = DownEdgesProperty::create(&DownEdgesProperty{}).into();
+        let u_d_edges_move = UpDownEdgesProperty::create(&UpDownEdgesProperty{}).into();
+        
 
         Self { twist_move, flip_move, slice_sorted_move, u_edges_move, d_edges_move, u_d_edges_move, corners_move }        
     }

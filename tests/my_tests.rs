@@ -106,15 +106,25 @@ fn test_ud_edges(seed: u8){
     }
 }
 
-// #[test]
-// fn test_corner_slice_depth(){
-//     let moves_source = MovesSource::create();
+#[test]
+fn test_create_corners(){
+    let r = CornersProperty::create(&CornersProperty{});
 
-//     // moves_source.corners_move.
 
-//     // let csd = DataSource::create_corner_slice_depth(&moves_source);
+    for c in r{
+        assert!(c < 40320)
+    }
+}
 
-//     // for c in csd{
-//     //     assert_ne!(c, u8::MAX)
-//     // }
-// }
+#[test]
+fn test_corner_slice_depth(){
+    let moves_source = MovesSource::create();
+
+    // moves_source.corners_move.
+
+    let csd = DataSource::create_corner_slice_depth(&moves_source);
+
+    for c in csd{
+        assert_ne!(c, u8::MAX)
+    }
+}
