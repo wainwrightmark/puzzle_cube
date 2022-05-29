@@ -154,6 +154,15 @@ fn test_create_corner_symmetries(){
     }
 }
 
+#[test]
+fn test_create_flip_slice_symmetries(){
+    let fss = FlipSliceSource::create();
+
+    for class_index in fss.flip_slice_class_index{
+        assert!(class_index < 64430)
+    }
+}
+
 
 #[test]
 fn test_basic_cubes() {

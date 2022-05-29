@@ -20,9 +20,7 @@ pub struct DataSource{
 
     pub twist_conjugation : Vec<u16>,
 
-    pub flip_slice_class_index : Vec<u16>,
-    pub flic_slice_symmetry : Vec<u8>,
-    pub flip_slice_rep : Vec<u32>,
+    pub flip_slice_souce: FlipSliceSource,
     
     pub corners_source : CornerSymmetriesSource,
     
@@ -36,6 +34,11 @@ pub struct CornerSymmetriesSource{
     pub corner_rep : Vec<u16>,
 }
 
+pub struct FlipSliceSource{
+    pub flip_slice_class_index : Vec<u16>,
+    pub flip_slice_symmetry : Vec<u8>,
+    pub flip_slice_rep : Vec<u32>,
+}
 
 
 
@@ -44,8 +47,8 @@ impl DataSource{
         let slice = slice_sorted / 24;
         let flip_slice = (NFLIP * slice  + flip) as usize;
 
-        let class_index = self.flip_slice_class_index[flip_slice];
-        let flip_slice_sym = self.flic_slice_symmetry[flip_slice];
+        let class_index = self.flip_slice_souce.flip_slice_class_index[flip_slice];
+        let flip_slice_sym = self.flip_slice_souce.flip_slice_symmetry[flip_slice];
 
         let twist_conj = self.get_twist_conj(twist, flip_slice_sym);
 
