@@ -33,9 +33,11 @@ BACK_DEFAULT_CUBE.multiply(&BACK_DEFAULT_CUBE),
 BACK_DEFAULT_CUBE.multiply(&BACK_DEFAULT_CUBE).multiply(&BACK_DEFAULT_CUBE)
 ];
 
+/// Cubes representing the basic symmetries and their combinations
+pub const SYMMETRY_CUBES: [CubieCube; 48]= array_const_fn_init![get_symmetry_cube; 48];
 
-pub const BASIC_CUBES: [CubieCube; 48]= array_const_fn_init![get_symmetry_cube; 48];
-pub const BASIC_CUBES_INVERTED: [CubieCube; 48]= array_const_fn_init![get_inverse_symmetry_cube; 48];
+/// The inverses of the symmetry cubes
+pub const SYMMETRY_CUBES_INVERTED: [CubieCube; 48]= array_const_fn_init![get_inverse_symmetry_cube; 48];
 
 
 const fn get_symmetry_cube(i: usize) -> CubieCube {
@@ -75,7 +77,7 @@ const fn get_symmetry_cube(i: usize) -> CubieCube {
 
 
 const fn get_inverse_symmetry_cube(j: usize) -> CubieCube{    
-    BASIC_CUBES[j].invert()    
+    SYMMETRY_CUBES[j].invert()    
 }
 
 

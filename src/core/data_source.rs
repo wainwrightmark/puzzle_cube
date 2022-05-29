@@ -24,14 +24,17 @@ pub struct DataSource{
     pub flic_slice_symmetry : Vec<u8>,
     pub flip_slice_rep : Vec<u32>,
     
+    pub corners_source : CornerSymmetriesSource,
     
-    pub corner_class_index : Vec<u16>,
-    pub corner_symmetry : Vec<u8>,
-    pub corner_rep : Vec<u16>,
 
     pub moves_source: MovesSource
 }
 
+pub struct CornerSymmetriesSource{
+    pub corner_class_index : Vec<u16>,
+    pub corner_symmetry : Vec<u8>,
+    pub corner_rep : Vec<u16>,
+}
 
 
 
@@ -67,8 +70,8 @@ impl DataSource{
     }
 
     pub fn get_corners_ud_edges_depth_3(&self, corners:  u16, ud_edges: u16) -> u8 {
-        let corner_class_index = self.corner_class_index[corners as usize];
-        let corner_sym = self.corner_symmetry[corners as usize];
+        let corner_class_index = self.corners_source.corner_class_index[corners as usize];
+        let corner_sym = self.corners_source. corner_symmetry[corners as usize];
 
         let ud_edges_conj = self.get_ud_edges_conj(ud_edges, corner_sym);
         let index = (NUDEDGES * corner_class_index + ud_edges_conj) as usize; 
