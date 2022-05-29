@@ -7,7 +7,7 @@ use array_const_fn_init::array_const_fn_init;
 use strum::EnumCount;
 use strum_macros::*;
 
-#[derive(Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize, Clone, Default, Hash)]
+#[derive(Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize, Clone, Default, Hash, PartialOrd, Ord)]
 pub struct CoordinateCube {
     pub flip: u16,
     pub twist: u16,

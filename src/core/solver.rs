@@ -32,17 +32,16 @@ impl Solver{
 
 
         let mut coordinator = SerialSolveCoordinator{
-            data_source: data_source,
+            data_source,
             solution: None,
             max_moves: 24,
             seen: HashMap::new(),
             queue
         };
 
-        let solution = coordinator.solve(20)
+        
+        coordinator.solve(20)
         .map(|s|s.get_moves())
-        ;
-        solution
     }
 }
 
@@ -142,7 +141,7 @@ impl SearchState {
                 }
 
 
-                return None;
+                None
             },
             PhaseData::Phase2 { cornslice_depth, corners_ud_edges_depth_mod3 } => {
                 
@@ -176,7 +175,7 @@ impl SearchState {
                         coordinator.maybe_add_search(next_state);
                     }
                 }
-                return None;
+                None
             },
             PhaseData::Solved => Some(self),
         }
@@ -188,7 +187,7 @@ impl SearchState {
                 return false;
             }
         }
-        return true;
+        true
     }
 
     
@@ -218,10 +217,8 @@ impl SerialSolveCoordinator{
         loop  {
             if let Some(next) = self.queue.pop(){
                 if let Some(solution) = next.iterate(self){
-                    if self.try_add_solution(solution.clone()){
-                        if solution.moves < stopping_length{
-                            return Some(solution);
-                        }
+                    if self.try_add_solution(solution.clone()) && solution.moves < stopping_length {
+                        return Some(solution);
                     }
                 }
             }
@@ -240,7 +237,7 @@ impl SerialSolveCoordinator{
 
         self.max_moves = state.moves - 1;
         self.solution = Some(state);        
-        return true;
+        true
     }
 
     pub fn maybe_add_search(&mut self, state: SearchState){
@@ -254,7 +251,7 @@ impl SerialSolveCoordinator{
 
             match insert_result {
                 Ok(_) =>{
-                    self.queue.push(state.clone());
+                    self.queue.push(state);
                     return;
                 } ,
                 Err(entry) => {

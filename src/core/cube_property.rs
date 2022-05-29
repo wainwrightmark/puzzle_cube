@@ -29,11 +29,11 @@ pub trait CubeProperty<const NMOVES:usize, const NVALUES: usize> {
                 let m = self.defined_moves()[m_index];
                 let applied = if self.is_edges()
                 {
-                    m.apply_edges(&cube)
+                    m.apply_edges(cube.clone())
                 }
                 else{
-                    m.apply_corners(&cube)
-                };                
+                    m.apply_corners(cube.clone())
+                };          
 
                 let new_value = self.get_value(&applied);
 

@@ -56,14 +56,14 @@ impl DataSource{
     }
 
     pub fn get_twist_conj(&self, twist: u16, flip_slice_sym : u8)->u16{
-        let r = self.twist_conjugation[(twist << 4) as usize + flip_slice_sym as usize];
-        return r;
+        
+        self.twist_conjugation[(twist << 4) as usize + flip_slice_sym as usize]
     }
 
     pub fn get_ud_edges(&self, u_edges: u16, d_edges: u16)-> u16{
         let index = 24 * u_edges + (d_edges % 24);
-        let r = self.phase_2_edge_merge[index as usize];
-        r
+        
+        self.phase_2_edge_merge[index as usize]
     }
 
     pub fn get_corners_ud_edges_depth_3(&self, corners:  u16, ud_edges: u16) -> u8 {
@@ -80,15 +80,15 @@ impl DataSource{
 
     pub fn get_ud_edges_conj(&self, ud_edges: u16, corner_sym: u8) -> u16 {
         let idx = (ud_edges << 4) as usize + corner_sym as usize;
-        let r = self.u_d_edges_conjugation[idx];
-        r
+        
+        self.u_d_edges_conjugation[idx]
     }
 
     pub fn get_cornslice_depth(&self, corners: u16, slice_sorted: u16)-> u8{
         let index = (24 * corners + slice_sorted) as usize;
-        let r = self.corner_slice_depth[index];
+        
 
-        r
+        self.corner_slice_depth[index]
     }
 }
 
@@ -108,13 +108,13 @@ pub struct MovesSource{
 impl MovesSource{
     pub fn create()-> Self{
 
-        let corners_move = CornersProperty::create(&CornersProperty{}).into();
-        let twist_move = TwistProperty::create(&TwistProperty{}).into();
-        let flip_move = FlipProperty::create(&FlipProperty{}).into();
-        let slice_sorted_move = SliceSortedProperty::create(&SliceSortedProperty{}).into();
-        let u_edges_move = UpEdgesProperty::create(&UpEdgesProperty{}).into();
-        let d_edges_move = DownEdgesProperty::create(&DownEdgesProperty{}).into();
-        let u_d_edges_move = UpDownEdgesProperty::create(&UpDownEdgesProperty{}).into();
+        let corners_move = CornersProperty::create(&CornersProperty{});
+        let twist_move = TwistProperty::create(&TwistProperty{});
+        let flip_move = FlipProperty::create(&FlipProperty{});
+        let slice_sorted_move = SliceSortedProperty::create(&SliceSortedProperty{});
+        let u_edges_move = UpEdgesProperty::create(&UpEdgesProperty{});
+        let d_edges_move = DownEdgesProperty::create(&DownEdgesProperty{});
+        let u_d_edges_move = UpDownEdgesProperty::create(&UpDownEdgesProperty{});
         
 
         Self { twist_move, flip_move, slice_sorted_move, u_edges_move, d_edges_move, u_d_edges_move, corners_move }        

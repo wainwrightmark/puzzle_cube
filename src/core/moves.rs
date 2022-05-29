@@ -119,16 +119,20 @@ impl Move {
 
 impl Move {
 
+    pub fn get_cube(self)-> &'static CubieCube  {
+        & MOVE_CUBES[self as usize]
+    }
+
     pub fn apply(self, cube: &CubieCube)-> CubieCube{
-        cube.clone().multiply(&MOVE_CUBES[self as usize])
+        cube.multiply(self.get_cube())
     }
     
-    pub fn apply_edges(self, cube: &CubieCube)-> CubieCube{
-        cube.clone().edge_multiply(&MOVE_CUBES[self as usize])
+    pub fn apply_edges(self, cube: CubieCube)-> CubieCube{
+        cube.edge_multiply(self.get_cube())
     }
     
-    pub fn apply_corners(self, cube: &CubieCube)-> CubieCube{
-        cube.clone().corner_multiply(&MOVE_CUBES[self as usize])
+    pub fn apply_corners(self, cube: CubieCube)-> CubieCube{
+        cube.corner_multiply(self.get_cube())
     }
 }
 

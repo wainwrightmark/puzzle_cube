@@ -1,7 +1,9 @@
 
 
+use std::collections::{HashSet, BTreeMap};
+
 use itertools::Itertools;
-use puzzle_cube::{core::prelude::*};
+use puzzle_cube::{core::prelude::*, web::prelude::Cube};
 
 use ntest::test_case;
 use rand::{prelude::StdRng, Rng};
@@ -52,36 +54,55 @@ fn test_make_random_cube(seed: u64) {
     
 }
 
-
-#[test_case(0)]
 #[test_case(1)]
 #[test_case(2)]
 #[test_case(3)]
 #[test_case(4)]
 #[test_case(5)]
-#[test_case(6)]
-#[test_case(7)]
-#[test_case(8)]
-#[test_case(9)]
-#[test_case(10)]
-#[test_case(11)]
-#[test_case(12)]
-#[test_case(13)]
-#[test_case(14)]
-#[test_case(15)]
-#[test_case(16)]
-#[test_case(17)]
-fn any_move_four_times_returns_same(u: u8){
+fn test_invert(seed: u64)
+{    
+    let cube = CubieCube::random_cube(seed);
 
-    let m = Move::from_repr(u).unwrap();
-    let base_cube = CubieCube::random_cube(123);
-    let mut current = base_cube.clone();
-    for _ in 0..4 {
-        current = m.apply(&current);
-    }
+    let inverse = cube.invert();
 
-    assert_eq!(base_cube, current, "Move {}", m);
+    let mult = cube.multiply(&inverse);
+
+    assert_eq!(CubieCube::default(), mult);
+
 }
+
+
+#[test]
+fn any_move_four_times_returns_same(){
+
+    for m in Move::ALLMOVES{
+        let base_cube = CubieCube::random_cube(123);
+        let mut current = base_cube.clone();
+        for _ in 0..4 {
+            current = m.apply(&current);
+        }
+    
+        assert_eq!(base_cube, current, "Move {}", m);
+    }    
+}
+
+#[test]
+fn any_move_inverse_is_same_as_three_times(){
+
+    for m in Move::ALLMOVES{
+        let base_cube = CubieCube::random_cube(123);
+        let mut current = base_cube.clone();
+        for _ in 0..3 {
+            current = m.apply(&current);
+        }
+
+        let inverse =  m.apply(&CubieCube::default()).invert();
+        let inverse_applied= base_cube.multiply(&inverse);
+    
+        assert_eq!(current, inverse_applied, "Move {}", m);
+    }    
+}
+
 
 #[test_case(0)]
 #[test_case(1)]
@@ -132,5 +153,58 @@ fn test_corner_slice_depth(){
 
 #[test]
 fn test_basic_cubes(){
-    itertools::assert_equal(BASIC_CUBES.into_iter().map(|c| CoordinateCube::from(c) ) .duplicates(), vec![]) ;
+    itertools::assert_equal(BASIC_CUBES.into_iter().map(CoordinateCube::from ) .duplicates(), vec![]) ;
 }
+
+
+#[test]
+fn test_inverse_moves(){
+    for  m in Move::ALLMOVES  {
+
+        let cube = m.get_cube();
+        let inverse = cube.invert();
+
+        let product = cube.multiply(&inverse);
+        
+
+        assert_eq!(product, CubieCube::default());
+    }
+}
+
+#[test]
+fn test_urf_3(){
+    let cube = URF3_SYMMETRY;
+    let cube2 = cube.multiply(&cube);
+    let cube3 = cube2.multiply(&cube);
+    let inverse = cube.invert();
+    let inverse2 = cube2.invert();
+
+    assert_eq!(cube3, CubieCube::default(), "Multiplied by self twice");   
+    assert_eq!(inverse, cube2, "Inverse"); 
+    assert_eq!(inverse2, cube, "Inverse2");
+}
+
+#[test]
+fn test_inverse_cubes(){
+    for  i in 0..48  {
+
+        let product = BASIC_CUBES[i].multiply(&BASIC_CUBES_INVERTED[i]);
+
+        assert_eq!(product, CubieCube::default(), "Cube {}", i);
+    }
+}
+
+#[test]
+fn test_inverse_cubes2(){
+
+    itertools::assert_equal(BASIC_CUBES_INVERTED.into_iter().map(CoordinateCube::from ) .duplicates(), vec![]) ;
+    let basic_cubes = std::collections::BTreeSet::from_iter(BASIC_CUBES.into_iter().map(CoordinateCube::from ));
+
+    for i in 0..BASIC_CUBES_INVERTED.len(){
+        let inverted_cube = BASIC_CUBES_INVERTED[i].clone().into();
+
+        assert!(basic_cubes.contains(&inverted_cube), "Cube {}", i);
+    }
+
+}
+

@@ -106,7 +106,6 @@ impl CubieCube {
         }
     }
 
-
     pub const fn multiply(&self, other: &Self) -> Self {
 
         let (corner_positions, corner_orientations) = self.multiply_corners(other);
@@ -121,28 +120,38 @@ impl CubieCube {
         let mut corner_positions = [CornerPosition::Urf; CornerPosition::COUNT];
         let mut corner_orientations = [CornerOrientation::Zero; CornerPosition::COUNT];
 
-        let mut e = 0;
-        while (e < EdgePosition::COUNT) {
-            let i = self.edge_positions[e] as usize;
-            let ori = self.edge_orientations[i];
-            edge_positions[i] = EdgePosition::from_repr(e as u8).unwrap();
-            edge_orientations[e as usize] = ori;
-            e += 1;
+        let mut index = 0;
+        while (index < EdgePosition::COUNT) {
+            let i = self.edge_positions[index] as usize;
+            edge_positions[i] = EdgePosition::from_repr(index as u8).unwrap();
+            index += 1;
         }
 
-        let mut c = 0;
-
-        while (c < CornerPosition::COUNT) {
-            let i = self.corner_positions[c as usize] as usize;
+        index = 0;
+        while (index < EdgePosition::COUNT) {
+            let i = edge_positions[index] as usize; //note: not self.edge_positions
+            let ori = self.edge_orientations[i];
+            edge_orientations[index] = ori;
+            index += 1;
+        }
+        
+        index = 0;
+        while (index < CornerPosition::COUNT) {
+            let i = self.corner_positions[index] as usize;
+            corner_positions[i] = CornerPosition::from_repr(index as u8).unwrap();
+            index += 1;
+        }
+        
+        index = 0;
+        while (index < CornerPosition::COUNT) {
+            let i = corner_positions[index] as usize; //note: not self.corner_positions
             let ori = self.corner_orientations[i] as u8;
             let new_ori = match ori {
                 1..=2 => 3 - ori,
                 _ => ori,
             };
-
-            corner_positions[i] = CornerPosition::from_repr(c as u8).unwrap();
-            corner_orientations[c as usize] = CornerOrientation::from_repr(new_ori).unwrap();
-            c += 1;
+            corner_orientations[index] = CornerOrientation::from_repr(new_ori).unwrap();
+            index += 1;
         }
 
         CubieCube {
