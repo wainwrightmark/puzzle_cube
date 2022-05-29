@@ -1,7 +1,7 @@
 name: Continuous deployment
 on:
   push:
-    branches: [master]
+    branches: [main]
 
 jobs:
   release:
@@ -18,7 +18,7 @@ jobs:
       - uses: actions/checkout@v2
       - run: trunk build --release --public-url "${GITHUB_REPOSITORY#*/}"
       - uses: peaceiris/actions-gh-pages@v3
-        if: github.ref == 'refs/heads/master'
+        if: github.ref == 'refs/heads/main'
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist
