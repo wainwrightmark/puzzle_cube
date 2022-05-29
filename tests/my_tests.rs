@@ -1,5 +1,6 @@
 
 
+use itertools::Itertools;
 use puzzle_cube::{core::prelude::*};
 
 use ntest::test_case;
@@ -127,4 +128,9 @@ fn test_corner_slice_depth(){
     for c in csd{
         assert_ne!(c, u8::MAX)
     }
+}
+
+#[test]
+fn test_basic_cubes(){
+    itertools::assert_equal(BASIC_CUBES.into_iter().map(|c| CoordinateCube::from(c) ) .duplicates(), vec![]) ;
 }

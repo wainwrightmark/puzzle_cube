@@ -34,6 +34,46 @@ BACK_DEFAULT_CUBE.multiply(&BACK_DEFAULT_CUBE).multiply(&BACK_DEFAULT_CUBE)
 ];
 
 
+pub const BASIC_CUBES: [CubieCube; 48]
+= array_const_fn_init![get_symmetry_cube; 48];
+
+
+const fn get_symmetry_cube(i: usize) -> CubieCube {
+
+    let mut c = CubieCube::default();
+    let mut index = i;
+
+    let mut itr = 0;
+    while(itr < index % 2){
+        c = c.multiply(&MIRROR_LR2_SYMMETRY);
+        itr +=1;
+    }
+    index /= 2;
+
+    itr = 0;
+    while(itr < index % 4){
+        c = c.multiply(&U4_SYMMETRY);
+        itr +=1;
+    }
+    index /= 4;
+
+    itr = 0;
+    while(itr < index % 2){
+        c = c.multiply(&F2_SYMMETRY);
+        itr +=1;
+    }
+    index /= 2;
+
+    itr = 0;
+    while(itr < index % 3){
+        c = c.multiply(&URF3_SYMMETRY);
+        itr +=1;
+    }
+
+    c
+}
+
+
 pub const UP_DEFAULT_CUBE: CubieCube = CubieCube {
     edge_positions: [Ub, Ur, Uf, Ul, Dr, Df, Dl, Db, Fr, Fl, Bl, Br],
     corner_positions: [Ubr, Urf, Ufl, Ulb, Dfr, Dlf, Dbl, Drb],
@@ -145,4 +185,74 @@ pub const BACK_DEFAULT_CUBE: CubieCube = CubieCube {
         CO::Two,
         CO::One,
     ],
+};
+
+
+///120° clockwise rotation around the long diagonal URF-DBL
+pub const URF3_SYMMETRY: CubieCube = CubieCube{
+    edge_positions: [Uf, Fr, Df, Fl, Ub, Br, Db, Bl, Ur, Dr, Dl, Ul],
+    corner_positions: [Urf, Dfr, Dlf, Ufl, Ubr, Drb, Dbl, Ulb],
+    edge_orientations: [
+        EO::One,        
+        EO::Zero,
+        EO::One,
+        EO::Zero,
+        EO::One,
+        EO::Zero,
+        EO::One,
+        EO::Zero,
+        EO::One,
+        EO::One,
+        EO::One,
+        EO::One,
+    ],
+    corner_orientations: [
+        CO::One,
+        CO::Two,
+        CO::One,
+        CO::Two,
+        CO::Two,
+        CO::One,
+        CO::Two,
+        CO::One,
+    ],
+};
+
+/// 180° rotation around the axis through the F and B centers
+pub const F2_SYMMETRY : CubieCube = CubieCube{
+    edge_positions: [Dl, Df, Dr, Db, Ul, Uf, Ur, Ub, Fl, Fr, Br, Bl],
+    corner_positions: [Dlf, Dfr, Drb, Dbl, Ufl, Urf, Ubr, Ulb],
+    edge_orientations: [EO::Zero; 12],
+    corner_orientations: [CO::Zero; 8],
+};
+
+/// 90° clockwise rotation around the axis through the U and D centers
+pub const U4_SYMMETRY : CubieCube = CubieCube{
+    edge_positions: [Ub, Ur, Uf, Ul, Db, Dr, Df, Dl, Br, Fr, Fl, Bl],
+    corner_positions: [Ubr, Urf, Ufl, Ulb, Drb, Dfr, Dlf, Dbl],
+    edge_orientations: [
+        EO::Zero,
+        EO::Zero,
+        EO::Zero,
+        EO::Zero,
+        EO::Zero,
+        EO::Zero,
+        EO::Zero,
+        EO::Zero,
+        EO::One,
+        EO::One,
+        EO::One,
+        EO::One,
+    ],
+    corner_orientations: [CO::Zero; 8],
+};
+
+/// <summary>
+/// reflection at the plane through the U, D, F, B centers
+/// </summary>
+pub const MIRROR_LR2_SYMMETRY : CubieCube = CubieCube{
+    edge_positions: [Ul, Uf, Ur, Ub, Dl, Df, Dr, Db, Fl, Fr, Br, Bl],
+    corner_positions: [Ufl, Urf, Ubr, Ulb, Dlf, Dfr, Drb, Dbl],
+    edge_orientations: [EO::Zero; 12],
+    corner_orientations: [CO::Three; 8],
 };

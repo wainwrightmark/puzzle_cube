@@ -25,8 +25,9 @@ impl Solver{
     pub fn get_solution(cube: CoordinateCube, data_source: DataSource) -> Option< Vec<Move>>{
 
         let mut queue: BinaryHeap<SearchState> = BinaryHeap::new();
+        let phase_data = cube.create_phase_data(&data_source);
         
-        queue.push(SearchState { cube, moves: 0, previous: PreviousState::Start { inverted: false, rotation: 0 }, deepening: false });
+        queue.push(SearchState { cube, phase_data, moves: 0, previous: PreviousState::Start { inverted: false, rotation: 0 }, deepening: false });
         //todo rotations and inversions
 
 
@@ -48,6 +49,7 @@ impl Solver{
 #[derive(PartialEq, Eq, Clone)]
 pub struct SearchState{
     cube: CoordinateCube,
+    phase_data: PhaseData,
     moves: u8,
     previous: PreviousState,
     deepening: bool
@@ -88,7 +90,7 @@ impl SearchState {
     /// Cubes closer to being solved have higher priority
     /// Solutions with more moves have lower priority
     pub fn get_priority(&self) -> u8{
-        match self.cube.phase {
+        match self.phase_data {
             PhaseData::Phase1 { flip_slice_twist_depth_mod3 } => {                
                 if self.deepening{
                     (100 - self.moves.max(40))
@@ -106,7 +108,7 @@ impl SearchState {
 
     pub fn iterate(self, coordinator : &mut SerialSolveCoordinator) -> Option<Self> {
         
-        match self.cube.phase{
+        match self.phase_data{
             PhaseData::Phase1 { flip_slice_twist_depth_mod3 } => {
                 
                 let next_depth = (flip_slice_twist_depth_mod3+ 3) % 3;
@@ -116,8 +118,9 @@ impl SearchState {
                 let next_previous_state = Arc::new(self.clone());
 
                 for m in Move::iter().filter(|&m|self.can_do_move(m)){
-                    let next_cube = self.cube.after_move(m, &coordinator. data_source);
-                    let next_is_deepening = match next_cube.phase {
+                    let next_cube = self.cube.after_move(m, &coordinator.data_source.moves_source);
+                    let next_phase = next_cube.create_phase_data(&coordinator.data_source);
+                    let next_is_deepening = match next_phase {
                         PhaseData::Phase1 { flip_slice_twist_depth_mod3 } => flip_slice_twist_depth_mod3 == next_depth,
                         PhaseData::Phase2 { cornslice_depth, corners_ud_edges_depth_mod3 } => true,
                         PhaseData::Solved => true,
@@ -126,6 +129,7 @@ impl SearchState {
                     if next_is_deepening || (!self.deepening && self.moves <= 2){ //Past a certain point, only do deepening moves
                         let next_state = Self{
                             cube: next_cube,
+                            phase_data: next_phase,
                             moves: self.moves +1,
                             previous: PreviousState::Move { state: next_previous_state.clone(), m },
                             deepening: next_is_deepening
@@ -151,8 +155,9 @@ impl SearchState {
                 let next_previous_state = Arc::new(self.clone());
 
                 for m in Move::PHASE2MOVES.into_iter().filter(|&m|self.can_do_move(m)){
-                    let next_cube = self.cube.after_move(m, &coordinator. data_source);
-                    let next_is_deepening = match next_cube.phase {
+                    let next_cube = self.cube.after_move(m, &coordinator.data_source.moves_source);
+                    let next_phase = next_cube.create_phase_data(&coordinator.data_source);
+                    let next_is_deepening = match next_phase {
                         PhaseData::Phase1 { flip_slice_twist_depth_mod3 } => false, //should be unreachable
                         PhaseData::Phase2 { cornslice_depth, corners_ud_edges_depth_mod3 } => corners_ud_edges_depth_mod3 == next_depth,
                         PhaseData::Solved => true,
@@ -161,6 +166,7 @@ impl SearchState {
                     if next_is_deepening{
                         let next_state = Self{
                             cube: next_cube,
+                            phase_data: next_phase,
                             moves: self.moves +1,
                             previous: PreviousState::Move { state: next_previous_state.clone(), m },
                             deepening: next_is_deepening
