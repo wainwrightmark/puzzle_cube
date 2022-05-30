@@ -24,7 +24,11 @@ pub fn app() -> Html {
     let height = format!("{SVG_HEIGHT}");
 
     let move_buttons = Move::iter()
-        .map(|my_move| html!(<MoveButton  {my_move} />))
+        .map(|my_move|{
+            let cube = my_move.get_cube().clone();
+            let name = format!("{}", my_move);
+            html!(<MoveButton {cube} {name} />)
+        } )
         .collect::<Html>();
 
     html! {
@@ -37,15 +41,30 @@ pub fn app() -> Html {
 
         <div id="buttons">
             <div class="row">
-            <RandomizeButton/><ResetButton/><InvertButton/>
+                <RandomizeButton/><ResetButton/><InvertButton/>
             </div>
             <div class="row">
-        {move_buttons}
-        </div>
+                {move_buttons}
+                
+            </div>
+            <SymButtons/>
         </div>
 
         </div>
     }
+}
+
+#[function_component(SymButtons)]
+pub fn sym_buttons()-> Html{
+html!(
+    <div class="row">
+                <MoveButton cube={F2_SYMMETRY} name={"Sym: F2"} />
+                <MoveButton cube={U4_SYMMETRY} name={"Sym: U4"} />
+                <MoveButton cube={URF3_SYMMETRY} name={"Sym: URF3"} />
+                <MoveButton cube={MIRROR_LR2_SYMMETRY} name={"Sym: LR2"} />
+                
+            </div>
+)
 }
 
 #[function_component(RandomizeButton)]
@@ -64,7 +83,6 @@ pub fn reset_button() -> Html {
     html!(<button {onclick} > {"Reset"} </button>)
 }
 
-
 #[function_component(InvertButton)]
 pub fn invert_button() -> Html {
     let onclick: Option<Callback<MouseEvent>> =
@@ -75,38 +93,40 @@ pub fn invert_button() -> Html {
 
 #[derive(PartialEq, Eq, Properties)]
 pub struct MoveButtonProperties {
-    pub my_move: Move,
+    pub cube: CubieCube,
+    pub name: String
 }
 
 #[function_component(MoveButton)]
 fn move_button(properties: &MoveButtonProperties) -> Html {
-    let my_move = properties.my_move;
+    let cube = properties.cube.clone();
     let onclick: Option<Callback<MouseEvent>> =
-        Some(Dispatch::new().apply_callback(move |_| MoveMsg { my_move }));
+        Some(Dispatch::new().apply_callback(move |_| MoveMsg { cube:cube.clone() }));
 
-    html!(<button {onclick} class="size-4 col btn-small"> {my_move.to_string()}  </button>)
+    html!(<button {onclick} class="size-2 col btn-small"> {properties.name.clone()}  </button>)
 }
+
 
 #[function_component(Cube)]
 pub fn cube() -> Html {
-
     let centres = FaceColor::iter()
         .map(|face| html!(<Centre {face} />))
         .collect::<Html>();
     let edges = EdgePosition::iter()
         .map(|edge| html!(<Edge {edge} />))
         .collect::<Html>();
-    let corners = CornerPosition::DEFAULT_ARRAY.into_iter()
+    let corners = CornerPosition::DEFAULT_ARRAY
+        .into_iter()
         .map(|corner| html!(<Corner {corner} />))
         .collect::<Html>();
 
     html!(
-<>
-{centres}
-{edges}
-{corners}
-</>
-    )
+    <>
+    {centres}
+    {edges}
+    {corners}
+    </>
+        )
 }
 
 #[derive(PartialEq, Eq, Properties)]
@@ -117,10 +137,22 @@ pub struct EdgeProperties {
 #[function_component(Edge)]
 fn edge(properties: &EdgeProperties) -> Html {
     let edge = properties.edge;
-    let position_index = *use_selector_with_deps(|x: &CubeState, &p|x.cube.edge_positions.into_iter().position(|x| x == p).unwrap(), edge);
+    let position_index = *use_selector_with_deps(
+        |x: &CubeState, &p| {
+            x.cube
+                .edge_positions
+                .into_iter()
+                .position(|x| x == p)
+                .unwrap()
+        },
+        edge,
+    );
     let position = EdgePosition::from_repr(position_index as u8).unwrap();
 
-    let orientation = *use_selector_with_deps(|x: &CubeState, &p|x.cube.edge_orientations[p], position_index);
+    let orientation = *use_selector_with_deps(
+        |x: &CubeState, &p| x.cube.edge_orientations[p],
+        position_index,
+    );
 
     let position0 = position.get_location(0, orientation);
     let color0 = edge.get_color(0);
@@ -145,19 +177,30 @@ pub struct CornerProperties {
 
 #[function_component(Corner)]
 fn corner(properties: &CornerProperties) -> Html {
-
     let corner = properties.corner;
-    let position_index = *use_selector_with_deps(|x: &CubeState, &p|x.cube.corner_positions.into_iter().position(|x| x == p).unwrap(), corner);
+    let position_index = *use_selector_with_deps(
+        |x: &CubeState, &p| {
+            x.cube
+                .corner_positions
+                .into_iter()
+                .position(|x| x == p)
+                .unwrap()
+        },
+        corner,
+    );
     let position = CornerPosition::from_repr(position_index as u8).unwrap();
 
-    let orientation = *use_selector_with_deps(|x: &CubeState, &p|x.cube.corner_orientations[p], position_index);
+    let orientation = *use_selector_with_deps(
+        |x: &CubeState, &p| x.cube.corner_orientations[p],
+        position_index,
+    );
 
     let position0 = position.get_location(0, orientation);
     let color0 = corner.get_color(0);
 
     let position1 = position.get_location(1, orientation);
     let color1 = corner.get_color(1);
-    
+
     let position2 = position.get_location(2, orientation);
     let color2 = corner.get_color(2);
 
@@ -168,7 +211,6 @@ fn corner(properties: &CornerProperties) -> Html {
              {face(color2, position2)}
         </>
     )
-
 
     // let position0 = properties.position.get_location(0, properties.orientation);
     // let sposition0 = properties.corner.get_location(0, properties.orientation);
@@ -189,7 +231,6 @@ fn corner(properties: &CornerProperties) -> Html {
     //         <Face color={color2} facelet_position={position2} solved_position={sposition2} />
     //     </g>
 
-
     // )
 }
 
@@ -206,14 +247,10 @@ fn centre(properties: &CenterProperties) -> Html {
         VerticalPosition::Middle,
     ));
 
-    face(properties.face, facelet_position)    
+    face(properties.face, facelet_position)
 }
 
-
-
-fn face(color: FaceColor,
-    facelet_position: FaceletPosition,
-) -> Html {
+fn face(color: FaceColor, facelet_position: FaceletPosition) -> Html {
     let hp = (facelet_position.get_horizontal_position() as usize) as f64;
     let hf = facelet_position.get_face().get_x() as f64;
 

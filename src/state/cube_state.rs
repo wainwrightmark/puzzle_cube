@@ -45,11 +45,11 @@ impl Reducer<CubeState> for InvertMsg {
     }
 }
 
-pub struct MoveMsg{pub my_move: Move}
+pub struct MoveMsg{pub cube: CubieCube}
 
 impl Reducer<CubeState> for MoveMsg{
     fn apply(&self, state: Rc<CubeState>) -> Rc<CubeState> {        
-         let cube =self.my_move.apply(&state.cube);
+         let cube = state.cube.multiply(&self.cube);
         CubeState{cube}.into()
 
     }
