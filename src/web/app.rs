@@ -21,7 +21,7 @@ pub fn app() -> Html {
             <svg viewBox={view_box} class="cubesvg" >
             <rect x="0" y="0" {width} {height} fill="white"  />
             //<g style={"transform: rotateX(-30deg) rotateY(-45deg) rotateZ(0deg);"}>
-            <SomeCubeView />
+            <CubieCubeView />
             //</g>
             </svg>
     <ButtonsControl/>
@@ -93,7 +93,7 @@ pub fn some_cube() -> Html {
     let c = use_store_value::<CubeState>();
 
     match c.cube.clone() {
-        SomeCube::Cubie { cube } => html!(<CubieCubeView cube={Rc::from(cube)} />),
+        SomeCube::Cubie { cube } => html!(<CubieCubeView />),
         SomeCube::Facelet { cube, color } => html!(<FaceletCubeView cube={Rc::from(cube)} />),
     }
 }
