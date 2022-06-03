@@ -22,6 +22,7 @@ pub fn app() -> Html {
             <rect x="0" y="0" {width} {height} fill="white"  />
             //<g style={"transform: rotateX(-30deg) rotateY(-45deg) rotateZ(0deg);"}>
             <CubieCubeView />
+            <FaceletCubeView />
             //</g>
             </svg>
     <ButtonsControl/>
@@ -33,7 +34,7 @@ pub fn app() -> Html {
 
 #[function_component(ButtonsControl)]
 pub fn buttons_control() -> Html {
-    let is_cubie = *use_selector(|x: &CubeState| matches!(x.cube, SomeCube::Cubie { cube: _ }));
+    let is_cubie = *use_selector(|x: &CubeState| x.is_cubie());
 
     if is_cubie {
         let move_buttons = Move::iter()
@@ -88,15 +89,6 @@ pub fn buttons_control() -> Html {
     }
 }
 
-#[function_component(SomeCubeView)]
-pub fn some_cube() -> Html {
-    let c = use_store_value::<CubeState>();
-
-    match c.cube.clone() {
-        SomeCube::Cubie { cube } => html!(<CubieCubeView />),
-        SomeCube::Facelet { cube, color } => html!(<FaceletCubeView cube={Rc::from(cube)} />),
-    }
-}
 
 #[function_component(SymButtons)]
 pub fn sym_buttons() -> Html {

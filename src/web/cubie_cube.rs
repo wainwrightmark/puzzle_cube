@@ -40,22 +40,8 @@ pub struct EdgeProperties {
 fn edge(properties: &EdgeProperties) -> Html {
     let view = use_selector(|s: &ViewState| s.view_type);
     let edge = properties.edge;
-    let option = *use_selector_with_deps(|s: &CubeState, &edge| {
-        if let SomeCube::Cubie { cube } = s.cube.clone() {
-            let position_index = cube
-                .edge_positions
-                .into_iter()
-                .position(|x| x == edge)
-                .unwrap();
-            let position = EdgePosition::from_repr(position_index as u8).unwrap();
-
-            let orientation = cube.edge_orientations[position_index];
-
-            Some((position, orientation))
-        } else {
-            None
-        }
-    }, properties.edge).as_ref();
+    let option = *use_selector_with_deps(|s: &CubeState, edge|
+        s.try_get_edge_position(edge), properties.edge).as_ref();
 
     if let Some((position, orientation)) = option {
         let position0 = position.get_location(0, orientation);
@@ -71,10 +57,7 @@ fn edge(properties: &EdgeProperties) -> Html {
             </>
         )
     } else {
-        html!(
-            <>
-            </>
-        )
+        Html::default()
     }
 }
 
@@ -87,17 +70,11 @@ pub struct CornerProperties {
 fn corner(properties: &CornerProperties) -> Html {
     let view = use_selector(|s: &ViewState| s.view_type);
     let some_cube = use_selector(|s: &CubeState| s.cube.clone());
+    let corner = properties.corner;
+    let option = *use_selector_with_deps(|s: &CubeState, corner|
+        s.try_get_corner_position(corner), properties.corner).as_ref();
 
-    if let SomeCube::Cubie { cube } = some_cube.as_ref() {
-        let corner = properties.corner;
-        let position_index = cube
-            .corner_positions
-            .into_iter()
-            .position(|x| x == corner)
-            .unwrap();
-        let position = CornerPosition::from_repr(position_index as u8).unwrap();
-
-        let orientation = cube.corner_orientations[position_index];
+    if let Some((position, orientation)) = option {
 
         let position0 = position.get_location(0, orientation);
         let color0 = Some(corner.get_color(0));
@@ -116,10 +93,7 @@ fn corner(properties: &CornerProperties) -> Html {
             </>
         )
     } else {
-        html!(
-            <>
-            </>
-        )
+        Html::default()
     }
 }
 
@@ -131,10 +105,16 @@ pub struct CenterProperties {
 #[function_component(Centre)]
 fn centre(properties: &CenterProperties) -> Html {
     let view = use_selector(|s: &ViewState| s.view_type);
-    let facelet_position = FaceletPosition::from((
-        properties.face,
-        HorizontalPosition::Middle,
-        VerticalPosition::Middle,
-    ));
-    face(Some(properties.face), facelet_position, *view)
+    let is_cubie = *use_selector(|x: &CubeState| x.is_cubie());
+    if is_cubie{
+        let facelet_position = FaceletPosition::from((
+            properties.face,
+            HorizontalPosition::Middle,
+            VerticalPosition::Middle,
+        ));
+        face(Some(properties.face), facelet_position, *view)
+    }
+    else {
+        Html::default()
+    }
 }

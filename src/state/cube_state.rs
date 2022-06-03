@@ -13,6 +13,49 @@ pub struct CubeState {
     pub cube: SomeCube,
 }
 
+impl CubeState{
+
+pub fn is_cubie(&self)->bool{
+    matches!(self.cube, SomeCube::Cubie { cube:_ })
+}
+
+    pub fn try_get_edge_position(&self, edge: &EdgePosition) -> Option<(EdgePosition, EdgeOrientation)>
+    {
+        if let SomeCube::Cubie { cube } = self.cube.clone() {
+            let position_index = cube
+                .edge_positions
+                .into_iter()
+                .position(|x| x == *edge)
+                .unwrap();
+            let position = EdgePosition::from_repr(position_index as u8).unwrap();
+
+            let orientation = cube.edge_orientations[position_index];
+
+            Some((position, orientation))
+        } else {
+            None
+        }
+    }
+    
+    pub fn try_get_corner_position(&self, corner: &CornerPosition) -> Option<(CornerPosition, CornerOrientation)>
+    {
+        if let SomeCube::Cubie { cube } = self.cube.clone() {
+            let position_index = cube
+                .corner_positions
+                .into_iter()
+                .position(|x| x == *corner)
+                .unwrap();
+            let position = CornerPosition::from_repr(position_index as u8).unwrap();
+
+            let orientation = cube.corner_orientations[position_index];
+
+            Some((position, orientation))
+        } else {
+            None
+        }
+    }
+}
+
 #[derive(PartialEq, Eq, Store, Clone, Serialize, Deserialize)]
 pub enum SomeCube {
     Cubie {
@@ -31,6 +74,8 @@ impl Default for SomeCube {
         }
     }
 }
+
+
 
 pub struct SetPaintColorMsg{
     pub color: FaceColor

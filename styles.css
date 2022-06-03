@@ -1,7 +1,7 @@
 .face{
     stroke: black;
     stroke-width: 0.3;
-    transition: all 1s;
+    transition: transform 1s;
 }
 
 .color-Up{

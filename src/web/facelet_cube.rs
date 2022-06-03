@@ -9,19 +9,25 @@ use strum::IntoEnumIterator;
 use yew::prelude::*;
 use yewdux::prelude::*;
 
-#[derive(PartialEq, Eq, Properties)]
-pub struct FaceletCubeProperties{
-    pub cube: Rc<FaceletCube>
-}
+
+
 
 #[function_component(FaceletCubeView)]
-pub fn facelet_cube(properties: &FaceletCubeProperties) -> Html {
+pub fn facelet_cube() -> Html {
+    let cube_state = use_store_value::<CubeState>().as_ref().clone();
     let view_type = use_selector(|v:&ViewState|v.view_type);
+
+if let SomeCube::Facelet { cube, color: _ } = cube_state.cube{
     let stuff =
     FaceletPosition::iter()
     .map(|position| {
-        let color =properties.cube.facelets[position as usize];
+        let color =cube.facelets[position as usize];
         face(color, position,*view_type )
     }).collect::<Html>();
-    html!({stuff})
+    stuff
+}
+else {
+    Html::default()
+}
+    
 }
