@@ -1,7 +1,6 @@
 .face{
     stroke: black;
     stroke-width: 0.3;
-    transform: translate(var(--xpos), var(--ypos));
     transition: all 1s;
 }
 
@@ -25,6 +24,19 @@
 }
 .color-Back{
     fill: orange;
+}
+
+.color-unknown{
+    fill: grey;
+}
+
+.paint_button{
+    width:30px;
+    height: 30px;
+}
+
+.selected{
+    border: 3px solid black;
 }
 
 .cubesvg{

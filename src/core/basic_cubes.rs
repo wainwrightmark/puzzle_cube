@@ -3,7 +3,6 @@ use crate::core::prelude::EdgePosition::*;
 use crate::core::prelude::FaceColor::*;
 use crate::core::prelude::FaceletPosition::*;
 use crate::core::prelude::*;
-use crate::web::prelude::Cube;
 use array_const_fn_init::array_const_fn_init;
 use strum::EnumCount;
 use strum_macros::*;

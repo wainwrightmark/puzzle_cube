@@ -164,6 +164,7 @@ impl From<usize> for CornerOrientation {
     FromRepr,
     EnumIter,
     EnumCount,
+    Hash
 )]
 #[repr(u8)]
 pub enum FaceColor {
@@ -176,6 +177,18 @@ pub enum FaceColor {
 }
 
 impl FaceColor {
+
+pub fn get_color_string(self)-> String{
+    match(self){
+        Up => "yellow",
+        Right => "green",
+        Front => "red",
+        Down => "white",
+        Left => "blue",
+        Back => "orange"
+    }.to_string()
+}
+
     pub const fn get_x(self)-> usize{
         match self {
             Up => 1,

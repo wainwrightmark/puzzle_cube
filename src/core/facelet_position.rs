@@ -41,6 +41,7 @@ impl FaceletPosition{
     Copy,
     Clone,
     FromRepr,
+    EnumIter
 )]
 #[repr(u8)]
 pub enum FaceletPosition {

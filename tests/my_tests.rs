@@ -64,6 +64,34 @@ fn test_invert(seed: u64) {
 }
 
 #[test]
+fn test_default_to_facelet_cube(){
+    let cube = CubieCube::default();
+
+    let fc: FaceletCube = cube.clone().into();
+
+    let cube2:CubieCube = fc.try_into().unwrap();
+
+    assert_eq!(cube, cube2);
+}
+
+#[test_case(1)]
+#[test_case(2)]
+#[test_case(3)]
+#[test_case(4)]
+#[test_case(5)]
+fn test_to_facelet_cube(seed: u64){
+    let cube = CubieCube::random_cube(seed);
+
+    let fc: FaceletCube = cube.clone().into();
+
+    let cube2:CubieCube = fc.try_into().unwrap();
+
+    assert_eq!(cube, cube2);
+}
+
+
+
+#[test]
 fn any_move_four_times_returns_same() {
     for m in Move::ALLMOVES {
         let base_cube = CubieCube::random_cube(123);

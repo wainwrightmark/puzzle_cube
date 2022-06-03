@@ -1,5 +1,7 @@
+use std::rc::Rc;
+
 use crate::core::prelude::*;
-use crate::state::prelude::*;
+use crate::state::{self, prelude::*};
 use crate::web::prelude::*;
 use chrono::format::format;
 use itertools::Itertools;
@@ -7,268 +9,199 @@ use strum::IntoEnumIterator;
 use yew::prelude::*;
 use yewdux::prelude::*;
 
-const FACELETSIZE: f64 = 10.0;
-const FACELETSPACING: f64 = 1.0;
-const FACESPACING: f64 = 1.0;
-const SVG_WIDTH: f64 = (FACELETSIZE + FACESPACING) * 12.0 + (FACESPACING * 3.0);
-const SVG_HEIGHT: f64 = (FACELETSIZE + FACESPACING) * 9.0 + (FACESPACING * 2.0);
-
 #[function_component(App)]
 pub fn app() -> Html {
-    let cube = //CubieCube::default();
-
-    CubieCube::random_cube(12345);
-
     let view_box = format!("0 0 {SVG_WIDTH} {SVG_HEIGHT}");
     let width = format!("{SVG_WIDTH}");
     let height = format!("{SVG_HEIGHT}");
 
-    let move_buttons = Move::iter()
-        .map(|my_move|{
-            let cube = my_move.get_cube().clone();
-            let name = format!("{}", my_move);
-            html!(<MoveButton {cube} {name} />)
-        } )
-        .collect::<Html>();
-
     html! {
 
-        <div class="paper container margin-bottom-large">
-        <svg viewBox={view_box} class="cubesvg" >
-        <rect x="0" y="0" {width} {height} fill="white"  />
-        <Cube />
-        </svg>
+            <div class="paper container margin-bottom-large">
+            <svg viewBox={view_box} class="cubesvg" >
+            <rect x="0" y="0" {width} {height} fill="white"  />
+            //<g style={"transform: rotateX(-30deg) rotateY(-45deg) rotateZ(0deg);"}>
+            <SomeCubeView />
+            //</g>
+            </svg>
+    <ButtonsControl/>
 
-        <div id="buttons">
-            <div class="row">
-                <RandomizeButton/><ResetButton/><InvertButton/>
+
             </div>
+        }
+}
+
+#[function_component(ButtonsControl)]
+pub fn buttons_control() -> Html {
+    let is_cubie = *use_selector(|x: &CubeState| matches!(x.cube, SomeCube::Cubie { cube: _ }));
+
+    if is_cubie {
+        let move_buttons = Move::iter()
+            .map(|my_move| {
+                let cube = my_move.get_cube().clone();
+                let name = format!("{}", my_move);
+                html!(<MoveButton {cube} {name} />)
+            })
+            .collect::<Html>();
+        html!(
+            <div id="buttons">
+            <div class="row">
+            <FunctionButton name={"Reset".to_string()} msg={BasicControlMsg::Reset} />
+            <FunctionButton name={"Shuffle".to_string()} msg={BasicControlMsg::Shuffle} />
+            <FunctionButton name={"Invert".to_string()} msg={BasicControlMsg::Invert} />
+            <FunctionButton name={"Paint".to_string()} msg={BasicControlMsg::Switch} />
+            </div>
+
             <div class="row">
                 {move_buttons}
-                
+
             </div>
             <SymButtons/>
+            <ViewButtons/>
         </div>
 
+        )
+    } else {
+        let paint_buttons = FaceColor::iter()
+        .map(|color| {
+            html!(<PaintButton {color} />)
+        })
+        .collect::<Html>();
+
+        html!(
+            <div id="buttons">
+            <div class="row">
+            <FunctionButton name={"Reset".to_string()} msg={BasicControlMsg::Reset} />
+            <FunctionButton name={"Clear".to_string()} msg={BasicControlMsg::Clear} />
+            <FunctionButton name={"Shuffle".to_string()} msg={BasicControlMsg::Shuffle} />
+            <FunctionButton name={"Freeze".to_string()} msg={BasicControlMsg::Switch} />
+            </div>
+            
+            <div class="row">
+            {paint_buttons}
+            </div>
+
+            <ViewButtons/>
         </div>
+
+        )
+    }
+}
+
+#[function_component(SomeCubeView)]
+pub fn some_cube() -> Html {
+    let c = use_store_value::<CubeState>();
+
+    match c.cube.clone() {
+        SomeCube::Cubie { cube } => html!(<CubieCubeView cube={Rc::from(cube)} />),
+        SomeCube::Facelet { cube, color } => html!(<FaceletCubeView cube={Rc::from(cube)} />),
     }
 }
 
 #[function_component(SymButtons)]
-pub fn sym_buttons()-> Html{
-html!(
-    <div class="row">
-                <MoveButton cube={F2_SYMMETRY} name={"Sym: F2"} />
-                <MoveButton cube={U4_SYMMETRY} name={"Sym: U4"} />
-                <MoveButton cube={URF3_SYMMETRY} name={"Sym: URF3"} />
-                <MoveButton cube={MIRROR_LR2_SYMMETRY} name={"Sym: LR2"} />
-                
-            </div>
-)
+pub fn sym_buttons() -> Html {
+    html!(
+        <div class="row">
+                    <MoveButton cube={F2_SYMMETRY} name={"Sym: F2"} />
+                    <MoveButton cube={U4_SYMMETRY} name={"Sym: U4"} />
+                    <MoveButton cube={URF3_SYMMETRY} name={"Sym: URF3"} />
+                    <MoveButton cube={MIRROR_LR2_SYMMETRY} name={"Sym: LR2"} />
+
+                </div>
+    )
 }
 
-#[function_component(RandomizeButton)]
-pub fn randomize_button() -> Html {
-    let onclick: Option<Callback<MouseEvent>> =
-        Some(Dispatch::new().apply_callback(|_| RandomizeMsg {}));
+#[function_component(PaintButtons)]
+pub fn paint_buttons() -> Html {
+    html!(
 
-    html!(<button {onclick} > {"Random"} </button>)
+        <div class="row">
+                    <MoveButton cube={F2_SYMMETRY} name={"Sym: F2"} />
+                    <MoveButton cube={U4_SYMMETRY} name={"Sym: U4"} />
+                    <MoveButton cube={URF3_SYMMETRY} name={"Sym: URF3"} />
+                    <MoveButton cube={MIRROR_LR2_SYMMETRY} name={"Sym: LR2"} />
+
+                </div>
+    )
 }
 
-#[function_component(ResetButton)]
-pub fn reset_button() -> Html {
-    let onclick: Option<Callback<MouseEvent>> =
-        Some(Dispatch::new().apply_callback(|_| ResetMsg {}));
-
-    html!(<button {onclick} > {"Reset"} </button>)
+#[derive(PartialEq, Eq, Properties)]
+pub struct PaintButtonProperties {
+    color: FaceColor,
 }
 
-#[function_component(InvertButton)]
-pub fn invert_button() -> Html {
-    let onclick: Option<Callback<MouseEvent>> =
-        Some(Dispatch::new().apply_callback(|_| InvertMsg {}));
+#[function_component(PaintButton)]
+pub fn paint_button(properties: &PaintButtonProperties) -> Html {
+    let color = properties.color;
+    let selected = *use_selector_with_deps(
+        |state: &CubeState, c| match (*state).cube {
+            SomeCube::Cubie { cube: _ } => false,
+            SomeCube::Facelet { cube: _, color } => color == Some(*c),
+        },
+        color,
+    );
 
-    html!(<button {onclick} > {"Invert"} </button>)
+    let onclick: Callback<MouseEvent> = Dispatch::new().apply_callback(move |_| SetPaintColorMsg{color});
+
+    let style = format!("background: {}", color.get_color_string());
+
+    let class = if selected{
+        "size-2 col btn-small selected paint_button"
+    }else{
+        "size-2 col btn-small paint_button"
+    };
+
+    html!(
+        <button {onclick} {class} {style} />
+    )
+}
+
+#[function_component(ViewButtons)]
+pub fn view_buttons() -> Html {
+    let flat: Callback<MouseEvent> = Dispatch::new().apply_callback(|_| ChangeViewMsg {
+        view_type: ViewType::FlatMap,
+    });
+    let compact: Callback<MouseEvent> = Dispatch::new().apply_callback(|_| ChangeViewMsg {
+        view_type: ViewType::Compact3D,
+    });
+    let explode: Callback<MouseEvent> = Dispatch::new().apply_callback(|_| ChangeViewMsg {
+        view_type: ViewType::Exploded3D,
+    });
+
+    html!(
+        <div class="row">
+        <button onclick={flat} > {"Flat"} </button>
+        <button onclick={compact} > {"Compact"} </button>
+        <button onclick={explode} > {"Explode"} </button>
+                </div>
+    )
+}
+
+#[derive(PartialEq, Eq, Properties)]
+pub struct FunctionButtonProperties {
+    pub name: String,
+    pub msg: BasicControlMsg,
+}
+
+#[function_component(FunctionButton)]
+pub fn function_button(properties: &FunctionButtonProperties) -> Html {
+    let msg = properties.msg;
+    let onclick: Callback<MouseEvent> = Dispatch::new().apply_callback(move |_| msg);
+
+    html!(<button {onclick} class="size-2 col btn-small" > {properties.name.clone()} </button>)
 }
 
 #[derive(PartialEq, Eq, Properties)]
 pub struct MoveButtonProperties {
     pub cube: CubieCube,
-    pub name: String
+    pub name: String,
 }
 
 #[function_component(MoveButton)]
 fn move_button(properties: &MoveButtonProperties) -> Html {
     let cube = properties.cube.clone();
     let onclick: Option<Callback<MouseEvent>> =
-        Some(Dispatch::new().apply_callback(move |_| MoveMsg { cube:cube.clone() }));
+        Some(Dispatch::new().apply_callback(move |_| MoveMsg { cube: cube.clone() }));
 
     html!(<button {onclick} class="size-2 col btn-small"> {properties.name.clone()}  </button>)
-}
-
-
-#[function_component(Cube)]
-pub fn cube() -> Html {
-    let centres = FaceColor::iter()
-        .map(|face| html!(<Centre {face} />))
-        .collect::<Html>();
-    let edges = EdgePosition::iter()
-        .map(|edge| html!(<Edge {edge} />))
-        .collect::<Html>();
-    let corners = CornerPosition::DEFAULT_ARRAY
-        .into_iter()
-        .map(|corner| html!(<Corner {corner} />))
-        .collect::<Html>();
-
-    html!(
-    <>
-    {centres}
-    {edges}
-    {corners}
-    </>
-        )
-}
-
-#[derive(PartialEq, Eq, Properties)]
-pub struct EdgeProperties {
-    pub edge: EdgePosition,
-}
-
-#[function_component(Edge)]
-fn edge(properties: &EdgeProperties) -> Html {
-    let edge = properties.edge;
-    let position_index = *use_selector_with_deps(
-        |x: &CubeState, &p| {
-            x.cube
-                .edge_positions
-                .into_iter()
-                .position(|x| x == p)
-                .unwrap()
-        },
-        edge,
-    );
-    let position = EdgePosition::from_repr(position_index as u8).unwrap();
-
-    let orientation = *use_selector_with_deps(
-        |x: &CubeState, &p| x.cube.edge_orientations[p],
-        position_index,
-    );
-
-    let position0 = position.get_location(0, orientation);
-    let color0 = edge.get_color(0);
-
-    let position1 = position.get_location(1, orientation);
-    let color1 = edge.get_color(1);
-
-    html!(
-        <>
-             {face(color0, position0)}
-             {face(color1, position1)}
-        </>
-    )
-}
-
-#[derive(PartialEq, Eq, Properties)]
-pub struct CornerProperties {
-    //pub corner: CornerPosition,
-    pub corner: CornerPosition,
-    //pub orientation: CornerOrientation,
-}
-
-#[function_component(Corner)]
-fn corner(properties: &CornerProperties) -> Html {
-    let corner = properties.corner;
-    let position_index = *use_selector_with_deps(
-        |x: &CubeState, &p| {
-            x.cube
-                .corner_positions
-                .into_iter()
-                .position(|x| x == p)
-                .unwrap()
-        },
-        corner,
-    );
-    let position = CornerPosition::from_repr(position_index as u8).unwrap();
-
-    let orientation = *use_selector_with_deps(
-        |x: &CubeState, &p| x.cube.corner_orientations[p],
-        position_index,
-    );
-
-    let position0 = position.get_location(0, orientation);
-    let color0 = corner.get_color(0);
-
-    let position1 = position.get_location(1, orientation);
-    let color1 = corner.get_color(1);
-
-    let position2 = position.get_location(2, orientation);
-    let color2 = corner.get_color(2);
-
-    html!(
-        <>
-             {face(color0, position0)}
-             {face(color1, position1)}
-             {face(color2, position2)}
-        </>
-    )
-
-    // let position0 = properties.position.get_location(0, properties.orientation);
-    // let sposition0 = properties.corner.get_location(0, properties.orientation);
-    // let color0 = properties.corner.get_color(0);
-
-    // let position1 = properties.position.get_location(1, properties.orientation);
-    // let sposition1 = properties.corner.get_location(1, properties.orientation);
-    // let color1 = properties.corner.get_color(1);
-
-    // let position2 = properties.position.get_location(2, properties.orientation);
-    // let sposition2 = properties.corner.get_location(2, properties.orientation);
-    // let color2 = properties.corner.get_color(2);
-
-    // html!(
-    //     <g id={properties.corner.to_string()} key={properties.corner.to_string()}>
-    //         <Face color={color0} facelet_position={position0} solved_position={sposition0} />
-    //         <Face color={color1} facelet_position={position1} solved_position={sposition1} />
-    //         <Face color={color2} facelet_position={position2} solved_position={sposition2} />
-    //     </g>
-
-    // )
-}
-
-#[derive(PartialEq, Eq, Properties)]
-pub struct CenterProperties {
-    pub face: FaceColor,
-}
-
-#[function_component(Centre)]
-fn centre(properties: &CenterProperties) -> Html {
-    let facelet_position = FaceletPosition::from((
-        properties.face,
-        HorizontalPosition::Middle,
-        VerticalPosition::Middle,
-    ));
-
-    face(properties.face, facelet_position)
-}
-
-fn face(color: FaceColor, facelet_position: FaceletPosition) -> Html {
-    let hp = (facelet_position.get_horizontal_position() as usize) as f64;
-    let hf = facelet_position.get_face().get_x() as f64;
-
-    let x: f64 =
-        FACELETSIZE * (hp + (hf * 3.0)) + ((hp + hf * 3.0) * FACELETSPACING) + (hf * FACESPACING);
-
-    let vp = (facelet_position.get_vertical_position() as usize) as f64;
-    let vf = facelet_position.get_face().get_y() as f64;
-
-    let y: f64 =
-        FACELETSIZE * (vp + (vf * 3.0)) + ((vp + vf * 3.0) * FACELETSPACING) + (vf * FACESPACING);
-
-    let color_class = format!("color-{}", color);
-    let class = classes!("face", color_class);
-
-    let style = format!("--xpos: {x}px; --ypos: {y}px;");
-
-    html! {
-        <rect {class} {style} width={FACELETSIZE.to_string()} height={FACELETSIZE.to_string()} rx="1" ></rect>
-    }
 }
