@@ -1,8 +1,7 @@
 .face{
     stroke: black;
     stroke-width: 0.3;
-    transform: translate(var(--xpos), var(--ypos));
-    transition: all 1s;
+    transition: transform 1s;
 }
 
 .color-Up{
@@ -27,7 +26,32 @@
     fill: orange;
 }
 
+.color-unknown{
+    fill: grey;
+}
+
+.paint_button{
+    width:30px;
+    height: 30px;
+}
+
+.selected{
+    border: 3px solid black;
+}
+
 .cubesvg{
     max-width: 500px;
     max-height: 500px;
+}
+
+.size-4{
+    flex: 0 0 33.33%;
+    max-width: 0 0 33.33%
+
+}
+
+.size-2{
+    flex: 0 0 16.66%;
+    max-width: 0 0 16.66%
+
 }
