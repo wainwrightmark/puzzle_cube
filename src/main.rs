@@ -1,7 +1,6 @@
 #![feature(const_option)]
 #![feature(const_for)]
 #![feature(map_try_insert)]
-
 #![feature(generic_const_exprs)]
 
 #![allow(dead_code)]

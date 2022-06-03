@@ -142,7 +142,7 @@ impl From<CubieCube> for FaceletCube {
 
             for k in 0..3 {
                 let i = CornerPosition::CORNERFACELETS[c][(k + ori) % 3] as usize;
-                let color = CornerPosition::CORNERCOLORS[c][k];
+                let color = CornerPosition::CORNERCOLORS[corner as usize][k];
                 facelets[i] = Some(color);
             }
         }
@@ -156,7 +156,7 @@ impl From<CubieCube> for FaceletCube {
             for k in 0..2 {
                 let i = EdgePosition::EDGEFACELETS[e][(k + ori) % 2] as usize;
 
-                let color = EdgePosition::EDGECOLORS[e][k];
+                let color = EdgePosition::EDGECOLORS[edge as usize][k];
 
                 facelets[i] = Some(color);
             }

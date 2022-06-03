@@ -74,6 +74,17 @@ fn test_default_to_facelet_cube(){
     assert_eq!(cube, cube2);
 }
 
+#[test]
+fn test_default_up_to_facelet_cube(){
+    let cube = CubieCube::default().multiply(&UP_DEFAULT_CUBE);
+
+    let fc: FaceletCube = cube.clone().into();
+
+    let cube2:CubieCube = fc.try_into().unwrap();
+
+    assert_eq!(cube, cube2);
+}
+
 #[test_case(1)]
 #[test_case(2)]
 #[test_case(3)]
