@@ -8,7 +8,6 @@ use array_const_fn_init::array_const_fn_init;
 use strum::EnumCount;
 use strum_macros::*;
 
-
 #[derive(
     Debug,
     Display,
@@ -68,27 +67,30 @@ impl Move {
         Move::U1,
         Move::U2,
         Move::U3,
-
         Move::R1,
         Move::R2,
         Move::R3,
-
         Move::F1,
         Move::F2,
         Move::F3,
-
         Move::D1,
         Move::D2,
         Move::D3,
-
         Move::L1,
         Move::L2,
         Move::L3,
-
         Move::B1,
         Move::B2,
         Move::B3,
     ];
+
+    ///Moves sorted by number then by face 
+    pub const MOVESBYNUMBER: [Move; 18] =
+        [
+            Move::U1, Move::R1, Move::F1, Move::D1, Move::L1, Move::B1,
+            Move::U2, Move::R2, Move::F2, Move::D2, Move::L2, Move::B2,
+            Move::U3, Move::R3, Move::F3, Move::D3, Move::L3, Move::B3,
+            ];
 
     pub const PHASE2MOVES: [Move; 10] = [
         Move::U1,
@@ -118,21 +120,19 @@ impl Move {
 }
 
 impl Move {
-
-    pub fn get_cube(self)-> &'static CubieCube  {
-        & MOVE_CUBES[self as usize]
+    pub fn get_cube(self) -> &'static CubieCube {
+        &MOVE_CUBES[self as usize]
     }
 
-    pub fn apply(self, cube: &CubieCube)-> CubieCube{
+    pub fn apply(self, cube: &CubieCube) -> CubieCube {
         cube.multiply(self.get_cube())
     }
-    
-    pub fn apply_edges(self, cube: CubieCube)-> CubieCube{
+
+    pub fn apply_edges(self, cube: CubieCube) -> CubieCube {
         cube.edge_multiply(self.get_cube())
     }
-    
-    pub fn apply_corners(self, cube: CubieCube)-> CubieCube{
+
+    pub fn apply_corners(self, cube: CubieCube) -> CubieCube {
         cube.corner_multiply(self.get_cube())
     }
 }
-

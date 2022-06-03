@@ -37,7 +37,8 @@ pub fn buttons_control() -> Html {
     let is_cubie = *use_selector(|x: &CubeState| x.is_cubie());
 
     if is_cubie {
-        let move_buttons = Move::iter()
+        let move_buttons = Move::MOVESBYNUMBER
+        .into_iter()
             .map(|my_move| {
                 let cube = my_move.get_cube().clone();
                 let name = format!("{}", my_move);
@@ -64,10 +65,8 @@ pub fn buttons_control() -> Html {
         )
     } else {
         let paint_buttons = FaceColor::iter()
-        .map(|color| {
-            html!(<PaintButton {color} />)
-        })
-        .collect::<Html>();
+            .map(|color| html!(<PaintButton {color} />))
+            .collect::<Html>();
 
         html!(
             <div id="buttons">
@@ -77,7 +76,7 @@ pub fn buttons_control() -> Html {
             <FunctionButton name={"Shuffle".to_string()} msg={BasicControlMsg::Shuffle} />
             <FunctionButton name={"Freeze".to_string()} msg={BasicControlMsg::Switch} />
             </div>
-            
+
             <div class="row">
             {paint_buttons}
             </div>
@@ -88,7 +87,6 @@ pub fn buttons_control() -> Html {
         )
     }
 }
-
 
 #[function_component(SymButtons)]
 pub fn sym_buttons() -> Html {
@@ -133,13 +131,14 @@ pub fn paint_button(properties: &PaintButtonProperties) -> Html {
         color,
     );
 
-    let onclick: Callback<MouseEvent> = Dispatch::new().apply_callback(move |_| SetPaintColorMsg{color});
+    let onclick: Callback<MouseEvent> =
+        Dispatch::new().apply_callback(move |_| SetPaintColorMsg { color });
 
     let style = format!("background: {}", color.get_color_string());
 
-    let class = if selected{
+    let class = if selected {
         "size-2 col btn-small selected paint_button"
-    }else{
+    } else {
         "size-2 col btn-small paint_button"
     };
 
