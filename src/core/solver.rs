@@ -9,6 +9,7 @@ use std::sync::Mutex;
 use crate::core::prelude::*;
 use crate::core::prelude::FaceletPosition::*;
 use crate::core::prelude::FaceColor::*;
+use itertools::Itertools;
 use strum::EnumCount;
 use strum::IntoEnumIterator;
 use strum_macros::*;
@@ -22,13 +23,37 @@ pub struct Solver{
 }
 
 impl Solver{
-    pub fn get_solution(cube: CoordinateCube, data_source: DataSource) -> Option< Vec<Move>>{
+    pub fn get_solution(base_cube: CubieCube, data_source: DataSource) -> Option< Vec<Move>>{
 
         let mut queue: BinaryHeap<SearchState> = BinaryHeap::new();
-        let phase_data = cube.create_phase_data(&data_source);
         
-        queue.push(SearchState { cube, phase_data, moves: 0, previous: PreviousState::Start { inverted: false, rotation: 0 }, deepening: false });
-        //todo rotations and inversions
+        
+        for rotation in 0u8..=2u8{
+
+            for inv_i in 0..=1{
+                let inverted = inv_i > 0;
+
+                let rotated_cube =
+
+                match rotation {
+                    0=>base_cube.clone(),
+                    1=>{
+                        URF3_SYMMETRY.multiply(&base_cube).multiply(&URF3_SYMMETRY).multiply(&URF3_SYMMETRY)
+                    }
+                    _=>URF3_SYMMETRY.multiply(&URF3_SYMMETRY).multiply(&base_cube).multiply(&URF3_SYMMETRY)
+                };
+
+                let cube: CoordinateCube = if inverted{rotated_cube.invert().into()} else{rotated_cube.into()};
+
+                let phase_data = cube.create_phase_data(&data_source);
+
+                queue.push(SearchState { cube, 
+                    phase_data, 
+                    moves: 0,
+                     previous: PreviousState::Start { inverted: false, rotation: 0 }, deepening: false });
+            }
+            
+        }
 
 
         let mut coordinator = SerialSolveCoordinator{
@@ -75,13 +100,29 @@ impl SearchState {
 
         let mut prev = self.previous.clone();
 
-        while let PreviousState::Move{state, m} = prev {
-            moves.push(m);
-            prev = state.previous.clone();
-        }
-        moves.reverse();
+        loop {
 
-        moves
+            match prev {
+                PreviousState::Start { inverted, rotation } => {
+                    if inverted{
+                        moves = moves.into_iter().map(|m|m.inverse()).collect_vec();
+                    }
+                    else{
+                        moves.reverse();
+                    }
+
+                    if rotation != 0{
+                        moves = moves.into_iter().map(|m|m.rotate(rotation)).collect_vec();
+                    }
+                    
+                    return moves;
+                },
+                PreviousState::Move { state, m } => {
+                    moves.push(m);
+                    prev = state.previous.clone();
+                },
+            }
+        }
     }
 
 

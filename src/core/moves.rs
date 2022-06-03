@@ -113,6 +113,25 @@ impl Move {
         Move::from_repr(r).unwrap()
     }
 
+    pub const fn rotate(self, rotation: u8) -> Self{
+        match rotation % 3 {
+            0 => self,
+            1 => Self::from((Self:: rotate_color(self.get_color()), self.into_move_number())),
+            _ => Self::from((Self:: rotate_color(Self:: rotate_color(self.get_color())), self.into_move_number())),
+        }
+    }
+
+    const fn rotate_color(fc : FaceColor)-> FaceColor{
+        match fc{
+            FaceColor::Up => Front,
+            FaceColor::Right => Up,
+            FaceColor::Front => Right,
+            FaceColor::Down => Back,
+            FaceColor::Left => Down,
+            FaceColor::Back => Left,
+        }
+    }
+
     ///Can m1 precede m2 in a solution
     pub const fn can_precede(self, m2: Move) -> bool {
         self.get_color() as u8 != m2.get_color() as u8
