@@ -1,4 +1,5 @@
 use itertools::Itertools;
+use js_sys::WebAssembly::Table;
 use puzzle_cube::core::prelude::*;
 
 use ntest::test_case;
@@ -173,6 +174,29 @@ fn test_corner_slice_depth() {
     for c in csd {
         assert_ne!(c, u8::MAX)
     }
+}
+
+#[test]
+fn test_phase_two_pruning() {
+    let moves_source = MovesSource::create();
+    let corner_source = CornerSymmetriesSource::create();
+
+    let table = DataSource::create_phase_2_pruning(&moves_source, &corner_source);
+
+    let expected = vec![1040187196 , 3738173439 , 3148869435 , 3270983646 , 1022771197 , 4286573750 , 4286009295 , 3354899262 , 4293918719 , 4091533311];
+
+    let sub_table =table.into_iter().take(10).collect_vec();
+    assert_eq!(sub_table, expected)
+}
+
+#[test]
+fn test_phase_two_ud_edge_merge() {
+
+    let table = DataSource::create_phase_2_edge_merge();
+
+    let sub_table =table.into_iter().take(10).collect_vec();
+    let expected = vec![20160, 20784,24000,23904,24504,24600,7200,7824,6000,5904];
+    assert_eq!(sub_table, expected);
 }
 
 #[test]

@@ -14,6 +14,8 @@ mod data_source;
 mod data_source_creator;
 mod solver;
 mod cube_property;
+mod phase_one_pruning;
+mod phase_two_pruning;
 
 
 pub mod prelude {
@@ -33,4 +35,6 @@ pub mod prelude {
     pub use crate::core::data_source_creator::*;
     pub use crate::core::solver::*;
     pub use crate::core::cube_property::*;
+    pub use crate::core::phase_one_pruning::*;
+    pub use crate::core::phase_two_pruning::*;
 }

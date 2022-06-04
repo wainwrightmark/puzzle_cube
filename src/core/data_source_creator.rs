@@ -128,23 +128,5 @@ impl DataSource {
         table
     }
 
-    pub fn create_up_down_edges_conjugation() -> Vec<u16> {
-        let mut table: Vec<u16> = Vec::new();
-        table.reserve_exact(40320 * 16);
-
-        for edges in 0..40320 {
-            let mut edges_cube = CubieCube::default();
-            edges_cube.set_ud_edges(edges);
-
-            for symmetry in 0..16 {
-                let mut sym_cube = SYMMETRY_CUBES[symmetry].clone();
-                sym_cube = sym_cube.edge_multiply(&edges_cube);
-                sym_cube = sym_cube.edge_multiply(&SYMMETRY_CUBES_INVERTED[symmetry]);
-                let ud_edges = sym_cube.get_ud_edges().unwrap();
-                table.push(ud_edges);
-            }
-        }
-
-        table
-    }
+    
 }

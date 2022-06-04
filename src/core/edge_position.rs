@@ -72,6 +72,16 @@ impl EdgePosition {
         EdgePosition::EDGEFACELETS[self as usize][(index + (orientation as usize)) % 2]
     }
 
+    ///Is this an up edge
+    pub fn is_up(self)-> bool{
+        (self as usize) < 4
+    }
+    
+    ///Is this a down edge
+    pub fn is_down(self)-> bool{
+        (self as usize) >= 4 && (self as usize) < 8
+    }
+
     ///The positions of each edge facelet
 pub const EDGEFACELETS:[[FaceletPosition;2];12] =[
     [U6, R2],
