@@ -201,11 +201,13 @@ fn test_phase_two_ud_edge_merge() {
 
 #[test]
 fn test_up_down_edges_conjugation() {
-    let conj = DataSource::create_up_down_edges_conjugation();
+    let table = DataSource::create_up_down_edges_conjugation();
 
-    for c in conj {
-        assert!(c < 40320)
-    }
+    let expected = vec![ 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 1 , 5 , 10 , 1 , 20 , 10 , 5 , 20 , 4440 , 624 , 36000 , 4440 , 26664 , 36000 , 624 , 26664 , 2 , 4 , 11 , 14 , 7 , 23 , 16 , 19 , 4344 , ];
+    let sub_table =table.into_iter().take(expected.len()).collect_vec();
+    
+    assert_eq!(sub_table, expected);
+
 }
 
 #[test]
