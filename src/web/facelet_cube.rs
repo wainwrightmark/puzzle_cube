@@ -18,13 +18,12 @@ pub fn facelet_cube() -> Html {
     let view_type = use_selector(|v:&ViewState|v.view_type);
 
 if let SomeCube::Facelet { cube, color: _ } = cube_state.cube{
-    let stuff =
+    
     FaceletPosition::iter()
     .map(|position| {
         let color =cube.facelets[position as usize];
         face(color, position,*view_type )
-    }).collect::<Html>();
-    stuff
+    }).collect::<Html>()
 }
 else {
     Html::default()

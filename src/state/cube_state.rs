@@ -206,7 +206,7 @@ impl Reducer<CubeState> for BasicControlMsg {
             BasicControlMsg::Invert => match state.cube.clone() {
                 SomeCube::Cubie { cube } => CubeState {
                     cube: SomeCube::Cubie {
-                        cube: cube.clone().invert().into(),
+                        cube: cube.invert().into(),
                     },
                 }
                 .into(),

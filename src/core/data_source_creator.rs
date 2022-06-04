@@ -45,8 +45,8 @@ impl FlipSliceSource {
         }
 
         FlipSliceSource {
-            flip_slice_class_index: flip_slice_class_index.into(),
-            flip_slice_symmetry: flip_slice_symmetry.into(),
+            flip_slice_class_index,
+            flip_slice_symmetry,
             flip_slice_rep: flip_slice_rep.into(),
         }
     }

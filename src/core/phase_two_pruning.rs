@@ -21,7 +21,7 @@ impl DataSource {
     fn get_corners_ud_edges_depth3 (ix:usize, tab: &Vec<u32>)->u32 {
         let mut y = tab[ix / 16];
         y >>= (ix % 16) * 2;
-        return (y & 3);
+        (y & 3)
     }
 
     pub fn create_phase_2_edge_merge() -> Vec<u16>{
@@ -29,7 +29,7 @@ impl DataSource {
 
         let mut cu = CubieCube::default();
         let mut cd = CubieCube::default();
-        let mut cud_edge_positions = CubieCube::default().edge_positions.clone();
+        let mut cud_edge_positions = CubieCube::default().edge_positions;
 
         for i in 0..1680{
             cu.set_u_edges(i);

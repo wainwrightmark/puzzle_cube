@@ -1,5 +1,5 @@
 use itertools::Itertools;
-use js_sys::WebAssembly::Table;
+
 use puzzle_cube::core::prelude::*;
 
 use ntest::test_case;

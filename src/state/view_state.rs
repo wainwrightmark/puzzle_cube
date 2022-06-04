@@ -55,7 +55,7 @@ impl TransformRotate {
     }
 }
 
-#[derive(PartialEq, Copy, Clone, Default, Serialize, Deserialize)]
+#[derive(PartialEq, Eq, Copy, Clone, Default, Serialize, Deserialize)]
 pub struct TransformRotate{
     pub x: i32,
     pub y: i32
