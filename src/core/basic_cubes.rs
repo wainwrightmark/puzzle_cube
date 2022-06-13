@@ -39,37 +39,65 @@ pub const SYMMETRY_CUBES: [CubieCube; 48]= array_const_fn_init![get_symmetry_cub
 pub const SYMMETRY_CUBES_INVERTED: [CubieCube; 48]= array_const_fn_init![get_inverse_symmetry_cube; 48];
 
 
+// const fn get_symmetry_cube(i: usize) -> CubieCube {
+
+//     let mut c = CubieCube::default();
+//     let mut index = i;
+
+//     let mut itr = 0;
+//     while(itr < index % 2){
+//         c = c.multiply(&MIRROR_LR2_SYMMETRY);
+//         itr +=1;
+//     }
+//     index /= 2;
+
+//     itr = 0;
+//     while(itr < index % 4){
+//         c = c.multiply(&U4_SYMMETRY);
+//         itr +=1;
+//     }
+//     index /= 4;
+
+//     itr = 0;
+//     while(itr < index % 2){
+//         c = c.multiply(&F2_SYMMETRY);
+//         itr +=1;
+//     }
+//     index /= 2;
+
+//     itr = 0;
+//     while(itr < index % 3){
+//         c = c.multiply(&URF3_SYMMETRY);
+//         itr +=1;
+//     }
+
+//     c
+// }
+
 const fn get_symmetry_cube(i: usize) -> CubieCube {
 
+    let mut urf3 = i / 16;
+    let mut f2 = (i % 16) / 8;
+    let mut u4 = (i % 8) / 2;
+    let mut lr2 = i % 2;
+    
+    
+    
     let mut c = CubieCube::default();
-    let mut index = i;
 
-    let mut itr = 0;
-    while(itr < index % 2){
-        c = c.multiply(&MIRROR_LR2_SYMMETRY);
-        itr +=1;
-    }
-    index /= 2;
-
-    itr = 0;
-    while(itr < index % 4){
-        c = c.multiply(&U4_SYMMETRY);
-        itr +=1;
-    }
-    index /= 4;
-
-    itr = 0;
-    while(itr < index % 2){
-        c = c.multiply(&F2_SYMMETRY);
-        itr +=1;
-    }
-    index /= 2;
-
-    itr = 0;
-    while(itr < index % 3){
-        c = c.multiply(&URF3_SYMMETRY);
-        itr +=1;
-    }
+    while urf3 > 0{
+          c=c.multiply(&URF3_SYMMETRY);
+          urf3 -=1;
+         }while f2 > 0{
+          c=c.multiply(&F2_SYMMETRY);
+          f2 -=1;
+         }while u4 > 0{
+          c=c.multiply(&U4_SYMMETRY);
+          u4 -=1;
+         }while lr2 > 0{
+          c=c.multiply(&MIRROR_LR2_SYMMETRY);
+          lr2 -=1;
+         }
 
     c
 }

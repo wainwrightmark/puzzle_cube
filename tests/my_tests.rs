@@ -65,23 +65,23 @@ fn test_invert(seed: u64) {
 }
 
 #[test]
-fn test_default_to_facelet_cube(){
+fn test_default_to_facelet_cube() {
     let cube = CubieCube::default();
 
     let fc: FaceletCube = cube.clone().into();
 
-    let cube2:CubieCube = fc.try_into().unwrap();
+    let cube2: CubieCube = fc.try_into().unwrap();
 
     assert_eq!(cube, cube2);
 }
 
 #[test]
-fn test_default_up_to_facelet_cube(){
+fn test_default_up_to_facelet_cube() {
     let cube = CubieCube::default().multiply(&UP_DEFAULT_CUBE);
 
     let fc: FaceletCube = cube.clone().into();
 
-    let cube2:CubieCube = fc.try_into().unwrap();
+    let cube2: CubieCube = fc.try_into().unwrap();
 
     assert_eq!(cube, cube2);
 }
@@ -91,17 +91,15 @@ fn test_default_up_to_facelet_cube(){
 #[test_case(3)]
 #[test_case(4)]
 #[test_case(5)]
-fn test_to_facelet_cube(seed: u64){
+fn test_to_facelet_cube(seed: u64) {
     let cube = CubieCube::random_cube(seed);
 
     let fc: FaceletCube = cube.clone().into();
 
-    let cube2:CubieCube = fc.try_into().unwrap();
+    let cube2: CubieCube = fc.try_into().unwrap();
 
     assert_eq!(cube, cube2);
 }
-
-
 
 #[test]
 fn any_move_four_times_returns_same() {
@@ -183,19 +181,39 @@ fn test_phase_two_pruning() {
 
     let table = DataSource::create_phase_2_pruning(&moves_source, &corner_source);
 
-    let expected = vec![1040187196 , 3738173439 , 3148869435 , 3270983646 , 1022771197 , 4286573750 , 4286009295 , 3354899262 , 4293918719 , 4091533311];
+    let expected = vec![
+        1040187196, 3738173439, 3148869435, 3270983646, 1022771197, 4286573750, 4286009295,
+        3354899262, 4293918719, 4091533311,
+    ];
 
-    let sub_table =table.into_iter().take(10).collect_vec();
+    let sub_table = table.into_iter().take(10).collect_vec();
+    assert_eq!(sub_table, expected)
+}
+
+#[test]
+fn test_phase_one_pruning() {
+    let moves_source = MovesSource::create();
+    let flip_slice_source = FlipSliceSource::create();
+
+    let table = DataSource::create_phase_1_pruning(&moves_source, &flip_slice_source);
+
+    let expected = vec![
+        1704289684, 1494853018, 1503286594, 2439088264, 2551548309, 2757072154, 1704232488,
+        2594350426, 2774941993, 2321846938,
+    ];
+
+    let sub_table = table.into_iter().take(10).collect_vec();
     assert_eq!(sub_table, expected)
 }
 
 #[test]
 fn test_phase_two_ud_edge_merge() {
-
     let table = DataSource::create_phase_2_edge_merge();
 
-    let sub_table =table.into_iter().take(10).collect_vec();
-    let expected = vec![20160, 20784,24000,23904,24504,24600,7200,7824,6000,5904];
+    let sub_table = table.into_iter().take(10).collect_vec();
+    let expected = vec![
+        20160, 20784, 24000, 23904, 24504, 24600, 7200, 7824, 6000, 5904,
+    ];
     assert_eq!(sub_table, expected);
 }
 
@@ -203,31 +221,32 @@ fn test_phase_two_ud_edge_merge() {
 fn test_up_down_edges_conjugation() {
     let table = DataSource::create_up_down_edges_conjugation();
 
-    let expected = vec![ 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 1 , 5 , 10 , 1 , 20 , 10 , 5 , 20 , 4440 , 624 , 36000 , 4440 , 26664 , 36000 , 624 , 26664 , 2 , 4 , 11 , 14 , 7 , 23 , 16 , 19 , 4344 , ];
-    let sub_table =table.into_iter().take(expected.len()).collect_vec();
-    
-    assert_eq!(sub_table, expected);
+    let expected = vec![
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 5, 10, 1, 20, 10, 5, 20, 4440, 624,
+        36000, 4440, 26664, 36000, 624, 26664, 2, 4, 11, 14, 7, 23, 16, 19, 4344,
+    ];
+    let sub_table = table.into_iter().take(expected.len()).collect_vec();
 
+    assert_eq!(sub_table, expected);
 }
 
 #[test]
-fn test_create_corner_symmetries(){
+fn test_create_corner_symmetries() {
     let css = CornerSymmetriesSource::create();
 
-    for class_index in css.corner_class_index{
+    for class_index in css.corner_class_index {
         assert!(class_index < 2768)
     }
 }
 
 #[test]
-fn test_create_flip_slice_symmetries(){
+fn test_create_flip_slice_symmetries() {
     let fss = FlipSliceSource::create();
 
-    for class_index in fss.flip_slice_class_index{
+    for class_index in fss.flip_slice_class_index {
         assert!(class_index < 64430)
     }
 }
-
 
 #[test]
 fn test_basic_cubes() {
@@ -293,4 +312,36 @@ fn test_inverse_cubes2() {
     }
 }
 
+#[test]
+fn test_solve_cube(){
 
+    let data_source = DataSource::create();
+    let base_cube = CubieCube::random_cube(100);
+
+    let solution = Solver::get_solution(base_cube.clone(), data_source);
+
+    assert!(solution.is_some());
+
+    let mut solved_cube = base_cube;
+    for m in solution.unwrap(){
+        solved_cube = m.apply(&solved_cube);
+    }
+    assert_eq!(solved_cube, CubieCube::default());
+
+    
+}
+
+#[test]
+fn test_symmetry_cubes(){
+    assert_eq!(SYMMETRY_CUBES[0], CubieCube::default()) ;
+
+    assert_eq!(SYMMETRY_CUBES[1], MIRROR_LR2_SYMMETRY) ;
+    assert_eq!(SYMMETRY_CUBES[2], U4_SYMMETRY) ;
+    assert_eq!(SYMMETRY_CUBES[8], F2_SYMMETRY) ;
+    assert_eq!(SYMMETRY_CUBES[16], URF3_SYMMETRY) ;
+
+
+    assert_eq!(SYMMETRY_CUBES[3], U4_SYMMETRY.multiply(&MIRROR_LR2_SYMMETRY)) ;
+    assert_eq!(SYMMETRY_CUBES[17], URF3_SYMMETRY.multiply(&MIRROR_LR2_SYMMETRY)) ;
+
+}
