@@ -16,8 +16,6 @@ pub trait CubeProperty<const NMOVES:usize, const NVALUES: usize> {
     fn set_value(&self, cube: &mut CubieCube, value: u16);
 
     fn create(&self)-> Vec<u16>{
-
-        //let mut array: [u16; NVALUES * NMOVES] = [u16::default(); NVALUES * NMOVES];
         let mut v = Vec::<u16>::new();
         v.reserve_exact(NVALUES * NMOVES);
 
@@ -38,21 +36,11 @@ pub trait CubeProperty<const NMOVES:usize, const NVALUES: usize> {
                 let new_value = self.get_value(&applied);
 
                 v.push(new_value);
-                //let index = value * NMOVES  + m_index;
-                //v[index] = new_value;
             }
         }
 
         v
-        //array.into()
     }
-    
-    // fn create2(&self)-> [u16; NVALUES * NMOVES]{
-
-    //     let mut array: [u16; NVALUES * NMOVES] = [u16::default(); NVALUES * NMOVES];
-
-    //     array
-    // }
 }
 
 pub struct SliceProperty {}

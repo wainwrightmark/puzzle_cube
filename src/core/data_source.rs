@@ -178,8 +178,8 @@ impl MovesSource {
         }
     }
 
-    pub fn get_ud_edge(&self, prev: u16, m: Move) -> u16 {
-        self.u_d_edges_move[((prev as usize) * 10) + m as usize]
+    pub fn get_ud_edge(&self, prev: u16, m: usize) -> u16 {
+        self.u_d_edges_move[((prev as usize) * 10) + m]
     }
 
     pub fn get_u_edge(&self, prev: u16, m: Move) -> u16 {
@@ -210,7 +210,9 @@ impl MovesSource {
     }
 
     pub fn get_ud_edges_conj(&self, ud_edges: u16, corner_sym: u8) -> u16 {
-        let idx = (ud_edges << 4) as usize + corner_sym as usize;
+        let cs = (corner_sym as usize);
+
+        let idx = ((ud_edges as usize) << 4) + cs;
 
         self.u_d_edges_conjugation[idx]
     }

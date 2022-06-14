@@ -106,16 +106,17 @@ impl DataSource {
                     if Self::get_corners_ud_edges_depth3(idx, &table) == depth3{
                         let corner = corners_source.corner_rep[c_class_index];
 
+                        let mut move_index = 0;
                         for m in Move::PHASE2MOVES{
-                            let udedge1 = moves_source.get_ud_edge(ud_edge, m);
+                            let udedge1a = moves_source.get_ud_edge(ud_edge, move_index);
                             let corner1 =  moves_source.get_corners(corner, m);
 
                             let c1_class_index = corners_source.corner_class_index[corner1 as usize];
                             let c1_symmetry = corners_source.corner_symmetry[corner1 as usize];
 
-                            let ud_edge1 = moves_source.get_ud_edges_conj(udedge1, c1_symmetry);
+                            let udedge1_conj = moves_source.get_ud_edges_conj(udedge1a, c1_symmetry);
 
-                            let idx1 = (40320 * (c1_class_index as usize)) + ud_edge1 as usize;
+                            let idx1 = (40320 * (c1_class_index as usize)) + udedge1_conj as usize;
 
                             if Self::get_corners_ud_edges_depth3(idx1, &table) ==3{
                                 Self::set_corners_ud_edges_depth3(idx1, (depth + 1) % 3, &mut table);
@@ -126,7 +127,7 @@ impl DataSource {
                                     for j in 1..16{
                                         sym >>=1;
                                         if sym % 2 ==1{
-                                            let u_d_edge2 = moves_source.get_ud_edges_conj(ud_edge1, j);
+                                            let u_d_edge2 = moves_source.get_ud_edges_conj(udedge1_conj, j);
 
                                             let idx2 = (40320 * (c1_class_index as usize)) + u_d_edge2 as usize;
 
@@ -138,6 +139,7 @@ impl DataSource {
                                     }
                                 }
                             }
+                            move_index+=1;
                         }
                     }
                     ud_edge+=1;
