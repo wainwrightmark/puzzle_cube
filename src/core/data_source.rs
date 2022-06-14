@@ -57,7 +57,7 @@ impl DataSource {
 
     pub fn get_flip_slice_twist_depth_mod_3(&self, flip: u16, twist: u16, slice_sorted: u16) -> u8 {
         let slice = slice_sorted / 24;
-        let flip_slice = (NFLIP * slice + flip) as usize;
+        let flip_slice = ((NFLIP * slice as usize) + (flip as usize)) ;
 
         let class_index = self.flip_slice_source.flip_slice_class_index[flip_slice];
         let flip_slice_sym = self.flip_slice_source.flip_slice_symmetry[flip_slice];
@@ -84,7 +84,7 @@ impl DataSource {
         let corner_sym = self.corners_source.corner_symmetry[corners as usize];
 
         let ud_edges_conj = self.moves_source.get_ud_edges_conj(ud_edges, corner_sym);
-        let index = (NUDEDGES * corner_class_index + ud_edges_conj) as usize;
+        let index = (NUDEDGES * (corner_class_index as usize) + (ud_edges_conj as usize));
 
         let mut y = self.phase_2_pruning[index / 16];
         y >>= (index % 16) * 2;
@@ -218,6 +218,6 @@ impl MovesSource {
     }
 
     pub fn get_twist_conj(&self, twist: u16, flip_slice_sym: u8) -> u16 {
-        self.twist_conjugation[(twist << 4) as usize + flip_slice_sym as usize]
+        self.twist_conjugation[((twist as usize) << 4) + flip_slice_sym as usize]
     }
 }

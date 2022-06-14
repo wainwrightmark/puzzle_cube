@@ -10,14 +10,14 @@ pub const NPERM4: u16 = 24;
 pub const NCHOOSE84: u8 = 70;
 pub const NMOVE: u16 = 18;
 pub const NTWIST: u16 = 2187;
-pub const NFLIP: u16 = 2048;
+pub const NFLIP: usize = 2048;
 pub const NSLICESORTED: u16 = 11880;
 pub const NSLICE: u16 = NSLICESORTED / NPERM4;
 pub const NFLIPSLICECLASS: u16 = 64430;
 pub const NUEDGESPHASE2: u16 = 1680;
 pub const NCORNERS: u16 = 40320;
 pub const NCORNERSCLASS: u16 = 2768;
-pub const NUDEDGES: u16 = 40320;
+pub const NUDEDGES: usize = 40320;
 pub const NSYM: u8 = 48;
 pub const NSYMD4H: u8 = 16;
 

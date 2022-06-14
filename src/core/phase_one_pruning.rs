@@ -56,12 +56,13 @@ impl DataSource {
                     {
                         twist += 16;
                         idx += 16;
+                        continue;
                     }
 
                     let is_match = if (back_search) {
                         Self::get_flip_slice_twist_depth3(idx, &table) == 3
                     } else {
-                        Self::get_flip_slice_twist_depth3(idx, &table) == depth
+                        Self::get_flip_slice_twist_depth3(idx, &table) == depth3
                     };
 
                     if is_match {
@@ -71,12 +72,12 @@ impl DataSource {
                         for m in Move::ALLMOVES {
                             let flip1 = moves_source.get_flip(flip, m);
                             let slice1 = moves_source.get_slice(slice, m);
-                            let flip_slice1 = (slice1 << 11) + flip1;
+                            let flip_slice1 = ((slice1 as usize) << 11) + flip1 as usize;
                             let fs_class_idx = flip_slice_source.flip_slice_class_index
-                                [flip_slice1 as usize]
+                                [flip_slice1]
                                 as usize;
                             let fs_symmetry =
-                                flip_slice_source.flip_slice_symmetry[flip_slice1 as usize];
+                                flip_slice_source.flip_slice_symmetry[flip_slice1];
                             let twist1 = moves_source
                                 .get_twist_conj(moves_source.get_twist(twist, m), fs_symmetry);
                             let idx1 = ((2187 * fs_class_idx) + twist1 as usize);
@@ -135,20 +136,22 @@ impl DataSource {
         table
     }
 
-    fn make_flip_slice_sym(flip_slice_source: &FlipSliceSource) -> [u16; 64430] {
+    pub fn make_flip_slice_sym(flip_slice_source: &FlipSliceSource) -> [u16; 64430] {
         let mut cc = CubieCube::default();
         let mut fs_sym = [u16::MIN; 64430];
         for i in 0..64430 {
-            let rep = flip_slice_source.flip_slice_rep[i] as u16;
+            let rep = flip_slice_source.flip_slice_rep[i];
             let rep_mod_flip = (rep % 2048) as u16;
+            let rep_div_flip = (rep / 2048) as u16; 
 
-            cc.set_slice(rep / 2048);
+            cc.set_slice(rep_div_flip);
             cc.set_flip(rep_mod_flip);
             for s in 0..16 {
                 let mut ss = SYMMETRY_CUBES[s].clone();
                 ss = ss.edge_multiply(&cc);
                 ss = ss.edge_multiply(&SYMMETRY_CUBES_INVERTED[s]);
-                if ss.get_slice() == rep / 2048 && ss.get_flip() == rep_mod_flip {
+                let slice = ss.get_slice();
+                if slice == rep_div_flip && ss.get_flip() == rep_mod_flip {
                     let q = 1 << s;
                     fs_sym[i] |= q;
                 }

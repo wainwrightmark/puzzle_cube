@@ -3,6 +3,7 @@ use std::collections::BinaryHeap;
 use std::collections::HashMap;
 use std::collections::HashSet;
 use std::fs;
+use std::rc::Rc;
 use std::sync::Arc;
 use std::sync::Mutex;
 
@@ -23,7 +24,7 @@ pub struct Solver{
 }
 
 impl Solver{
-    pub fn get_solution(base_cube: CubieCube, data_source: DataSource) -> Option< Vec<Move>>{
+    pub fn get_solution(base_cube: CubieCube, data_source: Rc<DataSource> ) -> Option< Vec<Move>>{
 
         let mut queue: BinaryHeap<SearchState> = BinaryHeap::new();
         
@@ -243,7 +244,7 @@ pub enum PreviousState{
 
 
 pub struct SerialSolveCoordinator{
-    pub data_source : DataSource,
+    pub data_source : Rc<DataSource> ,
     pub solution :Option<SearchState>,
     pub max_moves: u8,
     pub queue: BinaryHeap<SearchState>,

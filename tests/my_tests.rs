@@ -1,3 +1,5 @@
+use std::rc::Rc;
+
 use itertools::Itertools;
 
 use puzzle_cube::core::prelude::*;
@@ -326,6 +328,48 @@ fn test_phase_two_pruning() {
     assert_eq!(sub_table, expected)
 }
 
+
+
+#[test]
+fn test_fs_sym() {
+    
+    let flip_slice_source = FlipSliceSource::create();
+    let table = DataSource::make_flip_slice_sym(&flip_slice_source);
+
+    let expected = vec![
+        65535,
+771,
+26265,
+65535,
+1,
+1,
+1,
+1,
+9,
+1,
+9,
+1,
+9,
+9,
+51,
+3,
+17,
+33,
+51,
+1,
+1,
+1,
+1,
+255
+
+    ];
+
+    let sub_table = table.into_iter().take(expected.len()).collect_vec();
+    assert_eq!(sub_table, expected);
+
+    assert_eq!(table[24516], 1);
+}
+
 #[test]
 fn test_phase_one_pruning() {
     let moves_source = MovesSource::create();
@@ -439,6 +483,54 @@ fn test_create_flip_slice_symmetries() {
     assert_eq!(sub_table, expected);
 }
 
+
+#[test]
+fn test_create_flip_slice_rep() {
+    let fss = FlipSliceSource::create();
+    assert_eq!(fss.flip_slice_rep[24516], 169984);
+
+    let expected = vec![
+        0,
+1,
+2,
+7,
+8,
+10,
+11,
+14,
+24,
+25,
+26,
+28,
+29,
+31,
+40,
+41,
+42,
+43,
+47,
+56,
+57,
+59,
+61,
+120,
+121,
+122,
+127,
+136,
+137,
+138
+
+
+
+    ];
+    let sub_table = fss.flip_slice_rep.into_iter().take(expected.len()).collect_vec();
+
+    assert_eq!(sub_table, expected);
+
+    
+}
+
 #[test]
 fn test_basic_cubes() {
     itertools::assert_equal(
@@ -505,7 +597,7 @@ fn test_inverse_cubes2() {
 
 //#[test]
 fn test_solve_cube() {
-    let data_source = DataSource::create();
+    let data_source = Rc::new(DataSource::create());
     let base_cube = CubieCube::random_cube(100);
 
     let solution = Solver::get_solution(base_cube.clone(), data_source);
@@ -517,6 +609,27 @@ fn test_solve_cube() {
         solved_cube = m.apply(&solved_cube);
     }
     assert_eq!(solved_cube, CubieCube::default());
+}
+
+#[test]
+fn test_solve_basic_cubes() {
+    let data_source = Rc::new(DataSource::create());
+
+for base_cube in MOVE_CUBES{
+    //let base_cube = CubieCube::random_cube(100);
+
+    let solution = Solver::get_solution(base_cube.clone(), data_source.clone());
+
+    assert!(solution.is_some());
+
+    let mut solved_cube = base_cube;
+    for m in solution.unwrap() {
+        solved_cube = m.apply(&solved_cube);
+    }
+    assert_eq!(solved_cube, CubieCube::default());
+}
+
+    
 }
 
 #[test]
