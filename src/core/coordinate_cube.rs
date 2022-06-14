@@ -39,7 +39,7 @@ impl From<CubieCube> for CoordinateCube{
 
 impl CoordinateCube {
     pub fn create_phase_data(&self, data_source: &DataSource) -> PhaseData {
-        let slice = self.slice_sorted / NPERM4;
+        let slice = self.slice_sorted / 24;
 
         if (self.flip != 0 || slice != 0 || self.twist != 0) {
             let flip_slice_twist_depth_mod3 = data_source.get_flip_slice_twist_depth_mod_3(
@@ -69,16 +69,17 @@ impl CoordinateCube {
         }
     }
 
+
     pub fn after_move(&self, m: Move, moves_source: &MovesSource) -> Self {
         let mu = m as usize;
 
-        let flip = moves_source.flip_move[(NMOVE * self.flip) as usize + mu];
-        let twist = moves_source.twist_move[(NMOVE * self.twist) as usize + mu];
+        let flip = moves_source.flip_move[(Move::COUNT * (self.flip as usize))+ mu];
+        let twist = moves_source.twist_move[(Move::COUNT * (self.twist as usize))+ mu];
         let slice_sorted =
-            moves_source.slice_sorted_move[(NMOVE * self.slice_sorted) as usize + mu];
-        let corners = moves_source.corners_move[(NMOVE * self.corners) as usize + mu];
-        let u_edges = moves_source.u_edges_move[(NMOVE * self.u_edges) as usize + mu];
-        let d_edges = moves_source.d_edges_move[(NMOVE * self.d_edges) as usize + mu];
+            moves_source.slice_sorted_move[(Move::COUNT * (self.slice_sorted as usize))+ mu];
+        let corners = moves_source.corners_move[(Move::COUNT * (self.corners as usize))+ mu];
+        let u_edges = moves_source.u_edges_move[(Move::COUNT * (self.u_edges as usize))+ mu];
+        let d_edges = moves_source.d_edges_move[(Move::COUNT * (self.d_edges as usize))+ mu];
 
         CoordinateCube {
             flip,

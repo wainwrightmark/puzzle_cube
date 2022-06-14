@@ -28,7 +28,7 @@ impl DataSource {
         moves_source: &MovesSource,
         flip_slice_source: &FlipSliceSource,
     ) -> Vec<u32> {
-        let total = 64430 * 2187;
+        let total = NFLIPSLICECLASS * NTWIST;
         let fs_sym = DataSource::make_flip_slice_sym(flip_slice_source);
         let mut table = vec![u32::MAX; (total / 16) + 1];
 
@@ -46,7 +46,7 @@ impl DataSource {
             let mult = if depth < 8 { 5 } else { 1 };
 
             let mut idx = 0;
-            for fs_class_index in 0..64430 {
+            for fs_class_index in 0..NFLIPSLICECLASS {
                 let mut twist = 0;
                 while twist < 2187 {
                     if !back_search
@@ -136,10 +136,10 @@ impl DataSource {
         table
     }
 
-    pub fn make_flip_slice_sym(flip_slice_source: &FlipSliceSource) -> [u16; 64430] {
+    pub fn make_flip_slice_sym(flip_slice_source: &FlipSliceSource) -> [u16; NFLIPSLICECLASS] {
         let mut cc = CubieCube::default();
-        let mut fs_sym = [u16::MIN; 64430];
-        for i in 0..64430 {
+        let mut fs_sym = [u16::MIN; NFLIPSLICECLASS];
+        for i in 0..NFLIPSLICECLASS {
             let rep = flip_slice_source.flip_slice_rep[i];
             let rep_mod_flip = (rep % 2048) as u16;
             let rep_div_flip = (rep / 2048) as u16; 

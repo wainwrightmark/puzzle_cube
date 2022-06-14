@@ -45,12 +45,12 @@ pub trait CubeProperty<const NMOVES:usize, const NVALUES: usize> {
 
 pub struct SliceProperty {}
 
-impl CubeProperty< 18, 495> for SliceProperty {
+impl CubeProperty<{Move::COUNT}, NSLICE> for SliceProperty {
     fn is_edges(&self)->bool {
         true
     }
 
-    fn defined_moves(&self)->[Move; 18] {
+    fn defined_moves(&self)->[Move; Move::COUNT] {
         Move::ALLMOVES
     }
 
@@ -65,12 +65,12 @@ impl CubeProperty< 18, 495> for SliceProperty {
 
 pub struct FlipProperty {}
 
-impl CubeProperty< 18, 2048> for FlipProperty {
+impl CubeProperty<{Move::COUNT}, NFLIP> for FlipProperty {
     fn is_edges(&self)->bool {
         true
     }
 
-    fn defined_moves(&self)->[Move; 18] {
+    fn defined_moves(&self)->[Move; Move::COUNT] {
         Move::ALLMOVES
     }
 
@@ -85,12 +85,12 @@ impl CubeProperty< 18, 2048> for FlipProperty {
 
 pub struct DownEdgesProperty {}
 
-impl CubeProperty< 18, 11880> for DownEdgesProperty {
+impl CubeProperty<{Move::COUNT}, NSLICESORTED> for DownEdgesProperty {
     fn is_edges(&self)->bool {
         true
     }
 
-    fn defined_moves(&self)->[Move; 18] {
+    fn defined_moves(&self)->[Move; Move::COUNT] {
         Move::ALLMOVES
     }
 
@@ -105,12 +105,12 @@ impl CubeProperty< 18, 11880> for DownEdgesProperty {
 
 pub struct UpEdgesProperty {}
 
-impl CubeProperty<18, 11880> for UpEdgesProperty {
+impl CubeProperty<{Move::COUNT}, NSLICESORTED> for UpEdgesProperty {
     fn is_edges(&self)->bool {
         true
     }
 
-    fn defined_moves(&self)->[Move; 18] {
+    fn defined_moves(&self)->[Move; Move::COUNT] {
         Move::ALLMOVES
     }
 
@@ -145,12 +145,12 @@ impl CubeProperty< 10, 40320> for UpDownEdgesProperty {
 
 pub struct SliceSortedProperty {}
 
-impl CubeProperty< 18, 11880> for SliceSortedProperty {
+impl CubeProperty< {Move::COUNT}, NSLICESORTED> for SliceSortedProperty {
     fn is_edges(&self)->bool {
         true
     }
 
-    fn defined_moves(&self)->[Move; 18] {
+    fn defined_moves(&self)->[Move; Move::COUNT] {
         Move::ALLMOVES
     }
 
@@ -165,12 +165,12 @@ impl CubeProperty< 18, 11880> for SliceSortedProperty {
 
 pub struct CornersProperty {}
 
-impl CubeProperty<18, 40320> for CornersProperty {
+impl CubeProperty<{Move::COUNT}, NCORNERS> for CornersProperty {
     fn is_edges(&self)->bool {
         false
     }
 
-    fn defined_moves(&self)->[Move; 18] {
+    fn defined_moves(&self)->[Move; Move::COUNT] {
         Move::ALLMOVES
     }
 
@@ -185,12 +185,12 @@ impl CubeProperty<18, 40320> for CornersProperty {
 
 pub struct TwistProperty {}
 
-impl CubeProperty<18, 2187> for TwistProperty {
+impl CubeProperty<{Move::COUNT}, NTWIST> for TwistProperty {
     fn is_edges(&self)->bool {
         false
     }
 
-    fn defined_moves(&self)->[Move; 18] {
+    fn defined_moves(&self)->[Move; Move::COUNT] {
         Move::ALLMOVES
     }
 

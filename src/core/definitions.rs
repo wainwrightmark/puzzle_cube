@@ -6,20 +6,19 @@ use strum::IntoEnumIterator;
 use strum_macros::*;
 use array_const_fn_init::array_const_fn_init;
 
-pub const NPERM4: u16 = 24;
-pub const NCHOOSE84: u8 = 70;
-pub const NMOVE: u16 = 18;
-pub const NTWIST: u16 = 2187;
-pub const NFLIP: usize = 2048;
-pub const NSLICESORTED: u16 = 11880;
-pub const NSLICE: u16 = NSLICESORTED / NPERM4;
-pub const NFLIPSLICECLASS: u16 = 64430;
-pub const NUEDGESPHASE2: u16 = 1680;
-pub const NCORNERS: u16 = 40320;
-pub const NCORNERSCLASS: u16 = 2768;
-pub const NUDEDGES: usize = 40320;
-pub const NSYM: u8 = 48;
-pub const NSYMD4H: u8 = 16;
+pub const NPERM4: usize = 4 * 3 * 2;
+pub const NCHOOSE84: usize = 70; //8 choose 4
+pub const NTWIST: usize = 2187;// 3 ** 7;
+pub const NFLIP: usize = 2048;// 2 ** 11;
+pub const NSLICESORTED: usize = 11880; //12 choose 4 * 4 factorial
+pub const NSLICE: usize = 495;  //12 choose 4
+pub const NFLIPSLICECLASS: usize = 64430;
+pub const NUEDGESPHASE2: usize = 1680; //8 choose 4 * 24
+pub const NCORNERS: usize = 40320;// 8 factorial;
+pub const NCORNERSCLASS: usize = 2768;
+pub const NUDEDGES: usize = 8 * 7 * 6 * 5 * 4 * 3 * 2; //8 factorial
+pub const NSYM: usize = 48;// 2 * 3 * 4 * 2;
+pub const NSYMD4H: usize = 24;// 2 * 3 * 4;
 
 
 
