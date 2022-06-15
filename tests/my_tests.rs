@@ -601,7 +601,7 @@ fn test_solve_cube() {
     let data_source = Rc::new(DataSource::create());
     let base_cube = CubieCube::random_cube(100);
 
-    let solution = Solver::get_solution(base_cube.clone(), data_source);
+    let solution = Solver::get_solution(base_cube.clone(), data_source, SolveSettings::default()) ;
 
     assert!(solution.is_some());
 
@@ -616,10 +616,10 @@ fn test_solve_cube() {
 fn test_solve_basic_cubes() {
     let data_source = Rc::new(DataSource::create());
 
-for base_cube in MOVE_CUBES{
-    //let base_cube = CubieCube::random_cube(100);
+for m in Move::ALLMOVES{
+    let base_cube = m.get_cube().clone();
 
-    let solution = Solver::get_solution(base_cube.clone(), data_source.clone());
+    let solution = Solver::get_solution(base_cube.clone(), data_source.clone(), SolveSettings::default());
 
     assert!(solution.is_some());
 

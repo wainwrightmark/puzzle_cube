@@ -246,14 +246,32 @@ pub struct MoveMsg {
 
 impl Reducer<CubeState> for MoveMsg {
     fn apply(&self, state: Rc<CubeState>) -> Rc<CubeState> {
-        match state.cube.clone() {
-            SomeCube::Cubie { cube } => CubeState {
-                cube: SomeCube::Cubie {
-                    cube: cube.multiply(&self.cube).into(),
-                },
-                solution:None //TODO do better
+        match state.cube.clone() {            
+            SomeCube::Cubie { cube } =>
+            {
+                let solution: Option<Vec<Move>> = 
+                match &state.solution{
+                    Some(vec) =>
+                    match vec.split_first() {
+                        Some((m1, rem)) => if self.cube.eq(m1.get_cube()){
+                            Some(rem.into_iter().cloned().collect_vec())
+                        }else{None},
+                        None => None,
+                    },
+                    None => None,
+                };
+
+                CubeState {    
+                    cube: SomeCube::Cubie {
+                        cube: cube.multiply(&self.cube).into(),
+                    },
+                    solution
+                }
+                .into()
             }
-            .into(),
+            
+            
+            ,
             SomeCube::Facelet { cube, color } => state,
         }
     }
@@ -266,14 +284,21 @@ impl Reducer<CubeState> for SolveMsg{
     fn apply(&self, state: Rc<CubeState>) -> Rc<CubeState> {
         match state.cube.clone() {
             SomeCube::Cubie { cube } => {
-                let data_source = Dispatch::<DataState>::new().get().get_data_source();
+                let data_source = Dispatch::<DataState>::new().get().data.clone();
 
-                let solution = Solver::get_solution(cube.clone(), data_source);
+                match  data_source {
+                    Some(data) => {
+                        let solution = Solver::get_solution(cube.as_ref().clone(), data, SolveSettings::default());
 
-                CubeState{
-                    cube: SomeCube::Cubie { cube } ,
-                    solution
-                }            .into()},
+                        CubeState{
+                            cube: SomeCube::Cubie { cube } ,
+                            solution
+                        }            .into()},
+                    
+                    None => state,
+                }
+
+            },
             SomeCube::Facelet { cube, color } => state,
         }
     }

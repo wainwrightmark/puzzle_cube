@@ -19,12 +19,24 @@ use array_const_fn_init::array_const_fn_init;
 use super::coordinate_cube;
 
 
+pub struct SolveSettings{
+    pub max_moves : u8,
+    pub stopping_length: u8,
+    pub max_iterations: usize
+}
+
+impl Default for SolveSettings {
+    fn default() -> Self {
+        Self { max_moves: 24, stopping_length: 20, max_iterations: 1000 }
+    }
+}
+
 pub struct Solver{
 
 }
 
 impl Solver{
-    pub fn get_solution(base_cube: CubieCube, data_source: Rc<DataSource> ) -> Option< Vec<Move>>{
+    pub fn get_solution(base_cube: CubieCube, data_source: Rc<DataSource>, settings: SolveSettings ) -> Option< Vec<Move>>{
 
         let mut queue: BinaryHeap<SearchState> = BinaryHeap::new();
         
@@ -51,7 +63,7 @@ impl Solver{
                 queue.push(SearchState { cube, 
                     phase_data, 
                     moves: 0,
-                     previous: PreviousState::Start { inverted: false, rotation: 0 }, deepening: false });
+                     previous: PreviousState::Start { inverted, rotation }, deepening: false });
             }
             
         }
@@ -60,13 +72,13 @@ impl Solver{
         let mut coordinator = SerialSolveCoordinator{
             data_source,
             solution: None,
-            max_moves: 24,
+            max_moves: settings.max_moves,
             seen: HashMap::new(),
             queue
         };
 
         
-        coordinator.solve(20)
+        coordinator.solve(settings.stopping_length, settings.max_iterations)
         .map(|s|s.get_moves())
     }
 }
@@ -255,8 +267,10 @@ pub struct SerialSolveCoordinator{
 
 impl SerialSolveCoordinator{
 
-    pub fn solve(&mut self,stopping_length: u8) -> Option<SearchState> {
-        loop  {
+    pub fn solve(&mut self,stopping_length: u8, max_iterations: usize) -> Option<SearchState> {
+
+        let mut iterations = 0;
+        while iterations < max_iterations  {
             if let Some(next) = self.queue.pop(){
                 if let Some(solution) = next.iterate(self){
                     if self.try_add_solution(solution.clone()) && solution.moves < stopping_length {
@@ -267,7 +281,10 @@ impl SerialSolveCoordinator{
             else {
                 return self.solution.clone();
             }
+
+            iterations+=1;
         }
+        None
     }
 
     fn try_add_solution(&mut self, state : SearchState) -> bool{

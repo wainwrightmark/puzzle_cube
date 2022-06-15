@@ -4,24 +4,47 @@ use itertools::Itertools;
 use num::ToPrimitive;
 use serde::*;
 use std::default;
-use std::lazy::OnceCell;
 use std::rc::Rc;
 use yewdux::prelude::*;
+use log::debug;
 
 #[derive(Store, Default)]
 pub struct DataState {
-    pub data: OnceCell<Rc<DataSource>>
+    pub data: Option<Rc<DataSource>>,
 }
 
 impl DataState{
-    pub fn get_data_source(&self)->Rc<DataSource>{
-        let r = self.data.get_or_init(||DataSource::create().into()).clone();        
-        r
+    
+    pub fn is_generated(&self)-> bool{
+        self.data.is_some()
     }
 }
 
 impl PartialEq for DataState{
     fn eq(&self, other: &Self) -> bool {
-        self.data.get().is_some() == other.data.get().is_some()
+        self.data.is_some() == other.data.is_some()
+    }
+}
+
+pub struct GenerateMsg{}
+
+impl Reducer<DataState> for GenerateMsg {
+    fn apply(&self, state: Rc<DataState>) -> Rc<DataState> {
+        if state.is_generated(){
+            state
+        }
+        else{
+            debug!("Generating solve data");
+            let start_instant = instant::Instant::now();
+            let data = DataSource::create();
+            let diff = instant::Instant::now() - start_instant;
+
+            debug!("Solve generated in {:?}", diff);
+
+            let state = DataState{data: Some(data.into())};
+
+            state.into()
+
+        }
     }
 }

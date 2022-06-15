@@ -116,8 +116,9 @@ impl Move {
     pub const fn rotate(self, rotation: u8) -> Self{
         match rotation % 3 {
             0 => self,
-            1 => Self::from((Self:: rotate_color(self.get_color()), self.into_move_number())),
-            _ => Self::from((Self:: rotate_color(Self:: rotate_color(self.get_color())), self.into_move_number())),
+            
+            1 => Self::from((Self:: rotate_color(Self:: rotate_color(self.get_color())), self.into_move_number())),
+            _ => Self::from((Self:: rotate_color(self.get_color()), self.into_move_number())),
         }
     }
 

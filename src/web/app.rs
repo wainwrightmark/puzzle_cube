@@ -25,6 +25,7 @@ pub fn app() -> Html {
             <FaceletCubeView />
             //</g>
             </svg>
+            <SolutionView/>
     <ButtonsControl/>
 
 
@@ -45,6 +46,10 @@ pub fn buttons_control() -> Html {
                 html!(<MoveButton {cube} {name} />)
             })
             .collect::<Html>();
+
+
+
+
         html!(
             <div id="buttons">
             <div class="row">
@@ -52,6 +57,8 @@ pub fn buttons_control() -> Html {
             <FunctionButton name={"Shuffle".to_string()} msg={BasicControlMsg::Shuffle} />
             <FunctionButton name={"Invert".to_string()} msg={BasicControlMsg::Invert} />
             <FunctionButton name={"Paint".to_string()} msg={BasicControlMsg::Switch} />
+            <SolveGenerateButton />
+
             </div>
 
             <div class="row">
@@ -86,6 +93,47 @@ pub fn buttons_control() -> Html {
 
         )
     }
+}
+
+#[function_component(SolveGenerateButton)]
+pub fn solve_or_generate_button() -> Html{    
+    let is_data_generated = use_selector(|x: &DataState| x.is_generated()).as_ref().clone();
+    let is_solved = use_selector(|x: &CubeState| x.solution.is_some()).as_ref().clone();
+
+    let generate: Callback<MouseEvent> = Dispatch::new().apply_callback(|_| GenerateMsg {      
+    });
+    let solve: Callback<MouseEvent> = Dispatch::new().apply_callback(|_| SolveMsg {
+    });
+
+    if is_data_generated{
+        html!(<button class="size-2 col btn-small"  onclick={solve} disabled={is_solved} > {"Solve"} </button>)
+    }
+    else{
+        html!(        
+            <button class="size-2 col btn-small"  onclick={generate} > {"Generate Solve Data"} </button>
+        )
+    }
+
+    
+
+}
+
+#[function_component(SolutionView)]
+pub fn solution_view() -> Html{
+    let solution = use_selector(|x: &CubeState| x.solution.clone()).as_ref().clone();
+
+    match solution {
+    Some(vector) => {
+        let txt = vector.into_iter().map(|x|x.to_string()) .join(" ");
+        html!(<code>{txt} </code>)
+    },
+    None => {
+        let onclick: Option<Callback<MouseEvent>> =
+        Some(Dispatch::new().apply_callback(move |_| SolveMsg{}));
+
+    html!(<code> </code>)
+    }
+}
 }
 
 #[function_component(SymButtons)]
