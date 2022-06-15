@@ -80,77 +80,66 @@ impl DataSource {
     }
 
     pub fn create_phase_2_pruning(moves_source: &MovesSource, corners_source: &CornerSymmetriesSource) -> Vec<u32> {
-
         let c_sym = DataSource::make_corners_sym(corners_source);
-        let mut table = vec![u32::MAX; 40320 * 2768 / 16];        
+        let mut table = vec![u32::MAX; 40320 * 2768 / 16];
 
         let ud_edge = 0;
         Self::set_corners_ud_edges_depth3(0, 0, &mut table);
-        let mut done = 1;
         let mut depth = 0u32;
+        let mut done = 1;
 
+        let mut next = vec![(0,0)];//next is tuples of (corner_class_index, ud_edges_conj)
+        let mut current: Vec<(u16, u16)> = Vec::new();
         while depth < 10 {
-            let depth3 = depth % 3;
-            let mut idx = 0;
-            let mult = if depth > 9{1} else{2};
+            
+            std::mem::swap(&mut next,&mut current);
 
-            for c_class_index in 0..2768{
-                let mut ud_edge: u16 = 0;
-                while ud_edge < 40320 {
-                    if idx % 16 == 0 && table[idx / 16] == u32::MAX && ud_edge < (40320 -16){
-                        ud_edge+=16;
-                        idx += 16;
-                        continue;
-                    }
+            for (corner_class_index, ud_edge) in current.drain(..){
+                let mut move_index = 0;
+                let corners = corners_source.corner_rep[corner_class_index as usize];
+                for m in Move::PHASE2MOVES{
+                    let ud_edges_after_move = moves_source.get_ud_edge(ud_edge, move_index);
+                    let corners_after_move =  moves_source.get_corners(corners, m);
 
-                    if Self::get_corners_ud_edges_depth3(idx, &table) == depth3{
-                        let corner = corners_source.corner_rep[c_class_index];
+                    let corner_class_index_after_move = corners_source.corner_class_index[corners_after_move as usize];
+                    let corner_symmetry_after_move = corners_source.corner_symmetry[corners_after_move as usize];
 
-                        let mut move_index = 0;
-                        for m in Move::PHASE2MOVES{
-                            let udedge1a = moves_source.get_ud_edge(ud_edge, move_index);
-                            let corner1 =  moves_source.get_corners(corner, m);
+                    let udedge1_conj = moves_source.get_ud_edges_conj(ud_edges_after_move, corner_symmetry_after_move);
 
-                            let c1_class_index = corners_source.corner_class_index[corner1 as usize];
-                            let c1_symmetry = corners_source.corner_symmetry[corner1 as usize];
+                    let idx1 = (40320 * (corner_class_index_after_move as usize)) + udedge1_conj as usize;
 
-                            let udedge1_conj = moves_source.get_ud_edges_conj(udedge1a, c1_symmetry);
+                    if Self::get_corners_ud_edges_depth3(idx1, &table) ==3{ //this index has not yet been set
+                        Self::set_corners_ud_edges_depth3(idx1, (depth + 1) % 3, &mut table);
+                        next.push((corner_class_index_after_move, udedge1_conj));
+                        done+= 1;
 
-                            let idx1 = (40320 * (c1_class_index as usize)) + udedge1_conj as usize;
+                        let mut sym = c_sym[corner_class_index_after_move as usize];
+                        if sym != 1{
+                            for j in 1..16{
+                                sym >>=1;
+                                if sym % 2 ==1{
+                                    let ud_edges_after_move_and_symmetry = moves_source.get_ud_edges_conj(udedge1_conj, j);
 
-                            if Self::get_corners_ud_edges_depth3(idx1, &table) ==3{
-                                Self::set_corners_ud_edges_depth3(idx1, (depth + 1) % 3, &mut table);
-                                done+=1;
+                                    let idx2 = (40320 * (corner_class_index_after_move as usize)) + ud_edges_after_move_and_symmetry as usize;
 
-                                let mut sym = c_sym[c1_class_index as usize];
-                                if sym != 1{
-                                    for j in 1..16{
-                                        sym >>=1;
-                                        if sym % 2 ==1{
-                                            let u_d_edge2 = moves_source.get_ud_edges_conj(udedge1_conj, j);
-
-                                            let idx2 = (40320 * (c1_class_index as usize)) + u_d_edge2 as usize;
-
-                                            if Self::get_corners_ud_edges_depth3(idx2, &table) == 3{
-                                                Self::set_corners_ud_edges_depth3(idx2, (depth + 1) % 3, &mut table);
-                                                done +=1;
-                                            }
-                                        }
+                                    if Self::get_corners_ud_edges_depth3(idx2, &table) == 3{ //this index has not yet been set
+                                        Self::set_corners_ud_edges_depth3(idx2, (depth + 1) % 3, &mut table);
+                                        next.push((corner_class_index_after_move, ud_edges_after_move_and_symmetry));
+                                        done+= 1;
                                     }
                                 }
                             }
-                            move_index+=1;
                         }
                     }
-                    ud_edge+=1;
-                    idx+=1;
+                    move_index+=1;
                 }
             }
-            depth +=1;
+            depth = depth + 1;
         }
 
         table
     }
+
 
     fn make_corners_sym(corners_source: &CornerSymmetriesSource)->[u16;2768] {
         let mut cc = CubieCube::default();
