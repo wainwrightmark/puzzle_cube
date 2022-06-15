@@ -382,8 +382,9 @@ fn test_phase_one_pruning() {
         2594350426, 2774941993, 2321846938,
     ];
 
-    let sub_table = table.into_iter().take(10).collect_vec();
-    assert_eq!(sub_table, expected)
+    let sub_table = table.iter().cloned() .take(10).collect_vec();
+    assert_eq!(sub_table, expected);
+    assert_eq!(table[122672],356602961 );
 }
 
 #[test]

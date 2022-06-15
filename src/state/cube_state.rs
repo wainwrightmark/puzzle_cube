@@ -11,6 +11,7 @@ use yewdux::prelude::*;
 #[store(storage = "local")] // can also be "session"
 pub struct CubeState {
     pub cube: SomeCube,
+    pub solution: Option<Vec<Move>>
 }
 
 impl CubeState{
@@ -91,6 +92,7 @@ impl Reducer<CubeState> for SetPaintColorMsg {
                         cube,
                         color: Some(self.color),
                     },
+                    solution: None
                 }
                 .into()
             }
@@ -115,6 +117,7 @@ impl Reducer<CubeState> for ClickedMsg {
                             cube,
                             color: Some(self.position.get_face()),
                         },
+                        solution: None
                     }
                     .into()
                 } else {
@@ -126,6 +129,7 @@ impl Reducer<CubeState> for ClickedMsg {
                             cube: new_cube.into(),
                             color,
                         },
+                        solution: None
                     }
                     .into()
                 }
@@ -152,6 +156,7 @@ impl Reducer<CubeState> for BasicControlMsg {
                         cube: FaceletCube::from((*cube).clone()).into(),
                         color: None,
                     },
+                    solution: None
                 }
                 .into(),
                 SomeCube::Facelet { cube, color } => {
@@ -160,6 +165,7 @@ impl Reducer<CubeState> for BasicControlMsg {
                             cube: SomeCube::Cubie {
                                 cube: Rc::from(cubiecube),
                             },
+                            solution: None
                         }
                         .into()
                     } else {
@@ -172,6 +178,7 @@ impl Reducer<CubeState> for BasicControlMsg {
                     cube: SomeCube::Cubie {
                         cube: CubieCube::default().into(),
                     },
+                    solution: None
                 }
                 .into(),
                 SomeCube::Facelet { cube, color } => CubeState {
@@ -179,6 +186,7 @@ impl Reducer<CubeState> for BasicControlMsg {
                         cube: FaceletCube::default().into(),
                         color: None,
                     },
+                    solution: None,
                 }
                 .into(),
             },
@@ -192,6 +200,7 @@ impl Reducer<CubeState> for BasicControlMsg {
                         cube: SomeCube::Cubie {
                             cube: new_cube.into(),
                         },
+                        solution: None,
                     }
                     .into(),
                     SomeCube::Facelet { cube: _, color } => CubeState {
@@ -199,6 +208,7 @@ impl Reducer<CubeState> for BasicControlMsg {
                             cube: Rc::from(FaceletCube::from(new_cube)),
                             color: None,
                         },
+                        solution:None,
                     }
                     .into(),
                 }
@@ -208,6 +218,7 @@ impl Reducer<CubeState> for BasicControlMsg {
                     cube: SomeCube::Cubie {
                         cube: cube.invert().into(),
                     },
+                    solution:None,
                 }
                 .into(),
                 SomeCube::Facelet { cube, color } => state,
@@ -219,6 +230,7 @@ impl Reducer<CubeState> for BasicControlMsg {
                         cube: Rc::from(FaceletCube::CLEARED),
                         color: None,
                     },
+                    solution: None,
                 }
                 .into(),
             },
@@ -239,8 +251,29 @@ impl Reducer<CubeState> for MoveMsg {
                 cube: SomeCube::Cubie {
                     cube: cube.multiply(&self.cube).into(),
                 },
+                solution:None //TODO do better
             }
             .into(),
+            SomeCube::Facelet { cube, color } => state,
+        }
+    }
+}
+
+pub struct SolveMsg{
+}
+
+impl Reducer<CubeState> for SolveMsg{
+    fn apply(&self, state: Rc<CubeState>) -> Rc<CubeState> {
+        match state.cube.clone() {
+            SomeCube::Cubie { cube } => {
+                let data_source = Dispatch::<DataState>::new().get().get_data_source();
+
+                let solution = Solver::get_solution(cube.clone(), data_source);
+
+                CubeState{
+                    cube: SomeCube::Cubie { cube } ,
+                    solution
+                }            .into()},
             SomeCube::Facelet { cube, color } => state,
         }
     }

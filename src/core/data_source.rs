@@ -57,7 +57,7 @@ impl DataSource {
 
     pub fn get_flip_slice_twist_depth_mod_3(&self, flip: u16, twist: u16, slice_sorted: u16) -> u8 {
         let slice = slice_sorted / 24;
-        let flip_slice = ((NFLIP * (slice as usize)) + (flip as usize)) ;
+        let flip_slice = (NFLIP * (slice as usize)) + (flip as usize) ;
 
         let class_index = self.flip_slice_source.flip_slice_class_index[flip_slice] as usize;
         let flip_slice_sym = self.flip_slice_source.flip_slice_symmetry[flip_slice];
@@ -92,7 +92,7 @@ impl DataSource {
     }
 
     pub fn get_cornslice_depth(&self, corners: u16, slice_sorted: u16) -> u8 {
-        let index = (24 * corners + slice_sorted) as usize;
+        let index = (24 * (corners as usize)) + slice_sorted as usize;
 
         self.corner_slice_depth[index]
     }
