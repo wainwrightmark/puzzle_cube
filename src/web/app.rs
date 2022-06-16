@@ -25,6 +25,7 @@ pub fn app() -> Html {
             <FaceletCubeView />
             //</g>
             </svg>
+            <br/>
             <SolutionView/>
     <ButtonsControl/>
 
@@ -65,7 +66,7 @@ pub fn buttons_control() -> Html {
                 {move_buttons}
 
             </div>
-            <SymButtons/>
+            
             <ViewButtons/>
         </div>
 
@@ -124,7 +125,8 @@ pub fn solution_view() -> Html{
 
     match solution {
     Some(vector) => {
-        let txt = vector.into_iter().map(|x|x.to_string()) .join(" ");
+        let len = vector.len();
+        let txt = vector.into_iter().map(|x|x.to_string()) .join(" ") + format!(" ({})", &len).as_str();
         html!(<code>{txt} </code>)
     },
     None => {
@@ -136,18 +138,18 @@ pub fn solution_view() -> Html{
 }
 }
 
-#[function_component(SymButtons)]
-pub fn sym_buttons() -> Html {
-    html!(
-        <div class="row">
-                    <MoveButton cube={F2_SYMMETRY} name={"Sym: F2"} />
-                    <MoveButton cube={U4_SYMMETRY} name={"Sym: U4"} />
-                    <MoveButton cube={URF3_SYMMETRY} name={"Sym: URF3"} />
-                    <MoveButton cube={MIRROR_LR2_SYMMETRY} name={"Sym: LR2"} />
+// #[function_component(SymButtons)]
+// pub fn sym_buttons() -> Html {
+//     html!(
+//         <div class="row">
+//                     <MoveButton cube={F2_SYMMETRY} name={"Sym: F2"} />
+//                     <MoveButton cube={U4_SYMMETRY} name={"Sym: U4"} />
+//                     <MoveButton cube={URF3_SYMMETRY} name={"Sym: URF3"} />
+//                     <MoveButton cube={MIRROR_LR2_SYMMETRY} name={"Sym: LR2"} />
 
-                </div>
-    )
-}
+//                 </div>
+//     )
+// }
 
 #[function_component(PaintButtons)]
 pub fn paint_buttons() -> Html {
@@ -239,8 +241,20 @@ pub struct MoveButtonProperties {
 #[function_component(MoveButton)]
 fn move_button(properties: &MoveButtonProperties) -> Html {
     let cube = properties.cube.clone();
+
+    let is_highlighted = use_selector_with_deps(|state: &CubeState, c| match &state.solution {
+    Some(moves) => match moves.first(){
+    Some(m) => m.get_cube() == c,
+    None => false,
+},
+    None => false,
+} , cube.clone());
+
     let onclick: Option<Callback<MouseEvent>> =
         Some(Dispatch::new().apply_callback(move |_| MoveMsg { cube: cube.clone() }));
+        let extra_class = if *is_highlighted {Some("btn-success")} else {None};
 
-    html!(<button {onclick} class="size-2 col btn-small"> {properties.name.clone()}  </button>)
+        let class = classes!("size-2", "col", "btn-small", extra_class );
+
+    html!(<button {onclick} {class}> {properties.name.clone()}  </button>)
 }

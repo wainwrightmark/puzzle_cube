@@ -596,20 +596,12 @@ fn test_inverse_cubes2() {
     }
 }
 
-//#[test]
+#[test]
 fn test_solve_cube() {
     let data_source = Rc::new(DataSource::create());
     let base_cube = CubieCube::random_cube(100);
 
-    let solution = Solver::get_solution(base_cube.clone(), data_source, SolveSettings::default()) ;
-
-    assert!(solution.is_some());
-
-    let mut solved_cube = base_cube;
-    for m in solution.unwrap() {
-        solved_cube = m.apply(&solved_cube);
-    }
-    assert_eq!(solved_cube, CubieCube::default());
+    test_solver(&base_cube, data_source);
 }
 
 #[test]
@@ -617,20 +609,42 @@ fn test_solve_basic_cubes() {
     let data_source = Rc::new(DataSource::create());
 
 for m in Move::ALLMOVES{
-    let base_cube = m.get_cube().clone();
+    let base_cube = m.get_cube();
+    test_solver(base_cube, data_source.clone());
+}
+}
 
-    let solution = Solver::get_solution(base_cube.clone(), data_source.clone(), SolveSettings::default());
+#[test]
+fn test_solve_simple_cube(){
+    let data_source = Rc::new(DataSource::create());
+
+    let mut cube = CubieCube::default();
+    cube = Move::U1.apply(&cube);
+    cube = Move::R1.apply(&cube);
+    cube = Move::F1.apply(&cube);
+
+    test_solver(&cube, data_source);
+}
+
+#[test]
+fn test_solve_symmetry_cubes(){
+    let data_source = Rc::new(DataSource::create());
+
+    for cube in SYMMETRY_CUBES{
+        test_solver(&cube, data_source.clone());
+    }    
+}
+
+fn test_solver(cube: &CubieCube, data_source: Rc<DataSource>){
+    let solution = Solver::get_solution(cube.clone(), data_source.clone(), SolveSettings::default());
 
     assert!(solution.is_some());
 
-    let mut solved_cube = base_cube;
+    let mut solved_cube = cube.clone();
     for m in solution.unwrap() {
         solved_cube = m.apply(&solved_cube);
     }
     assert_eq!(solved_cube, CubieCube::default());
-}
-
-    
 }
 
 #[test]

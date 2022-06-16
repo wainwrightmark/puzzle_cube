@@ -17,6 +17,7 @@ use strum_macros::*;
 use array_const_fn_init::array_const_fn_init;
 
 use super::coordinate_cube;
+use log::debug;
 
 
 pub struct SolveSettings{
@@ -27,7 +28,7 @@ pub struct SolveSettings{
 
 impl Default for SolveSettings {
     fn default() -> Self {
-        Self { max_moves: 24, stopping_length: 20, max_iterations: 1000 }
+        Self { max_moves: 24, stopping_length: 20, max_iterations: 100000 }
     }
 }
 
@@ -164,7 +165,7 @@ impl SearchState {
         match self.phase_data{
             PhaseData::Phase1 { flip_slice_twist_depth_mod3 } => {
                 
-                let next_depth = (flip_slice_twist_depth_mod3+ 3) % 3;
+                let next_depth = (flip_slice_twist_depth_mod3+ 2) % 3;
 
                 if next_depth + 1 + self.moves >= coordinator.max_moves{return None;}//no way to solve in time
 
@@ -203,7 +204,7 @@ impl SearchState {
                     return None;
                 }
 
-                let next_depth = (corners_ud_edges_depth_mod3+ 3) % 3;                
+                let next_depth = (corners_ud_edges_depth_mod3+ 2) % 3;                
                 
                 let next_previous_state = Arc::new(self.clone());
 
@@ -274,17 +275,20 @@ impl SerialSolveCoordinator{
             if let Some(next) = self.queue.pop(){
                 if let Some(solution) = next.iterate(self){
                     if self.try_add_solution(solution.clone()) && solution.moves < stopping_length {
+                        debug!("Solved in {:?} iterations", iterations);
                         return Some(solution);
                     }
                 }
             }
             else {
+                debug!("Solved in {:?} iterations", iterations);
                 return self.solution.clone();
             }
 
             iterations+=1;
         }
-        None
+        debug!("Failed to solve in {:?} iterations", iterations);
+        return self.solution.clone();
     }
 
     fn try_add_solution(&mut self, state : SearchState) -> bool{
