@@ -1,7 +1,7 @@
 use crate::core::prelude::*;
 
 impl DataSource {
-    fn set_flip_slice_twist_depth3(ix: usize, value: u32, tab: &mut Vec<u32>) {
+    fn set_flip_slice_twist_depth3(ix: usize, value: u32, tab: &mut [u32]) {
         let shift = (ix % 16) * 2;
         let base = ix >> 4;
         let mut tb = tab[base];
@@ -11,7 +11,7 @@ impl DataSource {
         tab[base] = tb;
     }
 
-    fn get_flip_slice_twist_depth3(ix: usize, tab: &Vec<u32>) -> u32 {
+    fn get_flip_slice_twist_depth3(ix: usize, tab: &[u32]) -> u32 {
         let mut y = tab[ix / 16];
         y >>= (ix % 16) * 2;
         y & 3

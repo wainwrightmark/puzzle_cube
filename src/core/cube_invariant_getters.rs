@@ -77,14 +77,14 @@ impl CubieCube {
         let mut x: usize = 0;
 
         let mut edge4: [usize; 4] = [0; 4];
-        let ep_mod: [EdgePosition; 12];
+        let ep_mod: [EdgePosition; 12] =
         if rot_right > 0 {
             let mut epm = self.edge_positions;
             epm.rotate_right(rot_right);
-            ep_mod = epm;
+            epm
         } else {
-            ep_mod = self.edge_positions;
-        }
+            self.edge_positions
+        };
 
         for j in (0..EdgePosition::COUNT).rev() {
             let edge = ep_mod[j] as usize;
