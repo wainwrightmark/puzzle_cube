@@ -30,7 +30,6 @@ impl CubieCube {
         }
     }
 
-    const ARRAYEIGHT: [usize; 8] = [0, 1, 2, 3, 4, 5, 6, 7];
 
     ///Multiply this cube with another cube.
     const fn multiply_corners(&self, other: &Self) -> ([CornerPosition; CornerPosition::COUNT], [CornerOrientation; CornerPosition::COUNT]) {

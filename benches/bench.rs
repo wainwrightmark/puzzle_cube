@@ -7,11 +7,11 @@ use puzzle_cube::core::prelude::*;
 
 benchmark_group!(benches,
 
-    //  bench_create_move_table,
-    //   bench_create_corner_slice_depth,
-    //    bench_create_ud_edges_conjugation,
-    //  bench_create_corner_symmetries,
-    //  bench_create_flip_slice,
+     bench_create_move_table,
+      bench_create_corner_slice_depth,
+       bench_create_ud_edges_conjugation,
+     bench_create_corner_symmetries,
+     bench_create_flip_slice,
      bench_create_phase_2_pruning
     );
 benchmark_main!(benches);

@@ -86,7 +86,6 @@ impl DataSource {
         let _ud_edge = 0;
         Self::set_corners_ud_edges_depth3(0, 0, &mut table);
         let mut depth = 0u32;
-        let mut done = 1;
 
         let mut next = vec![(0,0)];//next is tuples of (corner_class_index, ud_edges_conj)
         let mut current: Vec<(u16, u16)> = Vec::new();
@@ -111,7 +110,6 @@ impl DataSource {
                     if Self::get_corners_ud_edges_depth3(idx1, &table) ==3{ //this index has not yet been set
                         Self::set_corners_ud_edges_depth3(idx1, (depth + 1) % 3, &mut table);
                         next.push((corner_class_index_after_move, udedge1_conj));
-                        done+= 1;
 
                         let mut sym = c_sym[corner_class_index_after_move as usize];
                         if sym != 1{
@@ -125,7 +123,6 @@ impl DataSource {
                                     if Self::get_corners_ud_edges_depth3(idx2, &table) == 3{ //this index has not yet been set
                                         Self::set_corners_ud_edges_depth3(idx2, (depth + 1) % 3, &mut table);
                                         next.push((corner_class_index_after_move, ud_edges_after_move_and_symmetry));
-                                        done+= 1;
                                     }
                                 }
                             }
