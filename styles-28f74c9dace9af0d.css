@@ -1,0 +1,67 @@
+.face{
+    
+    position: absolute;
+    border: thin grey solid;
+    transition: transform 1s;
+    border-radius: 1vw;
+    width:7.5%; height:10%; transform-origin: 150% 150%;
+}
+
+.cube-area{
+    width: 100%;
+    aspect-ratio: 4/3;
+    transform-style: preserve-3d;
+}
+
+
+.color-Up{
+    background-color: yellow;
+}
+
+.color-Down{
+    background-color: white;
+}
+
+.color-Left{
+    background-color: blue;
+}
+
+.color-Right{
+    background-color: green;
+}
+.color-Front{
+    background-color: red;
+}
+.color-Back{
+    background-color: orange;
+}
+
+.color-unknown{
+    background-color: grey;
+}
+
+.paint_button{
+    width:30px;
+    height: 30px;
+}
+
+.selected{
+    border: 3px solid black;
+}
+
+.cubesvg{
+    max-width: 500px;
+    max-height: 500px;
+}
+
+.size-4{
+    flex: 0 0 33.33%;
+    max-width: 0 0 33.33%
+
+}
+
+.size-2{
+    flex: 0 0 16.66%;
+    max-width: 0 0 16.66%
+
+}
