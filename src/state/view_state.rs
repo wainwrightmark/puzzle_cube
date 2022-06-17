@@ -28,76 +28,37 @@ pub enum ViewType {
     Exploded3D,
 }
 
-#[derive(PartialEq, Copy, Clone, Default, Serialize, Deserialize)]
-pub struct TransformTranslate {
-    pub x: f64,
-    pub y: f64,
-    pub z: f64,
-}
 
-impl TransformTranslate {
-    pub fn get_text(self) -> String {
-        format!("translate3d({}vw,{}vw,{}vw)", self.x, self.y, self.z)
-    }
-}
 
-impl TransformRotate {
-    pub fn get_text(self) -> String {
-        if self.x != 0 {
-            if self.y != 0 {
-                format!("rotateX({}deg) rotateY({}deg)", self.x, self.y)
-            } else {
-                format!("rotateX({}deg)", self.x)
-            }
-        } else if self.y != 0 {
-            format!("rotateY({}deg)", self.y)
-        } else {
-            "".to_string()
-        }
-    }
-}
 
-#[derive(PartialEq, Eq, Copy, Clone, Default, Serialize, Deserialize)]
-pub struct TransformRotate {
-    pub x: i32,
-    pub y: i32,
-}
 
 impl ViewType {
-    pub fn get_initial_transform(&self) -> String {
+    pub fn get_initial_transform(&self) -> Vec<TransformComponent> {
         match self {
-            ViewType::FlatMap => "".to_string(),
-            ViewType::Compact3D => {
-                " rotateX(-30deg) rotateY(-45deg) rotateZ(0deg) translate3d(40vw, 5vw, 0)"
-                    .to_string()
-            }
-            ViewType::Exploded3D => {
-                " rotateX(-30deg) rotateY(-45deg) rotateZ(0deg) translate3d(40vw, 5vw, 0)"
-                    .to_string()
-            }
+            ViewType::FlatMap => Default::default(),
+            _ => vec![TransformComponent::Rotate(TransformRotate{x: -30, y:-45, }) ,TransformComponent::Translate( TransformTranslate{x: 40.0,y: 5.0,z: 0.0})]
         }
     }
 
-    pub fn get_face_transform(&self, face: FaceColor) -> (TransformRotate, TransformTranslate) {
+    pub fn get_face_transform(&self, face: FaceColor) ->Vec<TransformComponent> {
         match self {
             ViewType::FlatMap => {
+
                 let hf = face.get_x() as f64;
                 let vf = face.get_y() as f64;
                 let x: f64 = ((FACELETSIZE + FACELETSPACING) * hf * 3.0) + (hf * FACESPACING);
                 let y: f64 = ((FACELETSIZE + FACELETSPACING) * vf * 3.0) + (vf * FACESPACING);
 
-                (
-                    TransformRotate::default(),
-                    TransformTranslate {
-                        x,
-                        y,
-                        ..Default::default()
-                    },
-                )
+                vec![TransformComponent::Translate(TransformTranslate {
+                    x,
+                    y,
+                    ..Default::default()
+                })]
+                
             }
             ViewType::Compact3D => {
                 let d = (FACELETSIZE) * 1.5;
-
+                let tuple =
                 match face {
                     FaceColor::Up => (
                         TransformRotate { x: 90, y: 0 },
@@ -147,11 +108,13 @@ impl ViewType {
                             z: d,
                         },
                     ),
-                }
+                };
+                vec![TransformComponent::Rotate(tuple.0),TransformComponent::Translate(tuple.1) ]
             }
             ViewType::Exploded3D => {
                 let d1 = (FACELETSIZE) * 1.5;
                 let d2 = (FACELETSIZE) * 6.0;
+                let tuple =
                 match face {
                     FaceColor::Up => (
                         TransformRotate { x: 90, y: 0 },
@@ -201,7 +164,8 @@ impl ViewType {
                             z: d2,
                         },
                     ),
-                }
+                };
+                vec![TransformComponent::Rotate(tuple.0),TransformComponent::Translate(tuple.1) ]
             }
         }
     }
