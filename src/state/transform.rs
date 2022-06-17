@@ -86,7 +86,7 @@ impl Transform {
                 } else if y == &0.0 {
                     return format!("translateX({:.2}{})", x, unit);
                 }
-                return format!(
+                format!(
                     "translate({x:.2}{unit}, {y:.2}{unit})",
                     x = x,
                     y = y,
