@@ -31,9 +31,9 @@ impl CubeState {
             SomeCube::Cubie { cube: _, solution } => match solution {
                 Some(vector) => {
                     let len = vector.len();
-                    let txt = vector.into_iter().map(|x| x.to_string()).join(" ")
+                    let txt = vector.iter().map(|x| x.to_string()).join(" ")
                         + format!(" ({})", &len).as_str();
-                    return txt;
+                    txt
                 }
                 None => "".to_string(),
             },

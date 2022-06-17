@@ -86,10 +86,10 @@ impl DataSource {
         while depth < 10 {
             std::mem::swap(&mut next, &mut current);
 
-            for (corner_class_index, ud_edge) in current.drain(..) {
-                let mut move_index = 0;
+            for (corner_class_index, ud_edge) in current.drain(..) 
+            {
                 let corners = corners_source.corner_rep[corner_class_index as usize];
-                for m in Move::PHASE2MOVES {
+                for (move_index, m) in Move::PHASE2MOVES.into_iter().enumerate() {
                     let ud_edges_after_move = moves_source.get_ud_edge(ud_edge, move_index);
                     let corners_after_move = moves_source.get_corners(corners, m);
 
@@ -136,7 +136,6 @@ impl DataSource {
                             }
                         }
                     }
-                    move_index += 1;
                 }
             }
             depth += 1;

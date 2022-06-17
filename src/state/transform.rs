@@ -86,12 +86,12 @@ impl Transform {
                 } else if y == &0.0 {
                     return format!("translateX({:.2}{})", x, unit);
                 }
-                return format!(
+                format!(
                     "translate({x:.2}{unit}, {y:.2}{unit})",
                     x = x,
                     y = y,
                     unit = unit
-                );
+                )
             }
             Transform::RotateX(a) => format!("rotateX({:.2}deg)", a),
             Transform::RotateY(a) => format!("rotateY({:.2}deg)", a),

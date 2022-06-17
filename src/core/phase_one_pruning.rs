@@ -70,7 +70,7 @@ impl DataSource {
                         let mut sym = fs_sym[fs_class_idx_after_move];
                         if sym != 1 {
                             for j in 1..16 {
-                                sym = sym >> 1;
+                                sym >>= 1;
                                 if sym % 2 == 1 {
                                     let twist_after_move_and_symmetry =
                                         moves_source.get_twist_conj(twist_after_move, j);
@@ -101,7 +101,7 @@ impl DataSource {
                     }
                 }
             }
-            depth = depth + 1;
+            depth += 1;
         }
 
         while done < total {

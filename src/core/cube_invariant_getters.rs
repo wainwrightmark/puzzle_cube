@@ -79,7 +79,7 @@ impl CubieCube {
         let mut edge4: [usize; 4] = [0; 4];
         let ep_mod: [EdgePosition; 12];
         if rot_right > 0 {
-            let mut epm = self.edge_positions.clone();
+            let mut epm = self.edge_positions;
             epm.rotate_right(rot_right);
             ep_mod = epm;
         } else {

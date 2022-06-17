@@ -313,13 +313,13 @@ impl SerialSolveCoordinator {
                     "Could not find better solution in {:?} iterations",
                     iterations
                 );
-                return Some(s);
+                Some(s)
             }
             None => {
                 debug!("Failed to solve in {:?} iterations", iterations);
-                return None;
+                None
             }
-        };
+        }
     }
 
     fn try_add_solution(&mut self, state: SearchState) -> bool {
