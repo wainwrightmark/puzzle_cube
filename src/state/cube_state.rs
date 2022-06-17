@@ -164,7 +164,7 @@ impl Reducer<CubeState> for ClickedMsg {
                     let mut new_cube = (*cube).clone();
                     new_cube.facelets[self.position as usize] = color;
 
-                    let err = match new_cube.validate_colors() {
+                    let _err = match new_cube.validate_colors() {
                         Ok(_) => None,
                         Err(s) => Some(s),
                     };
@@ -281,7 +281,7 @@ impl Reducer<CubeState> for BasicControlMsg {
                 }
             }
             BasicControlMsg::Invert => match state.cube.clone() {
-                SomeCube::Cubie { cube, solution } => CubeState {
+                SomeCube::Cubie { cube, solution: _ } => CubeState {
                     cube: SomeCube::Cubie {
                         cube: cube.invert().into(),
                         solution: None,
@@ -361,7 +361,7 @@ pub struct SolveMsg {}
 impl Reducer<CubeState> for SolveMsg {
     fn apply(&self, state: Rc<CubeState>) -> Rc<CubeState> {
         match state.cube.clone() {
-            SomeCube::Cubie { cube, solution } => {
+            SomeCube::Cubie { cube, solution: _ } => {
                 let data_source = Dispatch::<DataState>::new().get().data.clone();
 
                 match data_source {

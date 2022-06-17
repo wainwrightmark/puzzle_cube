@@ -1,7 +1,7 @@
 use std::rc::Rc;
 
 use crate::core::prelude::*;
-use crate::state::{self, prelude::*};
+use crate::state::{prelude::*};
 use crate::web::prelude::*;
 
 use itertools::Itertools;
@@ -116,8 +116,8 @@ pub fn solution_view() -> Html {
         SomeCube::Cubie { cube: _, solution } => solution.clone(),
         SomeCube::Facelet {
             cube: _,
-            color,
-            error,
+            color: _,
+            error: _,
         } => None,
     })
     .as_ref()
@@ -156,7 +156,7 @@ pub fn paint_button(properties: &PaintButtonProperties) -> Html {
             SomeCube::Facelet {
                 cube: _,
                 color,
-                error,
+                error: _,
             } => *color == Some(*c),
         },
         color,
@@ -225,14 +225,14 @@ fn move_button(properties: &MoveButtonProperties) -> Html {
 
     let is_highlighted = use_selector_with_deps(
         |state: &CubeState, c| match &state.cube {
-            SomeCube::Cubie { cube, solution } => match solution {
+            SomeCube::Cubie { cube: _, solution } => match solution {
                 Some(moves) => match moves.first() {
                     Some(m) => m.get_cube() == c,
                     None => false,
                 },
                 None => false,
             },
-            SomeCube::Facelet { cube, color, error } => false,
+            SomeCube::Facelet { cube: _, color: _, error: _ } => false,
         },
         cube.clone(),
     );
