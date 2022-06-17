@@ -8,7 +8,7 @@ use std::rc::Rc;
 use yewdux::prelude::*;
 
 #[derive(PartialEq, Eq, Store, Clone, Default, Serialize, Deserialize)]
-#[store(storage = "local")] // can also be "session"
+//#[store(storage = "local")] // can also be "session"
 pub struct CubeState {
     pub cube: SomeCube,
     pub solution: Option<Vec<Move>>

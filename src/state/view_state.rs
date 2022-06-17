@@ -7,7 +7,7 @@ use std::rc::Rc;
 use yewdux::prelude::*;
 
 #[derive(PartialEq, Eq, Store, Clone, Default, Serialize, Deserialize)]
-#[store(storage = "local")] // can also be "session"
+//#[store(storage = "local")] // can also be "session"
 pub struct ViewState{
     pub view_type : ViewType
 }
@@ -34,6 +34,7 @@ impl TransformTranslate{
         format!("translate3d({}vw,{}vw,{}vw)", self.x, self.y,self.z)
     }
 }
+
 
 impl TransformRotate {
     pub fn get_text(self)-> String{
