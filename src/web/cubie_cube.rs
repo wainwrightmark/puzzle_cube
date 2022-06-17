@@ -10,7 +10,7 @@ use yew::prelude::*;
 use yewdux::prelude::*;
 
 #[function_component(CubieCubeView)]
-pub fn cubie_cube() -> Html {
+pub fn cubie_cube() -> Html {    
     let centres = FaceColor::iter()
         .map(|face| html!(<Centre {face} />))
         .collect::<Html>();

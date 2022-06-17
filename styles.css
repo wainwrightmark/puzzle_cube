@@ -1,33 +1,43 @@
 .face{
-    stroke: black;
-    stroke-width: 0.3;
+    
+    position: absolute;
+    border: 0.1vw black solid;
     transition: transform 1s;
+    border-radius: 2vw;
 }
 
+.cube-area{
+    perspective: 600px;
+    width: 100%;
+    aspect-ratio: 4/3;
+    transform-style: preserve-3d;
+}
+
+
 .color-Up{
-    fill: yellow;
+    background-color: yellow;
 }
 
 .color-Down{
-    fill: white;
+    background-color: white;
 }
 
 .color-Left{
-    fill: blue;
+    background-color: blue;
 }
 
 .color-Right{
-    fill: green;
+    background-color: green;
 }
 .color-Front{
-    fill: red;
+    background-color: red;
 }
 .color-Back{
-    fill: orange;
+    background-color: orange;
 }
 
 .color-unknown{
-    fill: grey;
+    background-color: grey;
 }
 
 .paint_button{

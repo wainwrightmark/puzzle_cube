@@ -31,7 +31,7 @@ pub struct TransformTranslate{
 
 impl TransformTranslate{
     pub fn get_text(self)-> String{
-        format!("translate3d({}px,{}px,{}px)", self.x, self.y,self.z)
+        format!("translate3d({}vw,{}vw,{}vw)", self.x, self.y,self.z)
     }
 }
 
@@ -63,7 +63,16 @@ pub struct TransformRotate{
 
 
 impl ViewType{
-    pub fn get_face_transform(self, face: FaceColor)->  (TransformRotate, TransformTranslate){
+
+    pub fn get_initial_transform(&self)-> String{
+        match self {
+            ViewType::FlatMap =>"".to_string(),
+            ViewType::Compact3D =>" rotateX(-30deg) rotateY(-45deg) rotateZ(0deg) translate3d(40vw, 5vw, 0)".to_string(),
+            ViewType::Exploded3D =>" rotateX(-30deg) rotateY(-45deg) rotateZ(0deg) translate3d(40vw, 5vw, 0)".to_string(),
+        }
+    }
+
+    pub fn get_face_transform(&self, face: FaceColor)->  (TransformRotate, TransformTranslate){
         
         match self{
             ViewType::FlatMap => {                
@@ -76,14 +85,7 @@ impl ViewType{
             },
             ViewType::Compact3D => {
 
-                let d = (FACELETSIZE + FACELETSPACING) * 3.0;
-
-                // FaceColor.U => $"transform: rotateX(90deg) translate3d(0, 0, {UnitsInPixels(3)});",
-                // FaceColor.L => $"transform: rotateY(-90deg) translate3d(0, 0, {UnitsInPixels(exploded ? ExplodedTranslateUnits : CompactTranslateUnits)});",
-                // FaceColor.F => $"transform: translate3d(0, 0, {UnitsInPixels(3)});",
-                // FaceColor.R => $"transform: rotateY(90deg) translate3d(0, 0, {UnitsInPixels(3)});",
-                // FaceColor.B => $"transform: rotateY(180deg) translate3d(0, 0, {UnitsInPixels(exploded ? ExplodedTranslateUnits : CompactTranslateUnits)});",
-                // FaceColor.D => $"transform: rotateX(-90deg) translate3d(0, 0, {UnitsInPixels(exploded ? ExplodedTranslateUnits : CompactTranslateUnits)});",
+                let d = (FACELETSIZE) * 1.5;
 
                 match face{
                     FaceColor::Up => (TransformRotate{x:90,y:0}, TransformTranslate{x:0.0,y:0.0,z:d}),
@@ -95,8 +97,8 @@ impl ViewType{
                 }
             },
             ViewType::Exploded3D => {
-                let d1 = (FACELETSIZE + FACELETSPACING) * 3.0;
-                let d2 = (FACELETSIZE + FACELETSPACING) * 12.0;
+                let d1 = (FACELETSIZE ) * 1.5;
+                let d2 = (FACELETSIZE ) * 6.0;
                 match face{
                     FaceColor::Up => (TransformRotate{x:90,y:0}, TransformTranslate{x:0.0,y:0.0,z:d1}),
                     FaceColor::Left => (TransformRotate{x:0,y:-90}, TransformTranslate{x:0.0,y:0.0,z:d2}),

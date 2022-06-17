@@ -21,16 +21,20 @@ let onclick: Callback<MouseEvent> =Dispatch::new().apply_callback(move |_| Click
         "color-unknown".to_string()
     };
     let class = classes!("face", color_class);
+    let initial_transform = view.get_initial_transform();
 
     let style = format!(
-        "transform: {} {} {};",
-        face_translate.get_text(),
-        face_rotate.get_text(),
-        facelet_translate.get_text()
+        "transform: {initial_transform} {face_rotate} {face_translate} {facelet_translate}; width: {size}vw; height: {size}vw; transform-origin: {origin}vw {origin}vw;",
+        initial_transform = initial_transform,
+        face_rotate = face_rotate.get_text(),
+        face_translate = face_translate.get_text(),        
+        facelet_translate = facelet_translate.get_text(),
+        size = FACELETSIZE.to_string(),
+        origin = (FACELETSIZE * 1.5).to_string(),
     );
 
     html! {
-        <rect {class} {style} {onclick} width={FACELETSIZE.to_string()} height={FACELETSIZE.to_string()} rx="1" ></rect>
+        <div {class} {style} {onclick}   ></div>
     }
 }
 

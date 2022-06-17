@@ -11,20 +11,15 @@ use yewdux::prelude::*;
 
 #[function_component(App)]
 pub fn app() -> Html {
-    let view_box = format!("0 0 {SVG_WIDTH} {SVG_HEIGHT}");
-    let width = format!("{SVG_WIDTH}");
-    let height = format!("{SVG_HEIGHT}");
 
+    
     html! {
 
             <div class="paper container margin-bottom-large">
-            <svg viewBox={view_box} class="cubesvg" >
-            <rect x="0" y="0" {width} {height} fill="white"  />
-            //<g style={"transform: rotateX(-30deg) rotateY(-45deg) rotateZ(0deg);"}>
+            <div class="cube-area" >                    
             <CubieCubeView />
-            <FaceletCubeView />
-            //</g>
-            </svg>
+            <FaceletCubeView />            
+            </div>
             <br/>
             <SolutionView/>
     <ButtonsControl/>
@@ -136,33 +131,6 @@ pub fn solution_view() -> Html{
     html!(<code> </code>)
     }
 }
-}
-
-// #[function_component(SymButtons)]
-// pub fn sym_buttons() -> Html {
-//     html!(
-//         <div class="row">
-//                     <MoveButton cube={F2_SYMMETRY} name={"Sym: F2"} />
-//                     <MoveButton cube={U4_SYMMETRY} name={"Sym: U4"} />
-//                     <MoveButton cube={URF3_SYMMETRY} name={"Sym: URF3"} />
-//                     <MoveButton cube={MIRROR_LR2_SYMMETRY} name={"Sym: LR2"} />
-
-//                 </div>
-//     )
-// }
-
-#[function_component(PaintButtons)]
-pub fn paint_buttons() -> Html {
-    html!(
-
-        <div class="row">
-                    <MoveButton cube={F2_SYMMETRY} name={"Sym: F2"} />
-                    <MoveButton cube={U4_SYMMETRY} name={"Sym: U4"} />
-                    <MoveButton cube={URF3_SYMMETRY} name={"Sym: URF3"} />
-                    <MoveButton cube={MIRROR_LR2_SYMMETRY} name={"Sym: LR2"} />
-
-                </div>
-    )
 }
 
 #[derive(PartialEq, Eq, Properties)]
