@@ -20,14 +20,13 @@ pub fn face(color: Option<FaceColor>, facelet_position: FaceletPosition, view: V
     let class = classes!("face", color_class);
     let initial_transform = view.get_initial_transform();
 
-    let all_transforms = initial_transform.into_iter()
-    .chain(face_transforms.into_iter())
-    .chain(std::iter:: once(facelet_transform));
+    let all_transforms = initial_transform
+        .into_iter()
+        .chain(face_transforms.into_iter())
+        .chain(std::iter::once(facelet_transform));
 
     let combined_transforms = Transform::combine_transforms(all_transforms);
     let style = Transform::get_transform_string(&combined_transforms, &"%".to_string());
-
-
 
     html! {
         <div {class} {style} {onclick}   ></div>
@@ -41,8 +40,5 @@ fn get_facelet_transform(facelet_position: FaceletPosition) -> Transform {
     let vp = (facelet_position.get_vertical_position() as usize) as f32;
     let y: f32 = vp * (FACELETSIZE + FACELETSPACING);
 
-    Transform::Translate {
-        x,
-        y
-    }
+    Transform::Translate { x, y }
 }

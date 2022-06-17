@@ -289,13 +289,15 @@ impl SerialSolveCoordinator {
         while iterations < max_iterations {
             if let Some(next) = self.queue.pop() {
                 if let Some(solution) = next.iterate(self) {
-                    if self.try_add_solution(solution.clone())  {
-                        debug!("Solved with {} moves in {:?} iterations", solution.moves, iterations);
+                    if self.try_add_solution(solution.clone()) {
+                        debug!(
+                            "Solved with {} moves in {:?} iterations",
+                            solution.moves, iterations
+                        );
 
-                        if solution.moves < stopping_length{
+                        if solution.moves < stopping_length {
                             return Some(solution);
                         }
-                        
                     }
                 }
             } else {
@@ -307,13 +309,16 @@ impl SerialSolveCoordinator {
         }
         match self.solution.clone() {
             Some(s) => {
-                debug!("Could not find better solution in {:?} iterations", iterations);
+                debug!(
+                    "Could not find better solution in {:?} iterations",
+                    iterations
+                );
                 return Some(s);
-            },
+            }
             None => {
                 debug!("Failed to solve in {:?} iterations", iterations);
                 return None;
-            },
+            }
         };
     }
 

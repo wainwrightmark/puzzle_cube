@@ -11,7 +11,12 @@ pub fn facelet_cube() -> Html {
     let cube_state = use_store_value::<CubeState>().as_ref().clone();
     let view_type = use_selector(|v: &ViewState| v.view_type);
 
-    if let SomeCube::Facelet { cube, color: _, error:_ } = cube_state.cube {
+    if let SomeCube::Facelet {
+        cube,
+        color: _,
+        error: _,
+    } = cube_state.cube
+    {
         FaceletPosition::iter()
             .map(|position| {
                 let color = cube.facelets[position as usize];

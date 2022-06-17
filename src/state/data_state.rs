@@ -14,7 +14,7 @@ impl DataState {
         self.data.is_some()
     }
 
-    pub fn with_generate_data(self: Rc<Self>)-> Rc<Self>{
+    pub fn with_generate_data(self: Rc<Self>) -> Rc<Self> {
         if self.is_generated() {
             self
         } else {
@@ -25,10 +25,10 @@ impl DataState {
 
             debug!("Solve generated in {:?}", diff);
 
-            Self{
-                data:Some(data.into())
-            }.into()
-
+            Self {
+                data: Some(data.into()),
+            }
+            .into()
         }
     }
 }

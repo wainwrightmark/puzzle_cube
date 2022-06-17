@@ -4,12 +4,11 @@ use itertools::Itertools;
 use serde::*;
 
 use std::rc::Rc;
-use yewdux::{storage, prelude::*};
+use yewdux::{prelude::*, storage};
 
 #[derive(PartialEq, Eq, Clone, Default, Serialize, Deserialize)]
 pub struct CubeState {
     pub cube: SomeCube,
-    
 }
 
 impl Store for CubeState {
@@ -28,13 +27,23 @@ impl Store for CubeState {
 
 impl CubeState {
     pub fn is_cubie(&self) -> bool {
-        matches!(self.cube, SomeCube::Cubie { cube: _, solution:_ })
+        matches!(
+            self.cube,
+            SomeCube::Cubie {
+                cube: _,
+                solution: _
+            }
+        )
     }
-    
+
     pub fn is_solved(&self) -> bool {
         match &self.cube {
             SomeCube::Cubie { cube: _, solution } => solution.is_some(),
-            SomeCube::Facelet { cube:_, color:_, error:_ } => false,
+            SomeCube::Facelet {
+                cube: _,
+                color: _,
+                error: _,
+            } => false,
         }
     }
 
@@ -88,7 +97,7 @@ pub enum SomeCube {
     Facelet {
         cube: Rc<FaceletCube>,
         color: Option<FaceColor>,
-        error: Option<String>
+        error: Option<String>,
     },
 }
 
@@ -96,7 +105,7 @@ impl Default for SomeCube {
     fn default() -> Self {
         SomeCube::Cubie {
             cube: CubieCube::default().into(),
-            solution: None
+            solution: None,
         }
     }
 }
@@ -108,12 +117,19 @@ pub struct SetPaintColorMsg {
 impl Reducer<CubeState> for SetPaintColorMsg {
     fn apply(&self, state: Rc<CubeState>) -> Rc<CubeState> {
         match state.cube.clone() {
-            SomeCube::Cubie { cube: _ , solution: _} => state,
-            SomeCube::Facelet { cube, color: _, error } => CubeState {
+            SomeCube::Cubie {
+                cube: _,
+                solution: _,
+            } => state,
+            SomeCube::Facelet {
+                cube,
+                color: _,
+                error,
+            } => CubeState {
                 cube: SomeCube::Facelet {
                     cube,
                     color: Some(self.color),
-                    error
+                    error,
                 },
             }
             .into(),
@@ -128,7 +144,10 @@ pub struct ClickedMsg {
 impl Reducer<CubeState> for ClickedMsg {
     fn apply(&self, state: Rc<CubeState>) -> Rc<CubeState> {
         match state.cube.clone() {
-            SomeCube::Cubie { cube: _ , solution: _} => state,
+            SomeCube::Cubie {
+                cube: _,
+                solution: _,
+            } => state,
             SomeCube::Facelet { cube, color, error } => {
                 if self.position.get_horizontal_position() == HorizontalPosition::Middle
                     && self.position.get_vertical_position() == VerticalPosition::Middle
@@ -137,7 +156,7 @@ impl Reducer<CubeState> for ClickedMsg {
                         cube: SomeCube::Facelet {
                             cube,
                             color: Some(self.position.get_face()),
-                            error
+                            error,
                         },
                     }
                     .into()
@@ -145,7 +164,7 @@ impl Reducer<CubeState> for ClickedMsg {
                     let mut new_cube = (*cube).clone();
                     new_cube.facelets[self.position as usize] = color;
 
-                    let err = match new_cube.validate_colors(){
+                    let err = match new_cube.validate_colors() {
                         Ok(_) => None,
                         Err(s) => Some(s),
                     };
@@ -154,7 +173,7 @@ impl Reducer<CubeState> for ClickedMsg {
                         cube: SomeCube::Facelet {
                             cube: new_cube.into(),
                             color,
-                            error
+                            error,
                         },
                     }
                     .into()
@@ -181,43 +200,53 @@ impl Reducer<CubeState> for BasicControlMsg {
                     cube: SomeCube::Facelet {
                         cube: FaceletCube::from((*cube).clone()).into(),
                         color: None,
-                        error: None
+                        error: None,
                     },
                 }
                 .into(),
-                SomeCube::Facelet { cube, color, error:_ } => {
-
-                    match  CubieCube::try_from((*cube).clone()) {
-                        Ok(cubiecube) => CubeState {
-                            cube: SomeCube::Cubie {
-                                cube: Rc::from(cubiecube),
-                                solution: None,
-                            },
-                            
-                        }
-                        .into(),
-                        Err(err) =>CubeState{
-                            cube: SomeCube::Facelet { cube, color, error: err.into() },
-                        }.into(),
+                SomeCube::Facelet {
+                    cube,
+                    color,
+                    error: _,
+                } => match CubieCube::try_from((*cube).clone()) {
+                    Ok(cubiecube) => CubeState {
+                        cube: SomeCube::Cubie {
+                            cube: Rc::from(cubiecube),
+                            solution: None,
+                        },
                     }
-                }
+                    .into(),
+                    Err(err) => CubeState {
+                        cube: SomeCube::Facelet {
+                            cube,
+                            color,
+                            error: err.into(),
+                        },
+                    }
+                    .into(),
+                },
             },
             BasicControlMsg::Reset => match state.cube.clone() {
-                SomeCube::Cubie { cube: _, solution:_ } => CubeState {
+                SomeCube::Cubie {
+                    cube: _,
+                    solution: _,
+                } => CubeState {
                     cube: SomeCube::Cubie {
                         cube: CubieCube::default().into(),
                         solution: None,
                     },
-                    
                 }
                 .into(),
-                SomeCube::Facelet { cube: _, color: _, error:_ } => CubeState {
+                SomeCube::Facelet {
+                    cube: _,
+                    color: _,
+                    error: _,
+                } => CubeState {
                     cube: SomeCube::Facelet {
                         cube: FaceletCube::default().into(),
                         color: None,
-                        error:None
+                        error: None,
                     },
-                    
                 }
                 .into(),
             },
@@ -227,21 +256,26 @@ impl Reducer<CubeState> for BasicControlMsg {
                 let new_cube = CubieCube::random_cube(seed);
 
                 match state.cube.clone() {
-                    SomeCube::Cubie { cube: _, solution:_ } => CubeState {
+                    SomeCube::Cubie {
+                        cube: _,
+                        solution: _,
+                    } => CubeState {
                         cube: SomeCube::Cubie {
                             cube: new_cube.into(),
                             solution: None,
                         },
-                        
                     }
                     .into(),
-                    SomeCube::Facelet { cube: _, color: _, error:_ } => CubeState {
+                    SomeCube::Facelet {
+                        cube: _,
+                        color: _,
+                        error: _,
+                    } => CubeState {
                         cube: SomeCube::Facelet {
                             cube: Rc::from(FaceletCube::from(new_cube)),
                             color: None,
-                            error:None
+                            error: None,
                         },
-                        
                     }
                     .into(),
                 }
@@ -252,18 +286,28 @@ impl Reducer<CubeState> for BasicControlMsg {
                         cube: cube.invert().into(),
                         solution: None,
                     },
-                    
                 }
                 .into(),
-                SomeCube::Facelet { cube: _, color: _, error:_ } => state,
+                SomeCube::Facelet {
+                    cube: _,
+                    color: _,
+                    error: _,
+                } => state,
             },
             BasicControlMsg::Clear => match state.cube.clone() {
-                SomeCube::Cubie { cube: _, solution:_ } => state,
-                SomeCube::Facelet { cube: _, color: _, error:_ } => CubeState {
+                SomeCube::Cubie {
+                    cube: _,
+                    solution: _,
+                } => state,
+                SomeCube::Facelet {
+                    cube: _,
+                    color: _,
+                    error: _,
+                } => CubeState {
                     cube: SomeCube::Facelet {
                         cube: Rc::from(FaceletCube::CLEARED),
                         color: None,
-                        error:None
+                        error: None,
                     },
                 }
                 .into(),
@@ -297,13 +341,17 @@ impl Reducer<CubeState> for MoveMsg {
                 CubeState {
                     cube: SomeCube::Cubie {
                         cube: cube.multiply(&self.cube).into(),
-                        solution
+                        solution,
                     },
                 }
                 .into()
             }
 
-            SomeCube::Facelet { cube: _, color: _, error:_ } => state,
+            SomeCube::Facelet {
+                cube: _,
+                color: _,
+                error: _,
+            } => state,
         }
     }
 }
@@ -326,7 +374,6 @@ impl Reducer<CubeState> for SolveMsg {
 
                         CubeState {
                             cube: SomeCube::Cubie { cube, solution },
-                            
                         }
                         .into()
                     }
@@ -334,7 +381,11 @@ impl Reducer<CubeState> for SolveMsg {
                     None => state,
                 }
             }
-            SomeCube::Facelet { cube: _, color: _, error:_ } => state,
+            SomeCube::Facelet {
+                cube: _,
+                color: _,
+                error: _,
+            } => state,
         }
     }
 }
