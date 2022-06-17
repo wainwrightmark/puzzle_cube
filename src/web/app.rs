@@ -1,7 +1,5 @@
-
-
 use crate::core::prelude::*;
-use crate::state::{prelude::*};
+use crate::state::prelude::*;
 use crate::web::prelude::*;
 
 use itertools::Itertools;
@@ -11,14 +9,12 @@ use yewdux::prelude::*;
 
 #[function_component(App)]
 pub fn app() -> Html {
-
-    
     html! {
 
             <div class="paper container margin-bottom-large">
-            <div class="cube-area" >                    
+            <div class="cube-area" >
             <CubieCubeView />
-            <FaceletCubeView />            
+            <FaceletCubeView />
             </div>
             <br/>
             <SolutionView/>
@@ -35,16 +31,13 @@ pub fn buttons_control() -> Html {
 
     if is_cubie {
         let move_buttons = Move::MOVESBYNUMBER
-        .into_iter()
+            .into_iter()
             .map(|my_move| {
                 let cube = my_move.get_cube().clone();
                 let name = format!("{}", my_move);
                 html!(<MoveButton {cube} {name} />)
             })
             .collect::<Html>();
-
-
-
 
         html!(
             <div id="buttons">
@@ -61,7 +54,7 @@ pub fn buttons_control() -> Html {
                 {move_buttons}
 
             </div>
-            
+
             <ViewButtons/>
         </div>
 
@@ -92,45 +85,46 @@ pub fn buttons_control() -> Html {
 }
 
 #[function_component(SolveGenerateButton)]
-pub fn solve_or_generate_button() -> Html{    
-    let is_data_generated = use_selector(|x: &DataState| x.is_generated()).as_ref().clone();
-    let is_solved = use_selector(|x: &CubeState| x.solution.is_some()).as_ref().clone();
+pub fn solve_or_generate_button() -> Html {
+    let is_data_generated = use_selector(|x: &DataState| x.is_generated())
+        .as_ref()
+        .clone();
+    let is_solved = use_selector(|x: &CubeState| x.solution.is_some())
+        .as_ref()
+        .clone();
 
-    let generate: Callback<MouseEvent> = Dispatch::new().apply_callback(|_| GenerateMsg {      
-    });
-    let solve: Callback<MouseEvent> = Dispatch::new().apply_callback(|_| SolveMsg {
-    });
+    let generate: Callback<MouseEvent> = Dispatch::new().apply_callback(|_| GenerateMsg {});
+    let solve: Callback<MouseEvent> = Dispatch::new().apply_callback(|_| SolveMsg {});
 
-    if is_data_generated{
+    if is_data_generated {
         html!(<button class="size-2 col btn-small"  onclick={solve} disabled={is_solved} > {"Solve"} </button>)
-    }
-    else{
-        html!(        
+    } else {
+        html!(
             <button class="size-2 col btn-small"  onclick={generate} > {"Generate Solve Data"} </button>
         )
     }
-
-    
-
 }
 
 #[function_component(SolutionView)]
-pub fn solution_view() -> Html{
-    let solution = use_selector(|x: &CubeState| x.solution.clone()).as_ref().clone();
+pub fn solution_view() -> Html {
+    let solution = use_selector(|x: &CubeState| x.solution.clone())
+        .as_ref()
+        .clone();
 
     match solution {
-    Some(vector) => {
-        let len = vector.len();
-        let txt = vector.into_iter().map(|x|x.to_string()) .join(" ") + format!(" ({})", &len).as_str();
-        html!(<code>{txt} </code>)
-    },
-    None => {
-        let _onclick: Option<Callback<MouseEvent>> =
-        Some(Dispatch::new().apply_callback(move |_| SolveMsg{}));
+        Some(vector) => {
+            let len = vector.len();
+            let txt = vector.into_iter().map(|x| x.to_string()).join(" ")
+                + format!(" ({})", &len).as_str();
+            html!(<code>{txt} </code>)
+        }
+        None => {
+            let _onclick: Option<Callback<MouseEvent>> =
+                Some(Dispatch::new().apply_callback(move |_| SolveMsg {}));
 
-    html!(<code> </code>)
+            html!(<code> </code>)
+        }
     }
-}
 }
 
 #[derive(PartialEq, Eq, Properties)]
@@ -210,19 +204,26 @@ pub struct MoveButtonProperties {
 fn move_button(properties: &MoveButtonProperties) -> Html {
     let cube = properties.cube.clone();
 
-    let is_highlighted = use_selector_with_deps(|state: &CubeState, c| match &state.solution {
-    Some(moves) => match moves.first(){
-    Some(m) => m.get_cube() == c,
-    None => false,
-},
-    None => false,
-} , cube.clone());
+    let is_highlighted = use_selector_with_deps(
+        |state: &CubeState, c| match &state.solution {
+            Some(moves) => match moves.first() {
+                Some(m) => m.get_cube() == c,
+                None => false,
+            },
+            None => false,
+        },
+        cube.clone(),
+    );
 
     let onclick: Option<Callback<MouseEvent>> =
         Some(Dispatch::new().apply_callback(move |_| MoveMsg { cube: cube.clone() }));
-        let extra_class = if *is_highlighted {Some("btn-success")} else {None};
+    let extra_class = if *is_highlighted {
+        Some("btn-success")
+    } else {
+        None
+    };
 
-        let class = classes!("size-2", "col", "btn-small", extra_class );
+    let class = classes!("size-2", "col", "btn-small", extra_class);
 
     html!(<button {onclick} {class}> {properties.name.clone()}  </button>)
 }

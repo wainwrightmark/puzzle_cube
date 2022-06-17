@@ -1,16 +1,13 @@
-
-
 use crate::core::prelude::*;
 use crate::state::prelude::*;
 use crate::web::prelude::*;
-
 
 use strum::IntoEnumIterator;
 use yew::prelude::*;
 use yewdux::prelude::*;
 
 #[function_component(CubieCubeView)]
-pub fn cubie_cube() -> Html {    
+pub fn cubie_cube() -> Html {
     let centres = FaceColor::iter()
         .map(|face| html!(<Centre {face} />))
         .collect::<Html>();
@@ -40,8 +37,11 @@ pub struct EdgeProperties {
 fn edge(properties: &EdgeProperties) -> Html {
     let view = use_selector(|s: &ViewState| s.view_type);
     let edge = properties.edge;
-    let option = *use_selector_with_deps(|s: &CubeState, edge|
-        s.try_get_edge_position(edge), properties.edge).as_ref();
+    let option = *use_selector_with_deps(
+        |s: &CubeState, edge| s.try_get_edge_position(edge),
+        properties.edge,
+    )
+    .as_ref();
 
     if let Some((position, orientation)) = option {
         let position0 = position.get_location(0, orientation);
@@ -71,11 +71,13 @@ fn corner(properties: &CornerProperties) -> Html {
     let view = use_selector(|s: &ViewState| s.view_type);
     let _some_cube = use_selector(|s: &CubeState| s.cube.clone());
     let corner = properties.corner;
-    let option = *use_selector_with_deps(|s: &CubeState, corner|
-        s.try_get_corner_position(corner), properties.corner).as_ref();
+    let option = *use_selector_with_deps(
+        |s: &CubeState, corner| s.try_get_corner_position(corner),
+        properties.corner,
+    )
+    .as_ref();
 
     if let Some((position, orientation)) = option {
-
         let position0 = position.get_location(0, orientation);
         let color0 = Some(corner.get_color(0));
 
@@ -106,15 +108,14 @@ pub struct CenterProperties {
 fn centre(properties: &CenterProperties) -> Html {
     let view = use_selector(|s: &ViewState| s.view_type);
     let is_cubie = *use_selector(|x: &CubeState| x.is_cubie());
-    if is_cubie{
+    if is_cubie {
         let facelet_position = FaceletPosition::from((
             properties.face,
             HorizontalPosition::Middle,
             VerticalPosition::Middle,
         ));
         face(Some(properties.face), facelet_position, *view)
-    }
-    else {
+    } else {
         Html::default()
     }
 }

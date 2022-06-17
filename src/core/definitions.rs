@@ -1,26 +1,20 @@
-
-
 use crate::core::prelude::FaceColor::*;
-
 
 use strum_macros::*;
 
-
 pub const NPERM4: usize = 4 * 3 * 2;
 pub const NCHOOSE84: usize = 70; //8 choose 4
-pub const NTWIST: usize = 2187;// 3 ** 7;
-pub const NFLIP: usize = 2048;// 2 ** 11;
+pub const NTWIST: usize = 2187; // 3 ** 7;
+pub const NFLIP: usize = 2048; // 2 ** 11;
 pub const NSLICESORTED: usize = 11880; //12 choose 4 * 4 factorial
-pub const NSLICE: usize = 495;  //12 choose 4
+pub const NSLICE: usize = 495; //12 choose 4
 pub const NFLIPSLICECLASS: usize = 64430;
 pub const NUEDGESPHASE2: usize = 1680; //8 choose 4 * 24
-pub const NCORNERS: usize = 40320;// 8 factorial;
+pub const NCORNERS: usize = 40320; // 8 factorial;
 pub const NCORNERSCLASS: usize = 2768;
 pub const NUDEDGES: usize = 8 * 7 * 6 * 5 * 4 * 3 * 2; //8 factorial
-pub const NSYM: usize = 48;// 2 * 3 * 4 * 2;
-pub const NSYMD4H: usize = 24;// 2 * 3 * 4;
-
-
+pub const NSYM: usize = 48; // 2 * 3 * 4 * 2;
+pub const NSYMD4H: usize = 24; // 2 * 3 * 4;
 
 #[derive(
     Debug,
@@ -44,7 +38,7 @@ pub enum HorizontalPosition {
     Right = 2,
 }
 
-impl From<HorizontalPosition> for usize{
+impl From<HorizontalPosition> for usize {
     fn from(ep: HorizontalPosition) -> Self {
         ep as usize
     }
@@ -72,7 +66,7 @@ pub enum VerticalPosition {
     Bottom = 2,
 }
 
-impl From<VerticalPosition> for usize{
+impl From<VerticalPosition> for usize {
     fn from(ep: VerticalPosition) -> Self {
         ep as usize
     }
@@ -99,7 +93,7 @@ pub enum EdgeOrientation {
     One = 1,
 }
 
-impl From<EdgeOrientation> for usize{
+impl From<EdgeOrientation> for usize {
     fn from(ep: EdgeOrientation) -> Self {
         ep as usize
     }
@@ -110,7 +104,6 @@ impl From<usize> for EdgeOrientation {
         EdgeOrientation::from_repr(x as u8).unwrap()
     }
 }
-
 
 #[derive(
     Debug,
@@ -137,7 +130,7 @@ pub enum CornerOrientation {
     Five = 5,
 }
 
-impl From<CornerOrientation> for usize{
+impl From<CornerOrientation> for usize {
     fn from(ep: CornerOrientation) -> Self {
         ep as usize
     }
@@ -163,7 +156,7 @@ impl From<usize> for CornerOrientation {
     FromRepr,
     EnumIter,
     EnumCount,
-    Hash
+    Hash,
 )]
 #[repr(u8)]
 pub enum FaceColor {
@@ -176,19 +169,19 @@ pub enum FaceColor {
 }
 
 impl FaceColor {
+    pub fn get_color_string(self) -> String {
+        match self {
+            Up => "yellow",
+            Right => "green",
+            Front => "red",
+            Down => "white",
+            Left => "blue",
+            Back => "orange",
+        }
+        .to_string()
+    }
 
-pub fn get_color_string(self)-> String{
-    match self{
-        Up => "yellow",
-        Right => "green",
-        Front => "red",
-        Down => "white",
-        Left => "blue",
-        Back => "orange"
-    }.to_string()
-}
-
-    pub const fn get_x(self)-> usize{
+    pub const fn get_x(self) -> usize {
         match self {
             Up => 1,
             Right => 2,
@@ -199,7 +192,7 @@ pub fn get_color_string(self)-> String{
         }
     }
 
-    pub const fn get_y(self)-> usize{
+    pub const fn get_y(self) -> usize {
         match self {
             Up => 0,
             Right => 1,
@@ -211,7 +204,7 @@ pub fn get_color_string(self)-> String{
     }
 }
 
-impl From<FaceColor> for usize{
+impl From<FaceColor> for usize {
     fn from(ep: FaceColor) -> Self {
         ep as usize
     }
@@ -239,7 +232,7 @@ pub enum MoveNumber {
     Three = 3,
 }
 
-impl From<MoveNumber> for usize{
+impl From<MoveNumber> for usize {
     fn from(ep: MoveNumber) -> Self {
         ep as usize
     }

@@ -1,43 +1,52 @@
 use crate::core::prelude::CornerPosition::*;
 use crate::core::prelude::EdgePosition::*;
 
-
 use crate::core::prelude::*;
 use array_const_fn_init::array_const_fn_init;
 use strum::EnumCount;
 
-
 type CO = CornerOrientation;
 type EO = EdgeOrientation;
 
-pub const MOVE_CUBES: [CubieCube; Move::COUNT]
-=[
-UP_DEFAULT_CUBE,
-UP_DEFAULT_CUBE.multiply(&UP_DEFAULT_CUBE),
-UP_DEFAULT_CUBE.multiply(&UP_DEFAULT_CUBE).multiply(&UP_DEFAULT_CUBE),
-RIGHT_DEFAULT_CUBE,
-RIGHT_DEFAULT_CUBE.multiply(&RIGHT_DEFAULT_CUBE),
-RIGHT_DEFAULT_CUBE.multiply(&RIGHT_DEFAULT_CUBE).multiply(&RIGHT_DEFAULT_CUBE),
-FRONT_DEFAULT_CUBE,
-FRONT_DEFAULT_CUBE.multiply(&FRONT_DEFAULT_CUBE),
-FRONT_DEFAULT_CUBE.multiply(&FRONT_DEFAULT_CUBE).multiply(&FRONT_DEFAULT_CUBE),
-DOWN_DEFAULT_CUBE,
-DOWN_DEFAULT_CUBE.multiply(&DOWN_DEFAULT_CUBE),
-DOWN_DEFAULT_CUBE.multiply(&DOWN_DEFAULT_CUBE).multiply(&DOWN_DEFAULT_CUBE),
-LEFT_DEFAULT_CUBE,
-LEFT_DEFAULT_CUBE.multiply(&LEFT_DEFAULT_CUBE),
-LEFT_DEFAULT_CUBE.multiply(&LEFT_DEFAULT_CUBE).multiply(&LEFT_DEFAULT_CUBE),
-BACK_DEFAULT_CUBE,
-BACK_DEFAULT_CUBE.multiply(&BACK_DEFAULT_CUBE),
-BACK_DEFAULT_CUBE.multiply(&BACK_DEFAULT_CUBE).multiply(&BACK_DEFAULT_CUBE)
+pub const MOVE_CUBES: [CubieCube; Move::COUNT] = [
+    UP_DEFAULT_CUBE,
+    UP_DEFAULT_CUBE.multiply(&UP_DEFAULT_CUBE),
+    UP_DEFAULT_CUBE
+        .multiply(&UP_DEFAULT_CUBE)
+        .multiply(&UP_DEFAULT_CUBE),
+    RIGHT_DEFAULT_CUBE,
+    RIGHT_DEFAULT_CUBE.multiply(&RIGHT_DEFAULT_CUBE),
+    RIGHT_DEFAULT_CUBE
+        .multiply(&RIGHT_DEFAULT_CUBE)
+        .multiply(&RIGHT_DEFAULT_CUBE),
+    FRONT_DEFAULT_CUBE,
+    FRONT_DEFAULT_CUBE.multiply(&FRONT_DEFAULT_CUBE),
+    FRONT_DEFAULT_CUBE
+        .multiply(&FRONT_DEFAULT_CUBE)
+        .multiply(&FRONT_DEFAULT_CUBE),
+    DOWN_DEFAULT_CUBE,
+    DOWN_DEFAULT_CUBE.multiply(&DOWN_DEFAULT_CUBE),
+    DOWN_DEFAULT_CUBE
+        .multiply(&DOWN_DEFAULT_CUBE)
+        .multiply(&DOWN_DEFAULT_CUBE),
+    LEFT_DEFAULT_CUBE,
+    LEFT_DEFAULT_CUBE.multiply(&LEFT_DEFAULT_CUBE),
+    LEFT_DEFAULT_CUBE
+        .multiply(&LEFT_DEFAULT_CUBE)
+        .multiply(&LEFT_DEFAULT_CUBE),
+    BACK_DEFAULT_CUBE,
+    BACK_DEFAULT_CUBE.multiply(&BACK_DEFAULT_CUBE),
+    BACK_DEFAULT_CUBE
+        .multiply(&BACK_DEFAULT_CUBE)
+        .multiply(&BACK_DEFAULT_CUBE),
 ];
 
 /// Cubes representing the basic symmetries and their combinations
-pub const SYMMETRY_CUBES: [CubieCube; 48]= array_const_fn_init![get_symmetry_cube; 48];
+pub const SYMMETRY_CUBES: [CubieCube; 48] = array_const_fn_init![get_symmetry_cube; 48];
 
 /// The inverses of the symmetry cubes
-pub const SYMMETRY_CUBES_INVERTED: [CubieCube; 48]= array_const_fn_init![get_inverse_symmetry_cube; 48];
-
+pub const SYMMETRY_CUBES_INVERTED: [CubieCube; 48] =
+    array_const_fn_init![get_inverse_symmetry_cube; 48];
 
 // const fn get_symmetry_cube(i: usize) -> CubieCube {
 
@@ -75,38 +84,36 @@ pub const SYMMETRY_CUBES_INVERTED: [CubieCube; 48]= array_const_fn_init![get_inv
 // }
 
 const fn get_symmetry_cube(i: usize) -> CubieCube {
-
     let mut urf3 = i / 16;
     let mut f2 = (i % 16) / 8;
     let mut u4 = (i % 8) / 2;
     let mut lr2 = i % 2;
-    
-    
-    
+
     let mut c = CubieCube::default();
 
-    while urf3 > 0{
-          c=c.multiply(&URF3_SYMMETRY);
-          urf3 -=1;
-         }while f2 > 0{
-          c=c.multiply(&F2_SYMMETRY);
-          f2 -=1;
-         }while u4 > 0{
-          c=c.multiply(&U4_SYMMETRY);
-          u4 -=1;
-         }while lr2 > 0{
-          c=c.multiply(&MIRROR_LR2_SYMMETRY);
-          lr2 -=1;
-         }
+    while urf3 > 0 {
+        c = c.multiply(&URF3_SYMMETRY);
+        urf3 -= 1;
+    }
+    while f2 > 0 {
+        c = c.multiply(&F2_SYMMETRY);
+        f2 -= 1;
+    }
+    while u4 > 0 {
+        c = c.multiply(&U4_SYMMETRY);
+        u4 -= 1;
+    }
+    while lr2 > 0 {
+        c = c.multiply(&MIRROR_LR2_SYMMETRY);
+        lr2 -= 1;
+    }
 
     c
 }
 
-
-const fn get_inverse_symmetry_cube(j: usize) -> CubieCube{    
-    SYMMETRY_CUBES[j].invert()    
+const fn get_inverse_symmetry_cube(j: usize) -> CubieCube {
+    SYMMETRY_CUBES[j].invert()
 }
-
 
 pub const UP_DEFAULT_CUBE: CubieCube = CubieCube {
     edge_positions: [Ub, Ur, Uf, Ul, Dr, Df, Dl, Db, Fr, Fl, Bl, Br],
@@ -115,18 +122,9 @@ pub const UP_DEFAULT_CUBE: CubieCube = CubieCube {
     corner_orientations: [CO::Zero; 8],
 };
 
-
-
 pub const RIGHT_DEFAULT_CUBE: CubieCube = CubieCube {
     edge_positions: [Fr, Uf, Ul, Ub, Br, Df, Dl, Db, Dr, Fl, Bl, Ur],
-    corner_positions: [Dfr,
-    Ufl,
-    Ulb,
-    Urf,
-    Drb,
-    Dlf,
-    Dbl,
-    Ubr],
+    corner_positions: [Dfr, Ufl, Ulb, Urf, Drb, Dlf, Dbl, Ubr],
     edge_orientations: [EO::Zero; 12],
     corner_orientations: [
         CO::Two,
@@ -221,13 +219,12 @@ pub const BACK_DEFAULT_CUBE: CubieCube = CubieCube {
     ],
 };
 
-
 ///120° clockwise rotation around the long diagonal URF-DBL
-pub const URF3_SYMMETRY: CubieCube = CubieCube{
+pub const URF3_SYMMETRY: CubieCube = CubieCube {
     edge_positions: [Uf, Fr, Df, Fl, Ub, Br, Db, Bl, Ur, Dr, Dl, Ul],
     corner_positions: [Urf, Dfr, Dlf, Ufl, Ubr, Drb, Dbl, Ulb],
     edge_orientations: [
-        EO::One,        
+        EO::One,
         EO::Zero,
         EO::One,
         EO::Zero,
@@ -253,7 +250,7 @@ pub const URF3_SYMMETRY: CubieCube = CubieCube{
 };
 
 /// 180° rotation around the axis through the F and B centers
-pub const F2_SYMMETRY : CubieCube = CubieCube{
+pub const F2_SYMMETRY: CubieCube = CubieCube {
     edge_positions: [Dl, Df, Dr, Db, Ul, Uf, Ur, Ub, Fl, Fr, Br, Bl],
     corner_positions: [Dlf, Dfr, Drb, Dbl, Ufl, Urf, Ubr, Ulb],
     edge_orientations: [EO::Zero; 12],
@@ -261,7 +258,7 @@ pub const F2_SYMMETRY : CubieCube = CubieCube{
 };
 
 /// 90° clockwise rotation around the axis through the U and D centers
-pub const U4_SYMMETRY : CubieCube = CubieCube{
+pub const U4_SYMMETRY: CubieCube = CubieCube {
     edge_positions: [Ub, Ur, Uf, Ul, Db, Dr, Df, Dl, Br, Fr, Fl, Bl],
     corner_positions: [Ubr, Urf, Ufl, Ulb, Drb, Dfr, Dlf, Dbl],
     edge_orientations: [
@@ -284,7 +281,7 @@ pub const U4_SYMMETRY : CubieCube = CubieCube{
 /// <summary>
 /// reflection at the plane through the U, D, F, B centers
 /// </summary>
-pub const MIRROR_LR2_SYMMETRY : CubieCube = CubieCube{
+pub const MIRROR_LR2_SYMMETRY: CubieCube = CubieCube {
     edge_positions: [Ul, Uf, Ur, Ub, Dl, Df, Dr, Db, Fl, Fr, Br, Bl],
     corner_positions: [Ufl, Urf, Ubr, Ulb, Dlf, Dfr, Drb, Dbl],
     edge_orientations: [EO::Zero; 12],

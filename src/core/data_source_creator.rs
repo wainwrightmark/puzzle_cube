@@ -1,11 +1,5 @@
 use crate::core::prelude::*;
 
-
-
-
-
-
-
 impl FlipSliceSource {
     pub fn create() -> FlipSliceSource {
         let mut flip_slice_class_index = vec![u16::MAX; 2048 * 495];
@@ -20,7 +14,7 @@ impl FlipSliceSource {
             for flip in 0..2048 {
                 cube.set_flip(flip);
 
-                let index = (2048 * (slice  as usize)) + (flip as usize);
+                let index = (2048 * (slice as usize)) + (flip as usize);
 
                 if flip_slice_class_index[index] == u16::MAX {
                     flip_slice_class_index[index] = class_index as u16;
@@ -127,6 +121,4 @@ impl DataSource {
 
         table
     }
-
-    
 }

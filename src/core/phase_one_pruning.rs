@@ -1,11 +1,4 @@
-
-
 use crate::core::prelude::*;
-
-
-
-
-
 
 impl DataSource {
     fn set_flip_slice_twist_depth3(ix: usize, value: u32, tab: &mut Vec<u32>) {
@@ -37,17 +30,15 @@ impl DataSource {
         let mut done = 1;
         let mut depth = 0u32;
 
-        let mut next = vec![(0,0)];//next is tuples of (fs_class_idx, twist)
+        let mut next = vec![(0, 0)]; //next is tuples of (fs_class_idx, twist)
         let mut current: Vec<(usize, u16)> = Vec::new();
         current.reserve_exact(7950748); //magic number
         next.reserve_exact(7950748);
 
         while depth < 9 {
-            
-            std::mem::swap(&mut next,&mut current);
+            std::mem::swap(&mut next, &mut current);
 
-            for (fs_class_idx, twist) in current.drain(..){
-
+            for (fs_class_idx, twist) in current.drain(..) {
                 let flip_slice = flip_slice_source.flip_slice_rep[fs_class_idx];
                 let flip = (flip_slice % 2048) as u16;
                 let slice = (flip_slice >> 11) as u16;
@@ -56,15 +47,12 @@ impl DataSource {
                     let slice_after_move = moves_source.get_slice(slice, m);
                     let flip_slice_after_move =
                         ((slice_after_move as usize) << 11) + flip_after_move as usize;
-                    let fs_class_idx_after_move = flip_slice_source.flip_slice_class_index
-                        [flip_slice_after_move]
-                        as usize;
+                    let fs_class_idx_after_move =
+                        flip_slice_source.flip_slice_class_index[flip_slice_after_move] as usize;
                     let fs_symmetry_after_move =
                         flip_slice_source.flip_slice_symmetry[flip_slice_after_move];
-                    let twist_after_move = moves_source.get_twist_conj(
-                        moves_source.get_twist(twist, m),
-                        fs_symmetry_after_move,
-                    );
+                    let twist_after_move = moves_source
+                        .get_twist_conj(moves_source.get_twist(twist, m), fs_symmetry_after_move);
                     let idx_after_move =
                         (2187 * fs_class_idx_after_move) + twist_after_move as usize;
 
@@ -75,10 +63,9 @@ impl DataSource {
                             &mut table,
                         );
                         done += 1;
-                        if depth < 8{
+                        if depth < 8 {
                             next.push((fs_class_idx_after_move, twist_after_move));
                         }
-                        
 
                         let mut sym = fs_sym[fs_class_idx_after_move];
                         if sym != 1 {
@@ -101,10 +88,12 @@ impl DataSource {
                                             &mut table,
                                         );
                                         done += 1;
-                                        if depth < 8{
-                                            next.push((fs_class_idx_after_move, twist_after_move_and_symmetry));
+                                        if depth < 8 {
+                                            next.push((
+                                                fs_class_idx_after_move,
+                                                twist_after_move_and_symmetry,
+                                            ));
                                         }
-                                        
                                     }
                                 }
                             }
@@ -122,7 +111,6 @@ impl DataSource {
             for fs_class_index in 0..NFLIPSLICECLASS {
                 let mut twist = 0;
                 while twist < 2187 {
-
                     let is_match = Self::get_flip_slice_twist_depth3(idx, &table) == 3;
 
                     if is_match {
@@ -146,14 +134,8 @@ impl DataSource {
                             let idx_after_move =
                                 (2187 * fs_class_idx_after_move) + twist_after_move as usize;
 
-                                if Self::get_flip_slice_twist_depth3(idx_after_move, &table)
-                                == depth3
-                            {
-                                Self::set_flip_slice_twist_depth3(
-                                    idx,
-                                    (depth + 1) % 3,
-                                    &mut table,
-                                );
+                            if Self::get_flip_slice_twist_depth3(idx_after_move, &table) == depth3 {
+                                Self::set_flip_slice_twist_depth3(idx, (depth + 1) % 3, &mut table);
                                 done += 1;
                                 break;
                             }
@@ -168,10 +150,8 @@ impl DataSource {
             depth += 1;
         }
 
-
         table
     }
-
 
     pub fn make_flip_slice_sym(flip_slice_source: &FlipSliceSource) -> [u16; NFLIPSLICECLASS] {
         let mut cc = CubieCube::default();

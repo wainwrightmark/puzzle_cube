@@ -1,37 +1,28 @@
-
-
-
-
-
 use crate::core::prelude::*;
 
+use strum::EnumCount;
 
-use strum::{EnumCount};
+pub trait CubeProperty<const NMOVES: usize, const NVALUES: usize> {
+    fn is_edges(&self) -> bool;
+    fn defined_moves(&self) -> [Move; NMOVES];
 
-pub trait CubeProperty<const NMOVES:usize, const NVALUES: usize> {
-    fn is_edges(&self)->bool;
-    fn defined_moves(&self)->[Move; NMOVES];
-
-    fn get_value(&self, cube: &CubieCube)-> u16;
+    fn get_value(&self, cube: &CubieCube) -> u16;
     fn set_value(&self, cube: &mut CubieCube, value: u16);
 
-    fn create(&self)-> Vec<u16>{
+    fn create(&self) -> Vec<u16> {
         let mut v = Vec::<u16>::new();
         v.reserve_exact(NVALUES * NMOVES);
 
-        for value in 0..NVALUES{
-
+        for value in 0..NVALUES {
             let mut cube = CubieCube::default();
             self.set_value(&mut cube, value as u16);
-            for m_index in 0..NMOVES{
+            for m_index in 0..NMOVES {
                 let m = self.defined_moves()[m_index];
-                let applied = if self.is_edges()
-                {
+                let applied = if self.is_edges() {
                     m.apply_edges(cube.clone())
-                }
-                else{
+                } else {
                     m.apply_corners(cube.clone())
-                };          
+                };
 
                 let new_value = self.get_value(&applied);
 
@@ -45,16 +36,16 @@ pub trait CubeProperty<const NMOVES:usize, const NVALUES: usize> {
 
 pub struct SliceProperty {}
 
-impl CubeProperty<{Move::COUNT}, NSLICE> for SliceProperty {
-    fn is_edges(&self)->bool {
+impl CubeProperty<{ Move::COUNT }, NSLICE> for SliceProperty {
+    fn is_edges(&self) -> bool {
         true
     }
 
-    fn defined_moves(&self)->[Move; Move::COUNT] {
+    fn defined_moves(&self) -> [Move; Move::COUNT] {
         Move::ALLMOVES
     }
 
-    fn get_value(&self, cube: &CubieCube)-> u16 {
+    fn get_value(&self, cube: &CubieCube) -> u16 {
         cube.get_slice()
     }
 
@@ -65,16 +56,16 @@ impl CubeProperty<{Move::COUNT}, NSLICE> for SliceProperty {
 
 pub struct FlipProperty {}
 
-impl CubeProperty<{Move::COUNT}, NFLIP> for FlipProperty {
-    fn is_edges(&self)->bool {
+impl CubeProperty<{ Move::COUNT }, NFLIP> for FlipProperty {
+    fn is_edges(&self) -> bool {
         true
     }
 
-    fn defined_moves(&self)->[Move; Move::COUNT] {
+    fn defined_moves(&self) -> [Move; Move::COUNT] {
         Move::ALLMOVES
     }
 
-    fn get_value(&self, cube: &CubieCube)-> u16 {
+    fn get_value(&self, cube: &CubieCube) -> u16 {
         cube.get_flip()
     }
 
@@ -85,16 +76,16 @@ impl CubeProperty<{Move::COUNT}, NFLIP> for FlipProperty {
 
 pub struct DownEdgesProperty {}
 
-impl CubeProperty<{Move::COUNT}, NSLICESORTED> for DownEdgesProperty {
-    fn is_edges(&self)->bool {
+impl CubeProperty<{ Move::COUNT }, NSLICESORTED> for DownEdgesProperty {
+    fn is_edges(&self) -> bool {
         true
     }
 
-    fn defined_moves(&self)->[Move; Move::COUNT] {
+    fn defined_moves(&self) -> [Move; Move::COUNT] {
         Move::ALLMOVES
     }
 
-    fn get_value(&self, cube: &CubieCube)-> u16 {
+    fn get_value(&self, cube: &CubieCube) -> u16 {
         cube.get_d_edges()
     }
 
@@ -105,16 +96,16 @@ impl CubeProperty<{Move::COUNT}, NSLICESORTED> for DownEdgesProperty {
 
 pub struct UpEdgesProperty {}
 
-impl CubeProperty<{Move::COUNT}, NSLICESORTED> for UpEdgesProperty {
-    fn is_edges(&self)->bool {
+impl CubeProperty<{ Move::COUNT }, NSLICESORTED> for UpEdgesProperty {
+    fn is_edges(&self) -> bool {
         true
     }
 
-    fn defined_moves(&self)->[Move; Move::COUNT] {
+    fn defined_moves(&self) -> [Move; Move::COUNT] {
         Move::ALLMOVES
     }
 
-    fn get_value(&self, cube: &CubieCube)-> u16 {
+    fn get_value(&self, cube: &CubieCube) -> u16 {
         cube.get_u_edges()
     }
 
@@ -125,16 +116,16 @@ impl CubeProperty<{Move::COUNT}, NSLICESORTED> for UpEdgesProperty {
 
 pub struct UpDownEdgesProperty {}
 
-impl CubeProperty< 10, 40320> for UpDownEdgesProperty {
-    fn is_edges(&self)->bool {
+impl CubeProperty<10, 40320> for UpDownEdgesProperty {
+    fn is_edges(&self) -> bool {
         true
     }
 
-    fn defined_moves(&self)->[Move; 10] {
+    fn defined_moves(&self) -> [Move; 10] {
         Move::PHASE2MOVES
     }
 
-    fn get_value(&self, cube: &CubieCube)-> u16 {
+    fn get_value(&self, cube: &CubieCube) -> u16 {
         cube.get_ud_edges().unwrap()
     }
 
@@ -145,16 +136,16 @@ impl CubeProperty< 10, 40320> for UpDownEdgesProperty {
 
 pub struct SliceSortedProperty {}
 
-impl CubeProperty< {Move::COUNT}, NSLICESORTED> for SliceSortedProperty {
-    fn is_edges(&self)->bool {
+impl CubeProperty<{ Move::COUNT }, NSLICESORTED> for SliceSortedProperty {
+    fn is_edges(&self) -> bool {
         true
     }
 
-    fn defined_moves(&self)->[Move; Move::COUNT] {
+    fn defined_moves(&self) -> [Move; Move::COUNT] {
         Move::ALLMOVES
     }
 
-    fn get_value(&self, cube: &CubieCube)-> u16 {
+    fn get_value(&self, cube: &CubieCube) -> u16 {
         cube.get_slice_sorted()
     }
 
@@ -165,16 +156,16 @@ impl CubeProperty< {Move::COUNT}, NSLICESORTED> for SliceSortedProperty {
 
 pub struct CornersProperty {}
 
-impl CubeProperty<{Move::COUNT}, NCORNERS> for CornersProperty {
-    fn is_edges(&self)->bool {
+impl CubeProperty<{ Move::COUNT }, NCORNERS> for CornersProperty {
+    fn is_edges(&self) -> bool {
         false
     }
 
-    fn defined_moves(&self)->[Move; Move::COUNT] {
+    fn defined_moves(&self) -> [Move; Move::COUNT] {
         Move::ALLMOVES
     }
 
-    fn get_value(&self, cube: &CubieCube)-> u16 {
+    fn get_value(&self, cube: &CubieCube) -> u16 {
         cube.get_corners()
     }
 
@@ -185,16 +176,16 @@ impl CubeProperty<{Move::COUNT}, NCORNERS> for CornersProperty {
 
 pub struct TwistProperty {}
 
-impl CubeProperty<{Move::COUNT}, NTWIST> for TwistProperty {
-    fn is_edges(&self)->bool {
+impl CubeProperty<{ Move::COUNT }, NTWIST> for TwistProperty {
+    fn is_edges(&self) -> bool {
         false
     }
 
-    fn defined_moves(&self)->[Move; Move::COUNT] {
+    fn defined_moves(&self) -> [Move; Move::COUNT] {
         Move::ALLMOVES
     }
 
-    fn get_value(&self, cube: &CubieCube)-> u16 {
+    fn get_value(&self, cube: &CubieCube) -> u16 {
         cube.get_twist()
     }
 
@@ -202,6 +193,3 @@ impl CubeProperty<{Move::COUNT}, NTWIST> for TwistProperty {
         cube.set_twist(value)
     }
 }
-
-
-

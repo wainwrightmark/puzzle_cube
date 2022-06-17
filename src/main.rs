@@ -1,10 +1,6 @@
 #![feature(const_option)]
 #![feature(map_try_insert)]
 
-
-
-
-
 use crate::web::prelude::*;
 pub mod core;
 pub mod state;

@@ -1,10 +1,6 @@
-
-
 use crate::core::prelude::FaceColor::*;
 
 use crate::core::prelude::*;
-
-
 
 use strum_macros::*;
 
@@ -84,13 +80,27 @@ impl Move {
         Move::B3,
     ];
 
-    ///Moves sorted by number then by face 
-    pub const MOVESBYNUMBER: [Move; 18] =
-        [
-            Move::U1, Move::R1, Move::F1, Move::D1, Move::L1, Move::B1,
-            Move::U2, Move::R2, Move::F2, Move::D2, Move::L2, Move::B2,
-            Move::U3, Move::R3, Move::F3, Move::D3, Move::L3, Move::B3,
-            ];
+    ///Moves sorted by number then by face
+    pub const MOVESBYNUMBER: [Move; 18] = [
+        Move::U1,
+        Move::R1,
+        Move::F1,
+        Move::D1,
+        Move::L1,
+        Move::B1,
+        Move::U2,
+        Move::R2,
+        Move::F2,
+        Move::D2,
+        Move::L2,
+        Move::B2,
+        Move::U3,
+        Move::R3,
+        Move::F3,
+        Move::D3,
+        Move::L3,
+        Move::B3,
+    ];
 
     pub const PHASE2MOVES: [Move; 10] = [
         Move::U1,
@@ -113,17 +123,23 @@ impl Move {
         Move::from_repr(r).unwrap()
     }
 
-    pub const fn rotate(self, rotation: u8) -> Self{
+    pub const fn rotate(self, rotation: u8) -> Self {
         match rotation % 3 {
             0 => self,
-            
-            1 => Self::from((Self:: rotate_color(Self:: rotate_color(self.get_color())), self.into_move_number())),
-            _ => Self::from((Self:: rotate_color(self.get_color()), self.into_move_number())),
+
+            1 => Self::from((
+                Self::rotate_color(Self::rotate_color(self.get_color())),
+                self.into_move_number(),
+            )),
+            _ => Self::from((
+                Self::rotate_color(self.get_color()),
+                self.into_move_number(),
+            )),
         }
     }
 
-    const fn rotate_color(fc : FaceColor)-> FaceColor{
-        match fc{
+    const fn rotate_color(fc: FaceColor) -> FaceColor {
+        match fc {
             FaceColor::Up => Front,
             FaceColor::Right => Up,
             FaceColor::Front => Right,

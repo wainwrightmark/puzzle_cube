@@ -1,39 +1,33 @@
 use crate::core::prelude::*;
 
-
-
-
-
+use log::debug;
 use std::rc::Rc;
 use yewdux::prelude::*;
-use log::debug;
 
 #[derive(Store, Default)]
 pub struct DataState {
     pub data: Option<Rc<DataSource>>,
 }
 
-impl DataState{
-    
-    pub fn is_generated(&self)-> bool{
+impl DataState {
+    pub fn is_generated(&self) -> bool {
         self.data.is_some()
     }
 }
 
-impl PartialEq for DataState{
+impl PartialEq for DataState {
     fn eq(&self, other: &Self) -> bool {
         self.data.is_some() == other.data.is_some()
     }
 }
 
-pub struct GenerateMsg{}
+pub struct GenerateMsg {}
 
 impl Reducer<DataState> for GenerateMsg {
     fn apply(&self, state: Rc<DataState>) -> Rc<DataState> {
-        if state.is_generated(){
+        if state.is_generated() {
             state
-        }
-        else{
+        } else {
             debug!("Generating solve data");
             let start_instant = instant::Instant::now();
             let data = DataSource::create();
@@ -41,10 +35,11 @@ impl Reducer<DataState> for GenerateMsg {
 
             debug!("Solve generated in {:?}", diff);
 
-            let state = DataState{data: Some(data.into())};
+            let state = DataState {
+                data: Some(data.into()),
+            };
 
             state.into()
-
         }
     }
 }

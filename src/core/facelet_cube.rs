@@ -5,7 +5,6 @@ use serde_with::*;
 use strum::EnumCount;
 use strum::IntoEnumIterator;
 
-
 #[serde_as]
 #[derive(Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize, Clone)]
 pub struct FaceletCube {
@@ -13,10 +12,8 @@ pub struct FaceletCube {
     pub facelets: [Option<FaceColor>; 54],
 }
 
-
 const fn get_cleared_face(i: usize) -> Option<FaceColor> {
-
-    if i % 9 == 4{
+    if i % 9 == 4 {
         Some(match i / 9 {
             0 => FaceColor::Up,
             1 => FaceColor::Right,
@@ -25,15 +22,12 @@ const fn get_cleared_face(i: usize) -> Option<FaceColor> {
             4 => FaceColor::Left,
             _ => FaceColor::Back,
         })
-    }
-    else{
+    } else {
         None
     }
-    
 }
 
 impl FaceletCube {
-    
     pub const CLEARED: FaceletCube = FaceletCube {
         facelets: array_const_fn_init![get_cleared_face; 54],
     };
@@ -75,7 +69,7 @@ impl TryFrom<FaceletCube> for CubieCube {
             let ori = (0..3)
                 .find(|&i: &usize| {
                     cube.facelets[fac[i] as usize] == Some(FaceColor::Up)
-                        || cube.facelets[fac[i] as usize] ==Some( FaceColor::Down)
+                        || cube.facelets[fac[i] as usize] == Some(FaceColor::Down)
                 })
                 .ok_or("Bad Corner")?;
 
@@ -86,7 +80,7 @@ impl TryFrom<FaceletCube> for CubieCube {
                 .into_iter()
                 .find(|&j| {
                     let col = CornerPosition::CORNERCOLORS[j as usize];
-                    col1 ==Some( col[1]) && col2 == Some(col[2])
+                    col1 == Some(col[1]) && col2 == Some(col[2])
                 })
                 .ok_or("Bad Corner")?;
 
@@ -104,7 +98,8 @@ impl TryFrom<FaceletCube> for CubieCube {
                     let c0 = c[0];
                     let c1 = c[1];
 
-                    if cube.facelets[fac[0] as usize] == Some(c0) && cube.facelets[fac[1] as usize] == Some(c1)
+                    if cube.facelets[fac[0] as usize] == Some(c0)
+                        && cube.facelets[fac[1] as usize] == Some(c1)
                     {
                         Some((j, 0))
                     } else if cube.facelets[fac[0] as usize] == Some(c1)
@@ -133,7 +128,7 @@ impl TryFrom<FaceletCube> for CubieCube {
 
 impl From<CubieCube> for FaceletCube {
     fn from(cube: CubieCube) -> Self {
-        let mut facelets:[Option<FaceColor>; 54] = [None; 54];
+        let mut facelets: [Option<FaceColor>; 54] = [None; 54];
 
         //set corner colors
         for c in 0..CornerPosition::COUNT {

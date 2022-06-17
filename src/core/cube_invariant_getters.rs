@@ -1,6 +1,6 @@
 use crate::core::prelude::*;
 
-use strum::{EnumCount};
+use strum::EnumCount;
 impl CubieCube {
     ///Gets the corner parity
     /// Either 0 or 1
@@ -77,16 +77,14 @@ impl CubieCube {
         let mut x: usize = 0;
 
         let mut edge4: [usize; 4] = [0; 4];
-        let  ep_mod:[EdgePosition; 12];
-        if rot_right > 0{
-            let mut epm =self.edge_positions.clone();
+        let ep_mod: [EdgePosition; 12];
+        if rot_right > 0 {
+            let mut epm = self.edge_positions.clone();
             epm.rotate_right(rot_right);
             ep_mod = epm;
-        }
-        else{
+        } else {
             ep_mod = self.edge_positions;
         }
-        
 
         for j in (0..EdgePosition::COUNT).rev() {
             let edge = ep_mod[j] as usize;
@@ -117,7 +115,9 @@ impl CubieCube {
             return None; //One of the middle layer edges is in a different layer -> We are not in phase 1
         }
 
-        (calculate_permutation::<EdgePosition, 8>(self.edge_positions[0..8].try_into().unwrap(), 0) as u16).into()
+        (calculate_permutation::<EdgePosition, 8>(self.edge_positions[0..8].try_into().unwrap(), 0)
+            as u16)
+            .into()
     }
 
     ///Get a number representing the permutations of the 8 corners

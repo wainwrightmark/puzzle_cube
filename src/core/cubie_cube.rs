@@ -1,7 +1,7 @@
 use crate::core::prelude::*;
 
 use itertools::Itertools;
-use strum::{EnumCount};
+use strum::EnumCount;
 
 use rand::{prelude::StdRng, Rng};
 
@@ -30,9 +30,14 @@ impl CubieCube {
         }
     }
 
-
     ///Multiply this cube with another cube.
-    const fn multiply_corners(&self, other: &Self) -> ([CornerPosition; CornerPosition::COUNT], [CornerOrientation; CornerPosition::COUNT]) {
+    const fn multiply_corners(
+        &self,
+        other: &Self,
+    ) -> (
+        [CornerPosition; CornerPosition::COUNT],
+        [CornerOrientation; CornerPosition::COUNT],
+    ) {
         let mut corner_positions = [CornerPosition::Urf; CornerPosition::COUNT];
         let mut corner_orientations = [CornerOrientation::Zero; CornerPosition::COUNT];
         let mut c = 0;
@@ -60,12 +65,16 @@ impl CubieCube {
             c += 1;
         }
 
-        (corner_positions,
-            corner_orientations)
+        (corner_positions, corner_orientations)
     }
 
-
-    const fn multiply_edges(&self, other: &Self) -> ([EdgePosition; EdgePosition::COUNT], [EdgeOrientation; EdgePosition::COUNT]) {
+    const fn multiply_edges(
+        &self,
+        other: &Self,
+    ) -> (
+        [EdgePosition; EdgePosition::COUNT],
+        [EdgeOrientation; EdgePosition::COUNT],
+    ) {
         let mut edge_positions = [EdgePosition::Ur; EdgePosition::COUNT];
         let mut edge_orientations = [EdgeOrientation::Zero; EdgePosition::COUNT];
         let mut e = 0;
@@ -83,22 +92,21 @@ impl CubieCube {
             e += 1;
         }
 
-        (edge_positions,
-            edge_orientations)
+        (edge_positions, edge_orientations)
     }
 
     pub const fn corner_multiply(self, other: &Self) -> Self {
         let (corner_positions, corner_orientations) = self.multiply_corners(other);
-        Self{
+        Self {
             corner_positions,
             corner_orientations,
             ..self
         }
     }
-    
+
     pub const fn edge_multiply(self, other: &Self) -> Self {
         let (edge_positions, edge_orientations) = self.multiply_edges(other);
-        Self{
+        Self {
             edge_positions,
             edge_orientations,
             ..self
@@ -106,11 +114,15 @@ impl CubieCube {
     }
 
     pub const fn multiply(&self, other: &Self) -> Self {
-
         let (corner_positions, corner_orientations) = self.multiply_corners(other);
         let (edge_positions, edge_orientations) = self.multiply_edges(other);
 
-        Self { edge_positions, corner_positions, edge_orientations, corner_orientations }
+        Self {
+            edge_positions,
+            corner_positions,
+            edge_orientations,
+            corner_orientations,
+        }
     }
 
     pub const fn invert(&self) -> Self {
@@ -133,14 +145,14 @@ impl CubieCube {
             edge_orientations[index] = ori;
             index += 1;
         }
-        
+
         index = 0;
         while index < CornerPosition::COUNT {
             let i = self.corner_positions[index] as usize;
             corner_positions[i] = CornerPosition::from_repr(index as u8).unwrap();
             index += 1;
         }
-        
+
         index = 0;
         while index < CornerPosition::COUNT {
             let i = corner_positions[index] as usize; //note: not self.corner_positions
@@ -161,50 +173,50 @@ impl CubieCube {
         }
     }
 
-    pub fn verify(&self)->Result<(), &str>{
+    pub fn verify(&self) -> Result<(), &str> {
         let unique_edges = self.edge_positions.into_iter().dedup().count();
-        if unique_edges < EdgePosition::COUNT{
+        if unique_edges < EdgePosition::COUNT {
             return Err("There are duplicate edges");
         }
-        
+
         let unique_corners = self.corner_positions.into_iter().dedup().count();
-        if unique_corners < CornerPosition::COUNT{
+        if unique_corners < CornerPosition::COUNT {
             return Err("There are duplicate corners");
         }
-        
-        let edge_flip:u8 = self.edge_orientations.into_iter().map(|x|x as u8) .sum();
-        if edge_flip % 2 != 0{
+
+        let edge_flip: u8 = self.edge_orientations.into_iter().map(|x| x as u8).sum();
+        if edge_flip % 2 != 0 {
             return Err("Total Edge flip is wrong");
         }
 
-        let corner_twist:u8 = self.corner_orientations.into_iter().map(|x|x as u8).sum();
-        if corner_twist % 3 != 0{
+        let corner_twist: u8 = self.corner_orientations.into_iter().map(|x| x as u8).sum();
+        if corner_twist % 3 != 0 {
             return Err("Total Corner twist is wrong");
         }
 
         let edge_parity = self.get_edge_parity();
         let corner_parity = self.get_corner_parity();
 
-        if edge_parity != corner_parity{
+        if edge_parity != corner_parity {
             return Err("Edge and corner parities are not equal");
         }
 
         Ok(())
     }
 
-    pub fn random_cube(seed: u64) -> Self{
+    pub fn random_cube(seed: u64) -> Self {
         let mut cube = CubieCube::default();
-        
+
         let mut rng: StdRng = rand::SeedableRng::seed_from_u64(seed);
-        
+
         cube.set_edges(rng.gen_range(0..479001600));
         let edge_parity = cube.get_edge_parity();
         loop {
             cube.set_corners(rng.gen_range(0..40320));
             let corner_parity = cube.get_corner_parity();
-            if edge_parity == corner_parity{
+            if edge_parity == corner_parity {
                 break;
-            }            
+            }
         }
 
         cube.set_flip(rng.gen_range(0..2048));
@@ -213,4 +225,3 @@ impl CubieCube {
         cube
     }
 }
-

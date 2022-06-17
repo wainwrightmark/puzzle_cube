@@ -1,10 +1,9 @@
-use crate::core::prelude::*;
-use crate::core::prelude::FaceletPosition::*;
 use crate::core::prelude::FaceColor::*;
+use crate::core::prelude::FaceletPosition::*;
+use crate::core::prelude::*;
 
-use strum_macros::*;
 use array_const_fn_init::array_const_fn_init;
-
+use strum_macros::*;
 
 #[derive(
     Debug,
@@ -37,12 +36,11 @@ pub enum EdgePosition {
     Br = 11,
 }
 
-impl From<EdgePosition> for usize{
+impl From<EdgePosition> for usize {
     fn from(ep: EdgePosition) -> Self {
         ep as usize
     }
 }
-
 
 const fn get_edge_position_offset0(i: usize) -> EdgePosition {
     EdgePosition::from_repr((i) as u8).unwrap()
@@ -55,67 +53,59 @@ const fn get_edge_position_offset8(i: usize) -> EdgePosition {
     EdgePosition::from_repr((i + 8) as u8).unwrap()
 }
 
-
 impl EdgePosition {
     pub const DEFAULT_ARRAY: [Self; 12] = array_const_fn_init![get_edge_position_offset0; 12];
 
-    pub const DEFAULT_NON_SLICE_EDGES: [Self; 8] = array_const_fn_init![get_edge_position_offset0; 8];
+    pub const DEFAULT_NON_SLICE_EDGES: [Self; 8] =
+        array_const_fn_init![get_edge_position_offset0; 8];
     pub const DEFAULT_SLICE_EDGES: [Self; 4] = array_const_fn_init![get_edge_position_offset8; 4];
     pub const DEFAULT_UP_EDGES: [Self; 4] = array_const_fn_init![get_edge_position_offset0; 4];
     pub const DEFAULT_DOWN_EDGES: [Self; 4] = array_const_fn_init![get_edge_position_offset4; 4];
 
-    pub fn get_color(self, index : usize)-> FaceColor{
+    pub fn get_color(self, index: usize) -> FaceColor {
         EdgePosition::EDGECOLORS[self as usize][index]
     }
 
-    pub fn get_location(self, index : usize, orientation:  EdgeOrientation )-> FaceletPosition{
+    pub fn get_location(self, index: usize, orientation: EdgeOrientation) -> FaceletPosition {
         EdgePosition::EDGEFACELETS[self as usize][(index + (orientation as usize)) % 2]
     }
 
     ///Is this an up edge
-    pub fn is_up(self)-> bool{
+    pub fn is_up(self) -> bool {
         (self as usize) < 4
     }
-    
+
     ///Is this a down edge
-    pub fn is_down(self)-> bool{
+    pub fn is_down(self) -> bool {
         (self as usize) >= 4 && (self as usize) < 8
     }
 
     ///The positions of each edge facelet
-pub const EDGEFACELETS:[[FaceletPosition;2];12] =[
-    [U6, R2],
-    [U8, F2],
-    [U4, L2],
-    [U2, B2],
-    
-    [D6, R8],
-    [D2, F8],
-    [D4, L8],
-    [D8, B8],
-    
-    [F6, R4],
-    [F4, L6],
-    [B6, L4],
-    [B4, R6],
+    pub const EDGEFACELETS: [[FaceletPosition; 2]; 12] = [
+        [U6, R2],
+        [U8, F2],
+        [U4, L2],
+        [U2, B2],
+        [D6, R8],
+        [D2, F8],
+        [D4, L8],
+        [D8, B8],
+        [F6, R4],
+        [F4, L6],
+        [B6, L4],
+        [B4, R6],
     ];
-    
-    
-    
-    
+
     ///The colors of each of the edge pieces
-    pub const EDGECOLORS : [[FaceColor;2];12] =
-    [
+    pub const EDGECOLORS: [[FaceColor; 2]; 12] = [
         [Up, Right],
         [Up, Front],
         [Up, Left],
         [Up, Back],
-    
         [Down, Right],
         [Down, Front],
         [Down, Left],
         [Down, Back],
-    
         [Front, Right],
         [Front, Left],
         [Back, Left],
