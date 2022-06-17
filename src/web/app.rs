@@ -1,11 +1,13 @@
-use crate::core::prelude::*;
-use crate::state::prelude::*;
+use std::rc::Rc;
+
+use crate::{core::prelude::*};
+use crate::state::{prelude::*, self};
 use crate::web::prelude::*;
 
 use itertools::Itertools;
 use strum::IntoEnumIterator;
 use yew::prelude::*;
-use yewdux::prelude::*;
+use yewdux::{prelude::*};
 
 #[function_component(App)]
 pub fn app() -> Html {
@@ -89,11 +91,19 @@ pub fn solve_or_generate_button() -> Html {
     let is_data_generated = use_selector(|x: &DataState| x.is_generated())
         .as_ref()
         .clone();
-    let is_solved = use_selector(|x: &CubeState| x.solution.is_some())
+    let is_solved = use_selector(|x: &CubeState|  x.is_solved())
         .as_ref()
         .clone();
 
-    let generate: Callback<MouseEvent> = Dispatch::new().apply_callback(|_| GenerateMsg {});
+
+    let generate: Callback<MouseEvent> = Dispatch::new()
+    .reduce_callback(|state: Rc<DataState>| {
+        state.with_generate_data()
+    } );
+    
+    // .reduce_future_callback(|state: Rc<DataState>|async move {
+    //     state.with_generate_data()
+    // } );
     let solve: Callback<MouseEvent> = Dispatch::new().apply_callback(|_| SolveMsg {});
 
     if is_data_generated {
@@ -107,7 +117,10 @@ pub fn solve_or_generate_button() -> Html {
 
 #[function_component(SolutionView)]
 pub fn solution_view() -> Html {
-    let solution = use_selector(|x: &CubeState| x.solution.clone())
+    let solution = use_selector(|x: &CubeState| match &x.cube{
+    SomeCube::Cubie { cube: _, solution } => solution.clone(),
+    SomeCube::Facelet { cube: _, color, error } => None,
+})
         .as_ref()
         .clone();
 
@@ -136,9 +149,9 @@ pub struct PaintButtonProperties {
 pub fn paint_button(properties: &PaintButtonProperties) -> Html {
     let color = properties.color;
     let selected = *use_selector_with_deps(
-        |state: &CubeState, c| match (*state).cube {
-            SomeCube::Cubie { cube: _ } => false,
-            SomeCube::Facelet { cube: _, color } => color == Some(*c),
+        |state: &CubeState, c| match &state.cube {
+            SomeCube::Cubie { cube: _, solution:_ } => false,
+            SomeCube::Facelet { cube: _, color, error } => *color == Some(*c),
         },
         color,
     );
@@ -205,13 +218,16 @@ fn move_button(properties: &MoveButtonProperties) -> Html {
     let cube = properties.cube.clone();
 
     let is_highlighted = use_selector_with_deps(
-        |state: &CubeState, c| match &state.solution {
-            Some(moves) => match moves.first() {
-                Some(m) => m.get_cube() == c,
-                None => false,
-            },
+        |state: &CubeState, c| match &state.cube{
+    SomeCube::Cubie { cube, solution } => match solution {
+        Some(moves) => match moves.first() {
+            Some(m) => m.get_cube() == c,
             None => false,
         },
+        None => false,
+    },
+    SomeCube::Facelet { cube, color, error } => false,
+} ,
         cube.clone(),
     );
 

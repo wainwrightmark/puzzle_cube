@@ -13,20 +13,10 @@ impl DataState {
     pub fn is_generated(&self) -> bool {
         self.data.is_some()
     }
-}
 
-impl PartialEq for DataState {
-    fn eq(&self, other: &Self) -> bool {
-        self.data.is_some() == other.data.is_some()
-    }
-}
-
-pub struct GenerateMsg {}
-
-impl Reducer<DataState> for GenerateMsg {
-    fn apply(&self, state: Rc<DataState>) -> Rc<DataState> {
-        if state.is_generated() {
-            state
+    pub fn with_generate_data(self: Rc<Self>)-> Rc<Self>{
+        if self.is_generated() {
+            self
         } else {
             debug!("Generating solve data");
             let start_instant = instant::Instant::now();
@@ -35,11 +25,16 @@ impl Reducer<DataState> for GenerateMsg {
 
             debug!("Solve generated in {:?}", diff);
 
-            let state = DataState {
-                data: Some(data.into()),
-            };
+            Self{
+                data:Some(data.into())
+            }.into()
 
-            state.into()
         }
+    }
+}
+
+impl PartialEq for DataState {
+    fn eq(&self, other: &Self) -> bool {
+        self.data.is_some() == other.data.is_some()
     }
 }

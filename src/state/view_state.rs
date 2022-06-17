@@ -18,6 +18,10 @@ impl Store for ViewState {
             .expect("Unable to load state")
             .unwrap_or_default()
     }
+
+    fn changed(&self, other: &Self) -> bool {
+        self != other
+    }
 }
 
 #[derive(PartialEq, Eq, Copy, Clone, Default, Serialize, Deserialize)]

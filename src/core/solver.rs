@@ -23,7 +23,7 @@ impl Default for SolveSettings {
         Self {
             max_moves: 24,
             stopping_length: 20,
-            max_iterations: 100000,
+            max_iterations: 10000,
         }
     }
 }
@@ -289,9 +289,13 @@ impl SerialSolveCoordinator {
         while iterations < max_iterations {
             if let Some(next) = self.queue.pop() {
                 if let Some(solution) = next.iterate(self) {
-                    if self.try_add_solution(solution.clone()) && solution.moves < stopping_length {
-                        debug!("Solved in {:?} iterations", iterations);
-                        return Some(solution);
+                    if self.try_add_solution(solution.clone())  {
+                        debug!("Solved with {} moves in {:?} iterations", solution.moves, iterations);
+
+                        if solution.moves < stopping_length{
+                            return Some(solution);
+                        }
+                        
                     }
                 }
             } else {
@@ -301,8 +305,16 @@ impl SerialSolveCoordinator {
 
             iterations += 1;
         }
-        debug!("Failed to solve in {:?} iterations", iterations);
-        return self.solution.clone();
+        match self.solution.clone() {
+            Some(s) => {
+                debug!("Could not find better solution in {:?} iterations", iterations);
+                return Some(s);
+            },
+            None => {
+                debug!("Failed to solve in {:?} iterations", iterations);
+                return None;
+            },
+        };
     }
 
     fn try_add_solution(&mut self, state: SearchState) -> bool {

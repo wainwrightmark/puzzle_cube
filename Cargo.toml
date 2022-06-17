@@ -21,7 +21,7 @@ array-const-fn-init = "0.1.1"
 log = "0.4"
 wasm-logger = "0.2"
 yew = { git = "https://github.com/yewstack/yew.git", features = ["csr",] }
-yewdux = { git = "https://github.com/intendednull/yewdux.git" }
+yewdux = { git = "https://github.com/intendednull/yewdux.git", features=["future"] }
 
 wasm-bindgen-futures = "0.4"
 wasm-bindgen= { version = "0.2", features = ["serde"] }
