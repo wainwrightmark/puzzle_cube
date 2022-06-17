@@ -36,7 +36,7 @@ impl ViewType {
     pub fn get_initial_transform(&self) -> Vec<TransformComponent> {
         match self {
             ViewType::FlatMap => Default::default(),
-            _ => vec![TransformComponent::Rotate(TransformRotate{x: -30, y:-45, }) ,TransformComponent::Translate( TransformTranslate{x: 40.0,y: 5.0,z: 0.0})]
+            _ => vec![TransformComponent::Rotate(TransformRotate{x: -30, y:-45, z:0 }) ,TransformComponent::Translate( TransformTranslate{x: 40.0,y: 5.0,z: 0.0})]
         }
     }
 
@@ -61,7 +61,7 @@ impl ViewType {
                 let tuple =
                 match face {
                     FaceColor::Up => (
-                        TransformRotate { x: 90, y: 0 },
+                        TransformRotate { x: 90, y: 0, z:0  },
                         TransformTranslate {
                             x: 0.0,
                             y: 0.0,
@@ -69,7 +69,7 @@ impl ViewType {
                         },
                     ),
                     FaceColor::Left => (
-                        TransformRotate { x: 0, y: -90 },
+                        TransformRotate { x: 0, y: -90, z:0 },
                         TransformTranslate {
                             x: 0.0,
                             y: 0.0,
@@ -77,7 +77,7 @@ impl ViewType {
                         },
                     ),
                     FaceColor::Front => (
-                        TransformRotate { x: 0, y: 0 },
+                        TransformRotate { x: 0, y: 0, z:0 },
                         TransformTranslate {
                             x: 0.0,
                             y: 0.0,
@@ -85,7 +85,7 @@ impl ViewType {
                         },
                     ),
                     FaceColor::Right => (
-                        TransformRotate { x: 0, y: 90 },
+                        TransformRotate { x: 0, y: 90, z:0 },
                         TransformTranslate {
                             x: 0.0,
                             y: 0.0,
@@ -93,7 +93,7 @@ impl ViewType {
                         },
                     ),
                     FaceColor::Back => (
-                        TransformRotate { x: 0, y: 180 },
+                        TransformRotate { x: 0, y: 180, z:0 },
                         TransformTranslate {
                             x: 0.0,
                             y: 0.0,
@@ -101,7 +101,7 @@ impl ViewType {
                         },
                     ),
                     FaceColor::Down => (
-                        TransformRotate { x: -90, y: 0 },
+                        TransformRotate { x: -90, y: 0, z:0 },
                         TransformTranslate {
                             x: 0.0,
                             y: 0.0,
@@ -117,7 +117,7 @@ impl ViewType {
                 let tuple =
                 match face {
                     FaceColor::Up => (
-                        TransformRotate { x: 90, y: 0 },
+                        TransformRotate { x: 90, y: 0, z:0 },
                         TransformTranslate {
                             x: 0.0,
                             y: 0.0,
@@ -125,7 +125,7 @@ impl ViewType {
                         },
                     ),
                     FaceColor::Left => (
-                        TransformRotate { x: 0, y: -90 },
+                        TransformRotate { x: 0, y: -90, z:0 },
                         TransformTranslate {
                             x: 0.0,
                             y: 0.0,
@@ -133,7 +133,7 @@ impl ViewType {
                         },
                     ),
                     FaceColor::Front => (
-                        TransformRotate { x: 0, y: 0 },
+                        TransformRotate { x: 0, y: 0, z:0 },
                         TransformTranslate {
                             x: 0.0,
                             y: 0.0,
@@ -141,7 +141,7 @@ impl ViewType {
                         },
                     ),
                     FaceColor::Right => (
-                        TransformRotate { x: 0, y: 90 },
+                        TransformRotate { x: 0, y: 90, z:0 },
                         TransformTranslate {
                             x: 0.0,
                             y: 0.0,
@@ -149,7 +149,7 @@ impl ViewType {
                         },
                     ),
                     FaceColor::Back => (
-                        TransformRotate { x: 0, y: 180 },
+                        TransformRotate { x: 0, y: 180, z:0 },
                         TransformTranslate {
                             x: 0.0,
                             y: 0.0,
@@ -157,7 +157,7 @@ impl ViewType {
                         },
                     ),
                     FaceColor::Down => (
-                        TransformRotate { x: -90, y: 0 },
+                        TransformRotate { x: -90, y: 0, z:0 },
                         TransformTranslate {
                             x: 0.0,
                             y: 0.0,

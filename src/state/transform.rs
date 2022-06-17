@@ -98,6 +98,11 @@ impl From<TransformRotate> for TransformComponent {
 
 impl ToString for TransformTranslate{
     fn to_string(&self) -> String {
+
+        if self == &Default::default(){
+            return "".to_string();
+        }
+
         format!("translate3d({:.2}vw,{:.2}vw,{:.2}vw)", self.x, self.y, self.z)
     }
 }
@@ -106,6 +111,7 @@ impl ToString for TransformTranslate{
 pub struct TransformRotate {
     pub x: i32,
     pub y: i32,
+    pub z: i32
 }
 
 impl Add for TransformTranslate{
@@ -126,7 +132,8 @@ impl Add for TransformRotate{
     fn add(self, rhs: Self) -> Self::Output {
         Self{
             x: self.x + rhs.x,
-            y: self.y + rhs.y
+            y: self.y + rhs.y,
+            z: self.z + rhs.z,
         }
     }
 }
