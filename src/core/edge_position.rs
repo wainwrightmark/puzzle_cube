@@ -1,7 +1,7 @@
 use crate::core::prelude::*;
 use crate::core::prelude::FaceletPosition::*;
 use crate::core::prelude::FaceColor::*;
-use strum::EnumCount;
+
 use strum_macros::*;
 use array_const_fn_init::array_const_fn_init;
 

@@ -1,11 +1,11 @@
 use crate::core::prelude::CornerPosition::*;
 use crate::core::prelude::EdgePosition::*;
-use crate::core::prelude::FaceColor::*;
-use crate::core::prelude::FaceletPosition::*;
+
+
 use crate::core::prelude::*;
 use array_const_fn_init::array_const_fn_init;
 use strum::EnumCount;
-use strum_macros::*;
+
 
 type CO = CornerOrientation;
 type EO = EdgeOrientation;

@@ -1,10 +1,10 @@
 use crate::core::prelude::*;
-use array_const_fn_init::array_const_fn_init;
-use itertools::Itertools;
-use serde::__private::de;
-use strum::{EnumCount, IntoEnumIterator};
-use strum_macros::*;
-use rand::{SeedableRng, prelude::StdRng, Rng};
+
+
+
+
+
+
 
 impl DataSource {
 
@@ -21,7 +21,7 @@ impl DataSource {
     fn get_corners_ud_edges_depth3 (ix:usize, tab: &Vec<u32>)->u32 {
         let mut y = tab[ix / 16];
         y >>= (ix % 16) * 2;
-        (y & 3)
+        y & 3
     }
 
     pub fn create_phase_2_edge_merge() -> Vec<u16>{
@@ -83,7 +83,7 @@ impl DataSource {
         let c_sym = DataSource::make_corners_sym(corners_source);
         let mut table = vec![u32::MAX; 40320 * 2768 / 16];
 
-        let ud_edge = 0;
+        let _ud_edge = 0;
         Self::set_corners_ud_edges_depth3(0, 0, &mut table);
         let mut depth = 0u32;
         let mut done = 1;

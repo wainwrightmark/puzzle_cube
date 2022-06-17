@@ -1,7 +1,7 @@
 use crate::core::prelude::*;
 use num::ToPrimitive;
 
-use strum::{EnumCount, IntoEnumIterator};
+use strum::{EnumCount};
 impl CubieCube {
 
 
@@ -114,7 +114,7 @@ impl CubieCube {
                 a = a1;
             }
             else {
-                let other_index = if(other_x <4){other_x}else{other_x+ 4};
+                let other_index = if other_x <4 {other_x}else{other_x+ 4};
                 self.edge_positions[j] = EdgePosition::DEFAULT_ARRAY[other_index];
                 other_x +=1;
             }

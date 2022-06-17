@@ -1,7 +1,7 @@
 use crate::core::prelude::*;
 use crate::state::prelude::*;
-use itertools::Itertools;
-use num::ToPrimitive;
+
+
 use serde::*;
 use std::rc::Rc;
 use yewdux::prelude::*;
@@ -117,7 +117,7 @@ impl ViewType{
 pub struct ChangeViewMsg{pub view_type: ViewType}
 
 impl Reducer<ViewState> for ChangeViewMsg{
-    fn apply(&self, state: Rc<ViewState>) -> Rc<ViewState> {
+    fn apply(&self, _state: Rc<ViewState>) -> Rc<ViewState> {
         ViewState{
             view_type:self.view_type
         }.into()

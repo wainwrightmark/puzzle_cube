@@ -1,11 +1,11 @@
-use std::default;
 
-use crate::core::prelude::FaceColor::*;
-use crate::core::prelude::FaceletPosition::*;
+
+
+
 use crate::core::prelude::*;
-use array_const_fn_init::array_const_fn_init;
+
 use strum::EnumCount;
-use strum_macros::*;
+
 
 #[derive(Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize, Clone, Default, Hash, PartialOrd, Ord)]
 pub struct CoordinateCube {
@@ -41,7 +41,7 @@ impl CoordinateCube {
     pub fn create_phase_data(&self, data_source: &DataSource) -> PhaseData {
         let slice = self.slice_sorted / 24;
 
-        if (self.flip != 0 || slice != 0 || self.twist != 0) {
+        if self.flip != 0 || slice != 0 || self.twist != 0 {
             let flip_slice_twist_depth_mod3 = data_source.get_flip_slice_twist_depth_mod_3(
                 self.flip,
                 self.twist,

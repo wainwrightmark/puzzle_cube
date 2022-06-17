@@ -1,10 +1,10 @@
-use std::rc::Rc;
+
 
 use crate::core::prelude::*;
 use crate::state::prelude::*;
 use crate::web::prelude::*;
-use chrono::format::format;
-use itertools::Itertools;
+
+
 use strum::IntoEnumIterator;
 use yew::prelude::*;
 use yewdux::prelude::*;
@@ -69,7 +69,7 @@ pub struct CornerProperties {
 #[function_component(Corner)]
 fn corner(properties: &CornerProperties) -> Html {
     let view = use_selector(|s: &ViewState| s.view_type);
-    let some_cube = use_selector(|s: &CubeState| s.cube.clone());
+    let _some_cube = use_selector(|s: &CubeState| s.cube.clone());
     let corner = properties.corner;
     let option = *use_selector_with_deps(|s: &CubeState, corner|
         s.try_get_corner_position(corner), properties.corner).as_ref();

@@ -4,7 +4,7 @@ use itertools::Itertools;
 use serde_with::*;
 use strum::EnumCount;
 use strum::IntoEnumIterator;
-use strum_macros::*;
+
 
 #[serde_as]
 #[derive(Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize, Clone)]
@@ -60,7 +60,7 @@ impl TryFrom<FaceletCube> for CubieCube {
     type Error = String;
 
     fn try_from(cube: FaceletCube) -> Result<Self, Self::Error> {
-        if let (Err(e)) = cube.validate_colors() {
+        if let Err(e) = cube.validate_colors() {
             return Err(e);
         }
 

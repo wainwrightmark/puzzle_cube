@@ -1,10 +1,10 @@
-use crate::core::prelude::*;
-use crate::core::prelude::FaceletPosition::*;
+
+
 use crate::core::prelude::FaceColor::*;
-use strum::EnumCount;
-use strum::IntoEnumIterator;
+
+
 use strum_macros::*;
-use array_const_fn_init::array_const_fn_init;
+
 
 pub const NPERM4: usize = 4 * 3 * 2;
 pub const NCHOOSE84: usize = 70; //8 choose 4
@@ -178,7 +178,7 @@ pub enum FaceColor {
 impl FaceColor {
 
 pub fn get_color_string(self)-> String{
-    match(self){
+    match self{
         Up => "yellow",
         Right => "green",
         Front => "red",

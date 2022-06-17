@@ -1,11 +1,11 @@
-use std::process::id;
+
 
 use crate::core::prelude::*;
-use array_const_fn_init::array_const_fn_init;
-use itertools::Itertools;
-use rand::{prelude::StdRng, Rng, SeedableRng};
-use strum::{EnumCount, IntoEnumIterator};
-use strum_macros::*;
+
+
+
+
+
 
 impl DataSource {
     fn set_flip_slice_twist_depth3(ix: usize, value: u32, tab: &mut Vec<u32>) {
@@ -21,7 +21,7 @@ impl DataSource {
     fn get_flip_slice_twist_depth3(ix: usize, tab: &Vec<u32>) -> u32 {
         let mut y = tab[ix / 16];
         y >>= (ix % 16) * 2;
-        (y & 3)
+        y & 3
     }
 
     pub fn create_phase_1_pruning(
@@ -32,7 +32,7 @@ impl DataSource {
         let fs_sym = DataSource::make_flip_slice_sym(flip_slice_source);
         let mut table = vec![u32::MAX; (total / 16) + 1];
 
-        let twist = 0;
+        let _twist = 0;
         Self::set_flip_slice_twist_depth3(0, 0, &mut table);
         let mut done = 1;
         let mut depth = 0u32;
@@ -66,7 +66,7 @@ impl DataSource {
                         fs_symmetry_after_move,
                     );
                     let idx_after_move =
-                        ((2187 * fs_class_idx_after_move) + twist_after_move as usize);
+                        (2187 * fs_class_idx_after_move) + twist_after_move as usize;
 
                     if Self::get_flip_slice_twist_depth3(idx_after_move, &table) == 3 {
                         Self::set_flip_slice_twist_depth3(
@@ -144,7 +144,7 @@ impl DataSource {
                                 fs_symmetry_after_move,
                             );
                             let idx_after_move =
-                                ((2187 * fs_class_idx_after_move) + twist_after_move as usize);
+                                (2187 * fs_class_idx_after_move) + twist_after_move as usize;
 
                                 if Self::get_flip_slice_twist_depth3(idx_after_move, &table)
                                 == depth3

@@ -1,12 +1,12 @@
-use std::default;
-use std::vec;
 
-use crate::core::prelude::FaceColor::*;
-use crate::core::prelude::FaceletPosition::*;
+
+
+
+
 use crate::core::prelude::*;
-use array_const_fn_init::array_const_fn_init;
-use strum_macros::*;
-use strum::{EnumCount, IntoEnumIterator};
+
+
+use strum::{EnumCount};
 
 pub trait CubeProperty<const NMOVES:usize, const NVALUES: usize> {
     fn is_edges(&self)->bool;

@@ -1,4 +1,4 @@
-use itertools::Itertools;
+
 
 /// Calculate a number representing the permutation of the slice
 /// The slice must contain the elements offset..offset+N
@@ -26,8 +26,8 @@ pub fn reorder_to_permutation<T, const N: usize>( slice: &mut [T; N], mut permut
     if permutation == 0 {return;}
     for j in 1..N{
         let k = permutation %( j + 1);
-        permutation /= (j + 1);
-        if(k > 0){
+        permutation /= j + 1;
+        if k > 0 {
             slice[0..=j].rotate_right(k)
         }
     }
@@ -54,7 +54,7 @@ pub fn set_from_number_representation<T : Copy + From<usize>, const N:usize, con
     }
 
     //Set the last element from parity
-    let last =  ((MOD - (parity % MOD)) % MOD);
+    let last =  (MOD - (parity % MOD)) % MOD;
     arr[N- 1] = last.into();
 
 }
@@ -62,8 +62,8 @@ pub fn set_from_number_representation<T : Copy + From<usize>, const N:usize, con
 pub fn calculate_position_parity<T : PartialOrd, const N: usize>(slice:  &[T; N])-> u8
 {
     let mut s = 0;
-    for i in (1..N) {
-        for j in (0..i){
+    for i in 1..N {
+        for j in 0..i {
             if slice[i] > slice[j]{
                 s += 1;
             }
@@ -100,7 +100,7 @@ pub const fn binomial(mut n: usize, k: usize) -> usize {
 mod tests {
     // Note this useful idiom: importing names from outer (for mod tests) scope.
     use super::*;
-    use chrono::offset;
+    
     use ntest::test_case;
 
     #[test_case(0,1,2,3, 0, 0)]

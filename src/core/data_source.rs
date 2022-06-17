@@ -1,10 +1,10 @@
 use crate::core::prelude::*;
-use array_const_fn_init::array_const_fn_init;
-use itertools::Itertools;
-use rand::{prelude::StdRng, Rng, SeedableRng};
-use serde::__private::de;
-use strum::{EnumCount, IntoEnumIterator};
-use strum_macros::*;
+
+
+
+
+
+
 
 //#[derive(BorshSerialize, BorshDeserialize)]
 pub struct DataSource {
@@ -64,7 +64,7 @@ impl DataSource {
 
         let twist_conj = self.moves_source.get_twist_conj(twist, flip_slice_sym) as usize;
 
-        let ix = (NTWIST * class_index + twist_conj);
+        let ix = NTWIST * class_index + twist_conj;
 
         let mut y = self.phase_1_pruning[ix / 16];
         y >>= (ix % 16) * 2;
@@ -84,7 +84,7 @@ impl DataSource {
         let corner_sym = self.corners_source.corner_symmetry[corners as usize];
 
         let ud_edges_conj = self.moves_source.get_ud_edges_conj(ud_edges, corner_sym);
-        let index = (NUDEDGES * (corner_class_index as usize) + (ud_edges_conj as usize));
+        let index = NUDEDGES * (corner_class_index as usize) + (ud_edges_conj as usize);
 
         let mut y = self.phase_2_pruning[index / 16];
         y >>= (index % 16) * 2;
@@ -210,7 +210,7 @@ impl MovesSource {
     }
 
     pub fn get_ud_edges_conj(&self, ud_edges: u16, corner_sym: u8) -> u16 {
-        let cs = (corner_sym as usize);
+        let cs = corner_sym as usize;
 
         let idx = ((ud_edges as usize) << 4) + cs;
 

@@ -1,22 +1,22 @@
-use std::cell::Cell;
+
 use std::collections::BinaryHeap;
 use std::collections::HashMap;
-use std::collections::HashSet;
-use std::fs;
+
+
 use std::rc::Rc;
 use std::sync::Arc;
-use std::sync::Mutex;
+
 
 use crate::core::prelude::*;
-use crate::core::prelude::FaceletPosition::*;
-use crate::core::prelude::FaceColor::*;
-use itertools::Itertools;
-use strum::EnumCount;
-use strum::IntoEnumIterator;
-use strum_macros::*;
-use array_const_fn_init::array_const_fn_init;
 
-use super::coordinate_cube;
+
+use itertools::Itertools;
+
+use strum::IntoEnumIterator;
+
+
+
+
 use log::debug;
 
 
@@ -145,15 +145,15 @@ impl SearchState {
     /// Solutions with more moves have lower priority
     pub fn get_priority(&self) -> u8{
         match self.phase_data {
-            PhaseData::Phase1 { flip_slice_twist_depth_mod3 } => {                
+            PhaseData::Phase1 { flip_slice_twist_depth_mod3: _ } => {                
                 if self.deepening{
-                    (100 - self.moves.max(40))
+                    100 - self.moves.max(40)
                 }
                 else{
-                    (50 - self.moves.max(40))
+                    50 - self.moves.max(40)
                 }
             },
-            PhaseData::Phase2 { cornslice_depth, corners_ud_edges_depth_mod3 } => {
+            PhaseData::Phase2 { cornslice_depth, corners_ud_edges_depth_mod3: _ } => {
                 200 - (2 * cornslice_depth.max(12)) - self.moves.max(40)
             },
             PhaseData::Solved => u8::MAX - self.moves.max(50),
@@ -176,7 +176,7 @@ impl SearchState {
                     let next_phase = next_cube.create_phase_data(&coordinator.data_source);
                     let next_is_deepening = match next_phase {
                         PhaseData::Phase1 { flip_slice_twist_depth_mod3 } => flip_slice_twist_depth_mod3 == next_depth,
-                        PhaseData::Phase2 { cornslice_depth, corners_ud_edges_depth_mod3 } => true,
+                        PhaseData::Phase2 { cornslice_depth: _, corners_ud_edges_depth_mod3: _ } => true,
                         PhaseData::Solved => true,
                     };
 
@@ -212,8 +212,8 @@ impl SearchState {
                     let next_cube = self.cube.after_move(m, &coordinator.data_source.moves_source);
                     let next_phase = next_cube.create_phase_data(&coordinator.data_source);
                     let next_is_deepening = match next_phase {
-                        PhaseData::Phase1 { flip_slice_twist_depth_mod3 } => false, //should be unreachable
-                        PhaseData::Phase2 { cornslice_depth, corners_ud_edges_depth_mod3 } => corners_ud_edges_depth_mod3 == next_depth,
+                        PhaseData::Phase1 { flip_slice_twist_depth_mod3: _ } => false, //should be unreachable
+                        PhaseData::Phase2 { cornslice_depth: _, corners_ud_edges_depth_mod3 } => corners_ud_edges_depth_mod3 == next_depth,
                         PhaseData::Solved => true,
                     };
 

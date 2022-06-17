@@ -1,9 +1,9 @@
-use std::rc::Rc;
+
 
 use crate::core::prelude::*;
-use crate::state::{self, prelude::*};
+use crate::state::{prelude::*};
 use crate::web::prelude::*;
-use chrono::format::format;
+
 use itertools::Itertools;
 use strum::IntoEnumIterator;
 use yew::prelude::*;
@@ -125,7 +125,7 @@ pub fn solution_view() -> Html{
         html!(<code>{txt} </code>)
     },
     None => {
-        let onclick: Option<Callback<MouseEvent>> =
+        let _onclick: Option<Callback<MouseEvent>> =
         Some(Dispatch::new().apply_callback(move |_| SolveMsg{}));
 
     html!(<code> </code>)

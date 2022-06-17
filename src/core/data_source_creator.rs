@@ -1,10 +1,10 @@
 use crate::core::prelude::*;
-use array_const_fn_init::array_const_fn_init;
-use itertools::Itertools;
-use rand::{prelude::StdRng, Rng, SeedableRng};
-use serde::__private::de;
-use strum::{EnumCount, IntoEnumIterator};
-use strum_macros::*;
+
+
+
+
+
+
 
 impl FlipSliceSource {
     pub fn create() -> FlipSliceSource {
@@ -32,7 +32,7 @@ impl FlipSliceSource {
                         ss = ss.edge_multiply(&cube);
                         ss = ss.edge_multiply(&SYMMETRY_CUBES[sym]);
 
-                        let index_new = ((2048 * ss.get_slice() as usize) + ss.get_flip() as usize);
+                        let index_new = (2048 * ss.get_slice() as usize) + ss.get_flip() as usize;
                         if flip_slice_class_index[index_new] == u16::MAX {
                             flip_slice_class_index[index_new] = class_index as u16;
                             flip_slice_symmetry[index_new] = sym as u8;
@@ -103,13 +103,13 @@ impl DataSource {
 
         let mut next: Vec<(usize, usize)> = vec![(0, 0)];
 
-        while (done < 40320 * 24) {
+        while done < 40320 * 24 {
             let mut next_next: Vec<(usize, usize)> = Vec::new();
             for (corners, slice) in next {
                 for m in Move::PHASE2MOVES {
                     let corners1 = moves_source.corners_move[(18 * corners) + m as usize] as usize;
                     let slice1 = moves_source.slice_sorted_move[(18 * slice) + m as usize] as usize;
-                    let idx1 = (24 * corners1 + slice1);
+                    let idx1 = 24 * corners1 + slice1;
 
                     assert!(idx1 < 40320 * 24);
 

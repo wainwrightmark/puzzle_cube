@@ -1,9 +1,9 @@
 use crate::core::prelude::*;
-use array_const_fn_init::array_const_fn_init;
+
 use itertools::Itertools;
-use strum::{EnumCount, IntoEnumIterator};
-use strum_macros::*;
-use rand::{SeedableRng, prelude::StdRng, Rng};
+use strum::{EnumCount};
+
+use rand::{prelude::StdRng, Rng};
 
 #[derive(Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize, Clone)]
 pub struct CubieCube {
@@ -54,7 +54,7 @@ impl CubieCube {
             } else if ori_b < 3 {
                 ((ori_a - ori_b) % 3) + 3
             } else {
-                ((3 + ori_a - ori_b) % 3)
+                (3 + ori_a - ori_b) % 3
             };
             corner_orientations[c] = CornerOrientation::from_repr(ori).unwrap();
 
@@ -121,14 +121,14 @@ impl CubieCube {
         let mut corner_orientations = [CornerOrientation::Zero; CornerPosition::COUNT];
 
         let mut index = 0;
-        while (index < EdgePosition::COUNT) {
+        while index < EdgePosition::COUNT {
             let i = self.edge_positions[index] as usize;
             edge_positions[i] = EdgePosition::from_repr(index as u8).unwrap();
             index += 1;
         }
 
         index = 0;
-        while (index < EdgePosition::COUNT) {
+        while index < EdgePosition::COUNT {
             let i = edge_positions[index] as usize; //note: not self.edge_positions
             let ori = self.edge_orientations[i];
             edge_orientations[index] = ori;
@@ -136,14 +136,14 @@ impl CubieCube {
         }
         
         index = 0;
-        while (index < CornerPosition::COUNT) {
+        while index < CornerPosition::COUNT {
             let i = self.corner_positions[index] as usize;
             corner_positions[i] = CornerPosition::from_repr(index as u8).unwrap();
             index += 1;
         }
         
         index = 0;
-        while (index < CornerPosition::COUNT) {
+        while index < CornerPosition::COUNT {
             let i = corner_positions[index] as usize; //note: not self.corner_positions
             let ori = self.corner_orientations[i] as u8;
             let new_ori = match ori {
