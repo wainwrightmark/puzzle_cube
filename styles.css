@@ -1,13 +1,13 @@
 .face{
     
     position: absolute;
-    border: 0.1vw black solid;
+    border: thin grey solid;
     transition: transform 1s;
-    border-radius: 2vw;
+    border-radius: 1vw;
+    width:7.5%; height:10%; transform-origin: 150% 150%;
 }
 
 .cube-area{
-    perspective: 600px;
     width: 100%;
     aspect-ratio: 4/3;
     transform-style: preserve-3d;

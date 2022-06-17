@@ -5,7 +5,7 @@ use yew::prelude::*;
 use yewdux::prelude::*;
 
 pub fn face(color: Option<FaceColor>, facelet_position: FaceletPosition, view: ViewType) -> Html {
-    let facelet_translate = get_facelet_transform(facelet_position);
+    let facelet_transform = get_facelet_transform(facelet_position);
     let face_transforms = view.get_face_transform(facelet_position.get_face());
 
     let onclick: Callback<MouseEvent> = Dispatch::new().apply_callback(move |_| ClickedMsg {
@@ -22,33 +22,27 @@ pub fn face(color: Option<FaceColor>, facelet_position: FaceletPosition, view: V
 
     let all_transforms = initial_transform.into_iter()
     .chain(face_transforms.into_iter())
-    .chain(std::iter:: once(TransformComponent::Translate(facelet_translate)));
+    .chain(std::iter:: once(facelet_transform));
 
-    let combined_transforms = TransformComponent::combine_transforms(all_transforms);
-    let transform_string = TransformComponent::get_transform_string(&combined_transforms);
+    let combined_transforms = Transform::combine_transforms(all_transforms);
+    let style = Transform::get_transform_string(&combined_transforms, &"%".to_string());
 
-    let style = format!(
-        "{transform_string} width: {size}vw; height: {size}vw; transform-origin: {origin}vw {origin}vw;",
-        transform_string = transform_string,
-        size = FACELETSIZE.to_string(),
-        origin = (FACELETSIZE * 1.5).to_string(),
-    );
+
 
     html! {
         <div {class} {style} {onclick}   ></div>
     }
 }
 
-fn get_facelet_transform(facelet_position: FaceletPosition) -> TransformTranslate {
-    let hp = (facelet_position.get_horizontal_position() as usize) as f64;
-    let x: f64 = hp * (FACELETSIZE + FACELETSPACING);
+fn get_facelet_transform(facelet_position: FaceletPosition) -> Transform {
+    let hp = (facelet_position.get_horizontal_position() as usize) as f32;
+    let x: f32 = hp * (FACELETSIZE + FACELETSPACING);
 
-    let vp = (facelet_position.get_vertical_position() as usize) as f64;
-    let y: f64 = vp * (FACELETSIZE + FACELETSPACING);
+    let vp = (facelet_position.get_vertical_position() as usize) as f32;
+    let y: f32 = vp * (FACELETSIZE + FACELETSPACING);
 
-    TransformTranslate {
+    Transform::Translate {
         x,
-        y,
-        ..Default::default()
+        y
     }
 }

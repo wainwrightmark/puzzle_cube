@@ -28,144 +28,149 @@ pub enum ViewType {
     Exploded3D,
 }
 
-
-
-
-
 impl ViewType {
-    pub fn get_initial_transform(&self) -> Vec<TransformComponent> {
+    pub fn get_initial_transform(&self) -> Vec<Transform> {
         match self {
             ViewType::FlatMap => Default::default(),
-            _ => vec![TransformComponent::Rotate(TransformRotate{x: -30, y:-45, z:0 }) ,TransformComponent::Translate( TransformTranslate{x: 40.0,y: 5.0,z: 0.0})]
+            _ => vec![Transform::RotateX(-30.0), Transform::RotateY(-45.0), Transform::Translate { x: 750.0, y: 40.0 }]            
         }
     }
 
-    pub fn get_face_transform(&self, face: FaceColor) ->Vec<TransformComponent> {
+    pub fn get_face_transform(&self, face: FaceColor) ->Vec<Transform> {
         match self {
             ViewType::FlatMap => {
 
-                let hf = face.get_x() as f64;
-                let vf = face.get_y() as f64;
-                let x: f64 = ((FACELETSIZE + FACELETSPACING) * hf * 3.0) + (hf * FACESPACING);
-                let y: f64 = ((FACELETSIZE + FACELETSPACING) * vf * 3.0) + (vf * FACESPACING);
+                let hf = face.get_x() as f32;
+                let vf = face.get_y() as f32;
+                let x: f32 = ((FACELETSIZE + FACELETSPACING) * hf * 3.0) + (hf * FACESPACING);
+                let y: f32 = ((FACELETSIZE + FACELETSPACING) * vf * 3.0) + (vf * FACESPACING);
 
-                vec![TransformComponent::Translate(TransformTranslate {
-                    x,
-                    y,
-                    ..Default::default()
-                })]
+                vec![Transform::Translate{x,y}]
                 
             }
             ViewType::Compact3D => {
-                let d = (FACELETSIZE) * 1.5;
+                let d = FACELETSIZE * 1.5;
                 let tuple =
                 match face {
                     FaceColor::Up => (
-                        TransformRotate { x: 90, y: 0, z:0  },
-                        TransformTranslate {
+                        Transform::RotateY(-90.0),
+                        Transform::Translate {
                             x: 0.0,
-                            y: 0.0,
-                            z: d,
+                            y: -d,
                         },
+                        Transform::RotateY(90.0),
+                        Transform::RotateX(90.0),                                                                
                     ),
                     FaceColor::Left => (
-                        TransformRotate { x: 0, y: -90, z:0 },
-                        TransformTranslate {
+                        Transform::RotateZ(-90.0),
+                        Transform::Translate {
                             x: 0.0,
-                            y: 0.0,
-                            z: d,
+                            y: -d,
                         },
+                        Transform::RotateZ(90.0),
+                        Transform::RotateY(-90.0),
                     ),
                     FaceColor::Front => (
-                        TransformRotate { x: 0, y: 0, z:0 },
-                        TransformTranslate {
+                        Transform::RotateX(-90.0),
+                        Transform::Translate {
                             x: 0.0,
-                            y: 0.0,
-                            z: d,
+                            y: -d,
                         },
+                        Transform::RotateX(90.0),
+                        Transform::RotateY(0.0),
                     ),
                     FaceColor::Right => (
-                        TransformRotate { x: 0, y: 90, z:0 },
-                        TransformTranslate {
+                        Transform::RotateZ(-90.0),
+                        Transform::Translate {
                             x: 0.0,
-                            y: 0.0,
-                            z: d,
+                            y: d,
                         },
+                        Transform::RotateZ(90.0),
+                        Transform::RotateY(90.0),
                     ),
                     FaceColor::Back => (
-                        TransformRotate { x: 0, y: 180, z:0 },
-                        TransformTranslate {
+                        Transform::RotateX(-90.0),
+                        Transform::Translate {
                             x: 0.0,
-                            y: 0.0,
-                            z: d,
+                            y: d,
                         },
+                        Transform::RotateX(90.0),
+                        Transform::RotateY(180.0),
                     ),
                     FaceColor::Down => (
-                        TransformRotate { x: -90, y: 0, z:0 },
-                        TransformTranslate {
+                        Transform::RotateY(-90.0),
+                        Transform::Translate {
                             x: 0.0,
-                            y: 0.0,
-                            z: d,
+                            y: d,
                         },
+                        Transform::RotateY(90.0),
+                        Transform::RotateX(-90.0),
                     ),
                 };
-                vec![TransformComponent::Rotate(tuple.0),TransformComponent::Translate(tuple.1) ]
+                vec![tuple.0, tuple.1, tuple.2, tuple.3]
+                
             }
             ViewType::Exploded3D => {
-                let d1 = (FACELETSIZE) * 1.5;
-                let d2 = (FACELETSIZE) * 6.0;
+                let d1 = FACELETSIZE * 1.5;
+                let d2 = FACELETSIZE * 6.0;
                 let tuple =
                 match face {
                     FaceColor::Up => (
-                        TransformRotate { x: 90, y: 0, z:0 },
-                        TransformTranslate {
+                        Transform::RotateY(-90.0),
+                        Transform::Translate {
                             x: 0.0,
-                            y: 0.0,
-                            z: d1,
+                            y: -d1,
                         },
+                        Transform::RotateY(90.0),
+                        Transform::RotateX(90.0),                                                                
                     ),
                     FaceColor::Left => (
-                        TransformRotate { x: 0, y: -90, z:0 },
-                        TransformTranslate {
+                        Transform::RotateZ(-90.0),
+                        Transform::Translate {
                             x: 0.0,
-                            y: 0.0,
-                            z: d2,
+                            y: -d2,
                         },
+                        Transform::RotateZ(90.0),
+                        Transform::RotateY(-90.0),
                     ),
                     FaceColor::Front => (
-                        TransformRotate { x: 0, y: 0, z:0 },
-                        TransformTranslate {
+                        Transform::RotateX(-90.0),
+                        Transform::Translate {
                             x: 0.0,
-                            y: 0.0,
-                            z: d1,
+                            y: -d1,
                         },
+                        Transform::RotateX(90.0),
+                        Transform::RotateY(0.0),
                     ),
                     FaceColor::Right => (
-                        TransformRotate { x: 0, y: 90, z:0 },
-                        TransformTranslate {
+                        Transform::RotateZ(-90.0),
+                        Transform::Translate {
                             x: 0.0,
-                            y: 0.0,
-                            z: d1,
+                            y: d1,
                         },
+                        Transform::RotateZ(90.0),
+                        Transform::RotateY(90.0),
                     ),
                     FaceColor::Back => (
-                        TransformRotate { x: 0, y: 180, z:0 },
-                        TransformTranslate {
+                        Transform::RotateX(-90.0),
+                        Transform::Translate {
                             x: 0.0,
-                            y: 0.0,
-                            z: d2,
+                            y: d2,
                         },
+                        Transform::RotateX(90.0),
+                        Transform::RotateY(180.0),
                     ),
                     FaceColor::Down => (
-                        TransformRotate { x: -90, y: 0, z:0 },
-                        TransformTranslate {
+                        Transform::RotateY(-90.0),
+                        Transform::Translate {
                             x: 0.0,
-                            y: 0.0,
-                            z: d2,
+                            y: d2,
                         },
+                        Transform::RotateY(90.0),
+                        Transform::RotateX(-90.0),
                     ),
                 };
-                vec![TransformComponent::Rotate(tuple.0),TransformComponent::Translate(tuple.1) ]
+                vec![tuple.0, tuple.1, tuple.2, tuple.3]
             }
         }
     }

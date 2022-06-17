@@ -10,7 +10,7 @@ pub mod prelude {
     pub use crate::state::view_state::*;
     pub use crate::state::transform::*;
 
-    pub const FACELETSIZE: f64 = 6.0;
-    pub const FACELETSPACING: f64 = 0.1;
-    pub const FACESPACING: f64 = 0.5;
+    pub const FACELETSIZE: f32 = 100.0;
+    pub const FACELETSPACING: f32 = 0.0;
+    pub const FACESPACING: f32 = 5.0;
 }

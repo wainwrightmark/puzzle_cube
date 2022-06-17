@@ -1,36 +1,31 @@
-use std::ops::Add;
-
 use itertools::Itertools;
 use serde::*;
 
-#[derive(PartialEq, Copy, Clone, Default, Serialize, Deserialize)]
-pub struct TransformTranslate {
-    pub x: f64,
-    pub y: f64,
-    pub z: f64,
-}
-
 #[derive(PartialEq, Copy, Clone, Serialize, Deserialize)]
-pub enum TransformComponent{
-    Translate(TransformTranslate),
-    Rotate(TransformRotate)
+pub enum Transform{
+    Translate{
+        x: f32,
+        y: f32,
+    },
+    RotateX(f32),
+    RotateY(f32),
+    RotateZ(f32),
 }
 
+impl Transform{
 
+    
 
-
-impl TransformComponent{
-
-    pub fn get_transform_string(ts: &Vec<TransformComponent>)->String{
+    pub fn get_transform_string(ts: &Vec<Transform>, unit: &String)->String{
         if ts.is_empty(){
             "".to_string()
         }else {
-           "transform: ".to_string() + &ts.iter().map(|x|x.to_string()).join(" ") + ";"
+           "transform: ".to_string() + &ts.iter().map(|x|x.make_string(unit)).join(" ") + ";"
         }
     }
 
-    pub fn combine_transforms<T: Iterator<Item =TransformComponent>>(ts: T) -> Vec<TransformComponent>{
-        let mut v = Vec::<TransformComponent>::new();
+    pub fn combine_transforms<T: Iterator<Item =Transform>>(ts: T) -> Vec<Transform>{
+        let mut v = Vec::<Transform>::new();
      
          for t in ts{
              if let Some(last) = v.last(){
@@ -53,103 +48,56 @@ impl TransformComponent{
      }
 
     pub fn try_add(self, rhs: Self)->  Option<Self>{
+
         match self{
-            TransformComponent::Translate(t1) => match rhs{
-                TransformComponent::Translate(t2) => Self::Translate(t1 + t2).into(),
-                _ => None,
+            Transform::Translate { x:x1, y:y1 } => match rhs {
+                Transform::Translate { x:x2, y:y2 } => Self::Translate { x: x1+x2, y: y1+y2 }.into(),
+                _=> None
             },
-            TransformComponent::Rotate(r1) => match rhs{
-                TransformComponent::Rotate(r2) => Self::Rotate(r1 + r2).into(),
-                _ => None,
+            Transform::RotateX(a1) => match rhs {
                 
+                Transform::RotateX(a2) => Self::RotateX(a1+a2).into(),
+                _=> None
+            },
+            Transform::RotateY(a1) => match rhs {
+                
+                Transform::RotateY(a2) => Self::RotateY(a1+a2).into(),
+                _=> None
+            },Transform::RotateZ(a1) => match rhs {
+                
+                Transform::RotateZ(a2) => Self::RotateZ(a1+a2).into(),
+                _=> None
             },
         }
     }
 
     pub fn is_empty(self)-> bool{
         match self{
-            TransformComponent::Translate(t) =>  t == Default::default(),
-            TransformComponent::Rotate(r) => r == Default::default(),
+            Transform::Translate { x, y } => x == 0.0 && y == 0.0,
+            Transform::RotateX(a) => a == 0.0,
+            Transform::RotateY(a) => a == 0.0,
+            Transform::RotateZ(a) => a == 0.0,
         }
     }
 
-}
+    pub fn make_string(&self, unit:&String)->String{
+        if self.is_empty(){return "".to_string();}
 
-impl ToString for TransformComponent{
-    fn to_string(&self) -> String {
         match self {
-            TransformComponent::Translate(t) => t.to_string(),
-            TransformComponent::Rotate(r) => r.to_string(),
+            Transform::Translate { x, y } => {
+                if x == &0.0{
+                    return format!("translateY({:.2}{})",y, unit);
+                }else if y == &0.0{
+                    return format!("translateX({:.2}{})",x, unit);
+                }
+                return format!("translate({x:.2}{unit}, {y:.2}{unit})",x=x, y=y, unit=unit);
+            },
+            Transform::RotateX(a) => format!("rotateX({:.2}deg)",a),
+            Transform::RotateY(a) => format!("rotateY({:.2}deg)",a),
+            Transform::RotateZ(a) => format!("rotateZ({:.2}deg)",a),
         }
     }
+
 }
 
-impl From<TransformTranslate> for TransformComponent {
-    fn from(x: TransformTranslate) -> Self {
-        Self::Translate(x)
-    }
-}
 
-impl From<TransformRotate> for TransformComponent {
-    fn from(x: TransformRotate) -> Self {
-        Self::Rotate(x)
-    }
-}
-
-impl ToString for TransformTranslate{
-    fn to_string(&self) -> String {
-
-        if self == &Default::default(){
-            return "".to_string();
-        }
-
-        format!("translate3d({:.2}vw,{:.2}vw,{:.2}vw)", self.x, self.y, self.z)
-    }
-}
-
-#[derive(PartialEq, Eq, Copy, Clone, Default, Serialize, Deserialize)]
-pub struct TransformRotate {
-    pub x: i32,
-    pub y: i32,
-    pub z: i32
-}
-
-impl Add for TransformTranslate{
-    type Output = Self;
-
-    fn add(self, rhs: Self) -> Self::Output {
-        Self{
-            x: self.x + rhs.x,
-            y: self.y + rhs.y,
-            z: self.z + rhs.z,
-        }
-    }
-}
-
-impl Add for TransformRotate{
-    type Output = Self;
-
-    fn add(self, rhs: Self) -> Self::Output {
-        Self{
-            x: self.x + rhs.x,
-            y: self.y + rhs.y,
-            z: self.z + rhs.z,
-        }
-    }
-}
-
-impl ToString for TransformRotate{
-    fn to_string(&self) -> String {
-        if self.x != 0 {
-            if self.y != 0 {
-                format!("rotateX({:.2}deg) rotateY({:.2}deg)", self.x, self.y)
-            } else {
-                format!("rotateX({:.2}deg)", self.x)
-            }
-        } else if self.y != 0 {
-            format!("rotateY({:.2}deg)", self.y)
-        } else {
-            "".to_string()
-        }
-    }
-}
