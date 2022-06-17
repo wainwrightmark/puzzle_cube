@@ -147,7 +147,7 @@ impl DataSource {
     fn make_corners_sym(corners_source: &CornerSymmetriesSource) -> [u16; 2768] {
         let mut cc = CubieCube::default();
         let mut c_sym = [u16::MIN; 2768];
-        for i in 0..2768 {
+        for (i, item) in c_sym.iter_mut().enumerate() {
             let rep = corners_source.corner_rep[i];
             cc.set_corners(rep);
 
@@ -157,7 +157,7 @@ impl DataSource {
                 ss = ss.corner_multiply(&SYMMETRY_CUBES_INVERTED[s]);
                 if ss.get_corners() == rep {
                     let q = 1 << s;
-                    c_sym[i] |= q;
+                    *item |= q;
                 }
             }
         }

@@ -156,7 +156,7 @@ impl DataSource {
     pub fn make_flip_slice_sym(flip_slice_source: &FlipSliceSource) -> [u16; NFLIPSLICECLASS] {
         let mut cc = CubieCube::default();
         let mut fs_sym = [u16::MIN; NFLIPSLICECLASS];
-        for i in 0..NFLIPSLICECLASS {
+        for (i, item) in fs_sym.iter_mut().enumerate() {
             let rep = flip_slice_source.flip_slice_rep[i];
             let rep_mod_flip = (rep % 2048) as u16;
             let rep_div_flip = (rep / 2048) as u16;
@@ -170,7 +170,7 @@ impl DataSource {
                 let slice = ss.get_slice();
                 if slice == rep_div_flip && ss.get_flip() == rep_mod_flip {
                     let q = 1 << s;
-                    fs_sym[i] |= q;
+                    *item |= q;
                 }
             }
         }
