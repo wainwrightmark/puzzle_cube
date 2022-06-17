@@ -26,6 +26,27 @@ impl Store for CubeState {
 }
 
 impl CubeState {
+    pub fn get_message(&self) -> String {
+        match &self.cube {
+            SomeCube::Cubie { cube: _, solution } => match solution {
+                Some(vector) => {
+                    let len = vector.len();
+                    let txt = vector.into_iter().map(|x| x.to_string()).join(" ")
+                        + format!(" ({})", &len).as_str();
+                    return txt;
+                }
+                None => "".to_string(),
+            },
+            SomeCube::Facelet {
+                cube: _,
+                color: _,
+                error,
+            } => {
+                error.clone().unwrap_or_default()
+            }
+        }
+    }
+
     pub fn is_cubie(&self) -> bool {
         matches!(
             self.cube,
@@ -328,7 +349,7 @@ impl Reducer<CubeState> for MoveMsg {
                     Some(vec) => match vec.split_first() {
                         Some((m1, rem)) => {
                             if self.cube.eq(m1.get_cube()) {
-                                Some(rem.into_iter().cloned().collect_vec())
+                                Some(rem.iter().cloned().collect_vec())
                             } else {
                                 None
                             }

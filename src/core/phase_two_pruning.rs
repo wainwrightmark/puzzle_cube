@@ -139,7 +139,7 @@ impl DataSource {
                     move_index += 1;
                 }
             }
-            depth = depth + 1;
+            depth += 1;
         }
 
         table

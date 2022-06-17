@@ -19,7 +19,7 @@ pub fn app() -> Html {
             <FaceletCubeView />
             </div>
             <br/>
-            <SolutionView/>
+            <MessageView/>
     <ButtonsControl/>
 
 
@@ -88,10 +88,9 @@ pub fn buttons_control() -> Html {
 
 #[function_component(SolveGenerateButton)]
 pub fn solve_or_generate_button() -> Html {
-    let is_data_generated = use_selector(|x: &DataState| x.is_generated())
-        .as_ref()
-        .clone();
-    let is_solved = use_selector(|x: &CubeState| x.is_solved()).as_ref().clone();
+    let is_data_generated = *use_selector(|x: &DataState| x.is_generated())
+        .as_ref();
+    let is_solved = *use_selector(|x: &CubeState| x.is_solved()).as_ref();
 
     let generate: Callback<MouseEvent> =
         Dispatch::new().reduce_callback(|state: Rc<DataState>| state.with_generate_data());
@@ -110,33 +109,11 @@ pub fn solve_or_generate_button() -> Html {
     }
 }
 
-#[function_component(SolutionView)]
-pub fn solution_view() -> Html {
-    let solution = use_selector(|x: &CubeState| match &x.cube {
-        SomeCube::Cubie { cube: _, solution } => solution.clone(),
-        SomeCube::Facelet {
-            cube: _,
-            color: _,
-            error: _,
-        } => None,
-    })
-    .as_ref()
-    .clone();
+#[function_component(MessageView)]
+pub fn message_view() -> Html {
+    let message = use_selector(|x: &CubeState| x.get_message());
 
-    match solution {
-        Some(vector) => {
-            let len = vector.len();
-            let txt = vector.into_iter().map(|x| x.to_string()).join(" ")
-                + format!(" ({})", &len).as_str();
-            html!(<code>{txt} </code>)
-        }
-        None => {
-            let _onclick: Option<Callback<MouseEvent>> =
-                Some(Dispatch::new().apply_callback(move |_| SolveMsg {}));
-
-            html!(<code> </code>)
-        }
-    }
+    html!(<code>{message} </code>)
 }
 
 #[derive(PartialEq, Eq, Properties)]

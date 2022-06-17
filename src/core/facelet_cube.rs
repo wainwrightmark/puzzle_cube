@@ -117,12 +117,16 @@ impl TryFrom<FaceletCube> for CubieCube {
             edge_orientations[e as usize] = EdgeOrientation::from_repr(j.1).unwrap();
         }
 
-        Ok(CubieCube {
+        let c= CubieCube {
             corner_positions,
             corner_orientations,
             edge_orientations,
             edge_positions,
-        })
+        };
+
+        c.verify()?;
+
+        Ok(c)
     }
 }
 

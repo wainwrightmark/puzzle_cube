@@ -435,10 +435,8 @@ fn test_inverse_cubes2() {
     let basic_cubes =
         std::collections::BTreeSet::from_iter(SYMMETRY_CUBES.into_iter().map(CoordinateCube::from));
 
-    for i in 0..SYMMETRY_CUBES_INVERTED.len() {
-        let inverted_cube = SYMMETRY_CUBES_INVERTED[i].clone().into();
-
-        assert!(basic_cubes.contains(&inverted_cube), "Cube {}", i);
+    for (i, inverted_cube) in SYMMETRY_CUBES_INVERTED.into_iter().enumerate() {
+        assert!(basic_cubes.contains(&inverted_cube.into()), "Cube {}", i);
     }
 }
 
