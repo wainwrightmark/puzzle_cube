@@ -1,17 +1,25 @@
 use crate::core::prelude::*;
 use crate::state::prelude::*;
 use itertools::Itertools;
-
 use serde::*;
 
 use std::rc::Rc;
-use yewdux::prelude::*;
+use yewdux::{storage, prelude::*};
 
-#[derive(PartialEq, Eq, Store, Clone, Default, Serialize, Deserialize)]
-//#[store(storage = "local")] // can also be "session"
+#[derive(PartialEq, Eq, Clone, Default, Serialize, Deserialize)]
 pub struct CubeState {
     pub cube: SomeCube,
     pub solution: Option<Vec<Move>>,
+}
+
+impl Store for CubeState {
+    fn new() -> Self {
+        init_listener(storage::StorageListener::<Self>::new(storage::Area::Local));
+
+        storage::load(storage::Area::Local)
+            .expect("Unable to load state")
+            .unwrap_or_default()
+    }
 }
 
 impl CubeState {

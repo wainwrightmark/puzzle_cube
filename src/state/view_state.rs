@@ -3,12 +3,21 @@ use crate::state::prelude::*;
 
 use serde::*;
 use std::rc::Rc;
-use yewdux::prelude::*;
+use yewdux::{storage, prelude::*};
 
-#[derive(PartialEq, Eq, Store, Clone, Default, Serialize, Deserialize)]
-//#[store(storage = "local")] // can also be "session"
+#[derive(PartialEq, Eq, Clone, Default, Serialize, Deserialize)]
 pub struct ViewState {
     pub view_type: ViewType,
+}
+
+impl Store for ViewState {
+    fn new() -> Self {
+        init_listener(storage::StorageListener::<Self>::new(storage::Area::Local));
+
+        storage::load(storage::Area::Local)
+            .expect("Unable to load state")
+            .unwrap_or_default()
+    }
 }
 
 #[derive(PartialEq, Eq, Copy, Clone, Default, Serialize, Deserialize)]
