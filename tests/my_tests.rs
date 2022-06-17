@@ -626,14 +626,6 @@ fn test_solve_simple_cube(){
     test_solver(&cube, data_source);
 }
 
-#[test]
-fn test_solve_symmetry_cubes(){
-    let data_source = Rc::new(DataSource::create());
-
-    for cube in SYMMETRY_CUBES{
-        test_solver(&cube, data_source.clone());
-    }    
-}
 
 fn test_solver(cube: &CubieCube, data_source: Rc<DataSource>){
     let solution = Solver::get_solution(cube.clone(), data_source.clone(), SolveSettings::default());
