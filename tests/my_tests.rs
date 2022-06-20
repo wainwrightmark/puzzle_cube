@@ -183,57 +183,25 @@ fn test_ud_edges(seed: u8) {
 #[test]
 fn test_u_edges() {
     let move_source = MovesSource::create();
-
-    let expected = vec![0, 0, 0, 7920, 840, 1680, 5065, 385, 7945, 18];
-
-    let sub_table = move_source
-        .u_edges_move
-        .into_iter()
-        .take(expected.len())
-        .collect_vec();
-    assert_eq!(sub_table, expected)
+    insta::assert_debug_snapshot!(move_source.u_edges_move);
 }
 
 #[test]
 fn test_d_edges() {
     let move_source = MovesSource::create();
-
-    let expected = vec![0, 0, 0, 7920, 840, 1680, 5065, 385, 7945, 18];
-
-    let sub_table = move_source
-        .d_edges_move
-        .into_iter()
-        .take(expected.len())
-        .collect_vec();
-    assert_eq!(sub_table, expected)
+    insta::assert_debug_snapshot!(move_source.d_edges_move);
 }
 
 #[test]
 fn test_ud_edges_data() {
     let move_source = MovesSource::create();
-
-    let expected = vec![6, 12, 18, 42, 313, 35304];
-
-    let sub_table = move_source
-        .u_d_edges_move
-        .into_iter()
-        .take(expected.len())
-        .collect_vec();
-    assert_eq!(sub_table, expected)
+    insta::assert_debug_snapshot!(move_source.u_d_edges_move);
 }
 
 #[test]
 fn test_create_corners() {
     let r = CornersProperty::create(&CornersProperty {});
-
-    for c in r.clone() {
-        assert!(c < 40320)
-    }
-
-    let expected = vec![6, 12, 18, 26692, 9462, 22354, 354, 157, 667, 35304];
-
-    let sub_table = r.into_iter().take(expected.len()).collect_vec();
-    assert_eq!(sub_table, expected)
+    insta::assert_debug_snapshot!(r);
 }
 
 #[test]
@@ -241,15 +209,7 @@ fn test_corner_slice_depth() {
     let moves_source = MovesSource::create();
 
     let table = DataSource::create_corner_slice_depth(&moves_source);
-
-    for c in table.iter() {
-        assert_ne!(&u8::MAX, c)
-    }
-
-    let expected = vec![0, 6, 6, 8, 6, 6, 8, 6, 8, 6];
-
-    let sub_table = table.into_iter().take(expected.len()).collect_vec();
-    assert_eq!(sub_table, expected)
+    insta::assert_debug_snapshot!(table);
 }
 
 #[test]
@@ -258,29 +218,14 @@ fn test_phase_two_pruning() {
     let corner_source = CornerSymmetriesSource::create();
 
     let table = DataSource::create_phase_2_pruning(&moves_source, &corner_source);
-
-    let expected = vec![
-        1040187196, 3738173439, 3148869435, 3270983646, 1022771197, 4286573750, 4286009295,
-        3354899262, 4293918719, 4091533311,
-    ];
-
-    let sub_table = table.into_iter().take(expected.len()).collect_vec();
-    assert_eq!(sub_table, expected)
+    insta::assert_debug_snapshot!(table);
 }
 
 #[test]
 fn test_fs_sym() {
     let flip_slice_source = FlipSliceSource::create();
     let table = DataSource::make_flip_slice_sym(&flip_slice_source);
-
-    let expected = vec![
-        65535, 771, 26265, 65535, 1, 1, 1, 1, 9, 1, 9, 1, 9, 9, 51, 3, 17, 33, 51, 1, 1, 1, 1, 255,
-    ];
-
-    let sub_table = table.into_iter().take(expected.len()).collect_vec();
-    assert_eq!(sub_table, expected);
-
-    assert_eq!(table[24516], 1);
+    insta::assert_debug_snapshot!(table);
 }
 
 #[test]
@@ -289,104 +234,45 @@ fn test_phase_one_pruning() {
     let flip_slice_source = FlipSliceSource::create();
 
     let table = DataSource::create_phase_1_pruning(&moves_source, &flip_slice_source);
-
-    let expected = vec![
-        1704289684, 1494853018, 1503286594, 2439088264, 2551548309, 2757072154, 1704232488,
-        2594350426, 2774941993, 2321846938,
-    ];
-
-    let sub_table = table.iter().cloned().take(10).collect_vec();
-    assert_eq!(sub_table, expected);
-    assert_eq!(table[122672], 356602961);
+    insta::assert_debug_snapshot!(table);
 }
 
 #[test]
 fn test_phase_two_ud_edge_merge() {
     let table = DataSource::create_phase_2_edge_merge();
-
-    let sub_table = table.into_iter().take(10).collect_vec();
-    let expected = vec![
-        20160, 20784, 24000, 23904, 24504, 24600, 7200, 7824, 6000, 5904,
-    ];
-    assert_eq!(sub_table, expected);
+    insta::assert_debug_snapshot!(table);
 }
 
 #[test]
 fn test_up_down_edges_conjugation() {
     let table = DataSource::create_up_down_edges_conjugation();
-
-    let expected = vec![
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 5, 10, 1, 20, 10, 5, 20, 4440, 624,
-        36000, 4440, 26664, 36000, 624, 26664, 2, 4, 11, 14, 7, 23, 16, 19, 4344,
-    ];
-    let sub_table = table.into_iter().take(expected.len()).collect_vec();
-
-    assert_eq!(sub_table, expected);
+    insta::assert_debug_snapshot!(table);
 }
 
 #[test]
 fn test_create_corner_symmetries() {
     let css = CornerSymmetriesSource::create();
-
-    for class_index in css.corner_class_index.clone() {
-        assert!(class_index < 2768)
-    }
-
-    let expected = vec![0, 1, 2, 3, 2, 1, 4, 2, 5, 6, 1, 2, 7, 5, 2, 3, 2, 5, 4, 2];
-    let sub_table = css
-        .corner_class_index
-        .into_iter()
-        .take(expected.len())
-        .collect_vec();
-
-    assert_eq!(sub_table, expected);
+    insta::assert_debug_snapshot!(css.corner_class_index);
 }
 
 #[test]
 fn test_create_flip_slice_symmetries() {
     let fss = FlipSliceSource::create();
-
-    for class_index in fss.flip_slice_class_index.clone() {
-        assert!(class_index < 64430)
-    }
-
-    let expected = vec![0, 1, 2, 1, 1, 2, 1, 3, 4, 4, 5, 6, 5, 6, 7, 7, 5, 4, 4, 6];
-    let sub_table = fss
-        .flip_slice_class_index
-        .into_iter()
-        .take(expected.len())
-        .collect_vec();
-
-    assert_eq!(sub_table, expected);
+    insta::assert_debug_snapshot!(fss.flip_slice_class_index);
 }
 
 #[test]
 fn test_create_flip_slice_rep() {
-    let fss = FlipSliceSource::create();
-    assert_eq!(fss.flip_slice_rep[24516], 169984);
-
-    let expected = vec![
-        0, 1, 2, 7, 8, 10, 11, 14, 24, 25, 26, 28, 29, 31, 40, 41, 42, 43, 47, 56, 57, 59, 61, 120,
-        121, 122, 127, 136, 137, 138,
-    ];
-    let sub_table = fss
-        .flip_slice_rep
-        .into_iter()
-        .take(expected.len())
-        .collect_vec();
-
-    assert_eq!(sub_table, expected);
+    let fss = FlipSliceSource::create();    
+    insta::assert_debug_snapshot!(fss.flip_slice_rep);
 }
 
 #[test]
 fn test_basic_cubes() {
-    itertools::assert_equal(
-        SYMMETRY_CUBES
-            .into_iter()
-            .map(CoordinateCube::from)
-            .duplicates(),
-        vec![],
-    );
+    assert!(SYMMETRY_CUBES
+        .into_iter()
+        .map(CoordinateCube::from)
+        .duplicates().next().is_none())
 }
 
 #[test]
@@ -441,34 +327,20 @@ fn test_inverse_cubes2() {
 }
 
 #[test]
-fn test_solve_cube() {
-    let data_source = Rc::new(DataSource::create());
-    let base_cube = CubieCube::random_cube(100);
-
-    test_solver(&base_cube, data_source);
-}
-
-#[test]
-fn test_solve_basic_cubes() {
+fn test_solve_cubes() {
     let data_source = Rc::new(DataSource::create());
 
     for m in Move::ALLMOVES {
         let base_cube = m.get_cube();
         test_solver(base_cube, data_source.clone());
     }
+
+    for seed in 1..100{
+        let base_cube = CubieCube::random_cube(seed);
+        test_solver(&base_cube, data_source.clone());
+    }    
 }
 
-#[test]
-fn test_solve_simple_cube() {
-    let data_source = Rc::new(DataSource::create());
-
-    let mut cube = CubieCube::default();
-    cube = Move::U1.apply(&cube);
-    cube = Move::R1.apply(&cube);
-    cube = Move::F1.apply(&cube);
-
-    test_solver(&cube, data_source);
-}
 
 fn test_solver(cube: &CubieCube, data_source: Rc<DataSource>) {
     let solution = Solver::get_solution(cube.clone(), data_source, SolveSettings::default());
