@@ -49,7 +49,7 @@ opt-level = 3
 
 
 [dev-dependencies]
-bencher= "0.1"
+criterion = "0.3"
 ntest = "0.8"
 insta = "1.15.0"
 
