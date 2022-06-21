@@ -1,17 +1,24 @@
-use criterion::{black_box, criterion_group, criterion_main, Criterion};
+use criterion::{criterion_group, criterion_main, Criterion};
 use std::rc::Rc;
 
 use puzzle_cube::core::prelude::*;
 
 criterion_group!(
-    benches,
+    name = benches;
+    config = Criterion::default().sample_size(100).measurement_time(instant::Duration::new(5, 0));
+
+    targets=
+
+    bench_create_phase_1_pruning,
+    bench_create_phase_2_pruning,
+    bench_solver,
     bench_create_move_table,
     bench_create_corner_slice_depth,
     bench_create_ud_edges_conjugation,
     bench_create_corner_symmetries,
     bench_create_flip_slice,
-    bench_create_phase_2_pruning,
-    //bench_solver
+    
+    
 );
 criterion_main!(benches);
 
@@ -42,9 +49,24 @@ fn bench_create_phase_2_pruning(c: &mut Criterion) {
     c.bench_function("create phase 2 pruning", |bench|bench.iter(||create_phase_2_pruning(&moves_source, &corner_source)));    
 }
 
+fn bench_create_phase_1_pruning(c: &mut Criterion) {
+    let moves_source = MovesSource::create();
+    let flip_slice_source = FlipSliceSource::create();
+
+    let mut group = c.benchmark_group("phase one pruning");
+    group.sample_size(10);
+    group.measurement_time(instant::Duration::new(100, 0));
+    group.bench_function("create phase one pruning", |bench|bench.iter(||create_phase_1_pruning(&moves_source, &flip_slice_source)));
+    group.finish()
+}
+
 fn bench_solver(c: &mut Criterion) {
     let data_source = Rc::new(DataSource::create());
-    c.bench_function("solve random cube", |bench|bench.iter(||solve(data_source.clone())));
+
+    let mut group = c.benchmark_group("solver");
+    group.sample_size(10);
+    group.bench_function("solve 100 random cubes", |bench|bench.iter(||solve(data_source.clone(), 100)));
+    group.finish()
 }
 
 fn create_move_table() -> MovesSource {
@@ -74,8 +96,15 @@ fn create_phase_2_pruning(
     DataSource::create_phase_2_pruning(move_source, corner_source)
 }
 
-fn solve(data_source: Rc<DataSource>) {
-    for seed in 0..1 {
+fn create_phase_1_pruning(
+    move_source: &MovesSource,
+    flip_slice_source: &FlipSliceSource,
+) -> Vec<u32> {
+    DataSource::create_phase_1_pruning(move_source, flip_slice_source)
+}
+
+fn solve(data_source: Rc<DataSource>, number: u64) {
+    for seed in 0..number {
         let base_cube = CubieCube::random_cube(seed);
         let solution = Solver::get_solution(base_cube, data_source.clone(), SolveSettings::default());
         assert!(solution.is_some());
