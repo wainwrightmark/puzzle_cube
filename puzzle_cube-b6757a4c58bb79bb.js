@@ -683,7 +683,7 @@ function initSync(bytes) {
 
 async function init(input) {
     if (typeof input === 'undefined') {
-        input = new URL('puzzle_cube-d454f360ff67fb73_bg.wasm', import.meta.url);
+        input = new URL('puzzle_cube-b6757a4c58bb79bb_bg.wasm', import.meta.url);
     }
     const imports = getImports();
 
