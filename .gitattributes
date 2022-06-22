@@ -1,3 +1,4 @@
+*.snap filter=lfs diff=lfs merge=lfs -text
 *.yml filter=lfs diff=lfs merge=lfs -text
 *.gitignore filter=lfs diff=lfs merge=lfs -text
 *.lock filter=lfs diff=lfs merge=lfs -text
@@ -6,5 +7,4 @@
 *.html filter=lfs diff=lfs merge=lfs -text
 *.md filter=lfs diff=lfs merge=lfs -text
 *.css filter=lfs diff=lfs merge=lfs -text
-*.snap filter=lfs diff=lfs merge=lfs -text
 *.* !text !filter !merge !diff
