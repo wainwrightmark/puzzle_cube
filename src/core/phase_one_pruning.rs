@@ -33,8 +33,11 @@ impl DataSource {
 
         let mut next = vec![(0, 0)]; //next is tuples of (fs_class_idx, twist)
         let mut current: Vec<(usize, u16)> = Vec::new();
-        current.reserve_exact(7950748); //magic number
-        next.reserve_exact(7950748);
+        if !quick{
+            current.reserve_exact(7950748); //magic number
+            next.reserve_exact(7950748);
+        }
+        
 
         let round1_depth = if quick{7} else{8};        
 
