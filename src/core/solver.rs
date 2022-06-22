@@ -23,7 +23,7 @@ impl Default for SolveSettings {
         Self {
             max_moves: 24,
             stopping_length: 20,
-            max_iterations: 10000,
+            max_iterations: 100000,
         }
     }
 }
@@ -148,12 +148,12 @@ impl SearchState {
 
                 if fsm.is_some(){
                     if self.deepening {
-                        100 - self.moves.max(40)
+                        100 - self.moves.min(40)
                     } else {
-                        50 - self.moves.max(40)
+                        50 - self.moves.min(40)
                     }
                 }else{
-                    10 - self.moves.max(10)
+                    10 - self.moves.min(10)
                 }
 
                
@@ -161,8 +161,8 @@ impl SearchState {
             PhaseData::Phase2 {
                 cornslice_depth,
                 corners_ud_edges_depth_mod3: _,
-            } => 200 - (2 * cornslice_depth.max(12)) - self.moves.max(40),
-            PhaseData::Solved => u8::MAX - self.moves.max(50),
+            } => 200 - (2 * cornslice_depth.min(12)) - self.moves.min(40),
+            PhaseData::Solved => u8::MAX - self.moves.min(50),
         }
     }
 

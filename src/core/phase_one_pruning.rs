@@ -36,7 +36,9 @@ impl DataSource {
         current.reserve_exact(7950748); //magic number
         next.reserve_exact(7950748);
 
-        while depth < 9 {
+        let round1_depth = if quick{7} else{8};        
+
+        while depth <= round1_depth {
             std::mem::swap(&mut next, &mut current);
 
             for (fs_class_idx, twist) in current.drain(..) {
@@ -64,7 +66,7 @@ impl DataSource {
                             &mut table,
                         );
                         done += 1;
-                        if depth < 8 {
+                        if depth < round1_depth {
                             next.push((fs_class_idx_after_move, twist_after_move));
                         }
 
@@ -89,7 +91,7 @@ impl DataSource {
                                             &mut table,
                                         );
                                         done += 1;
-                                        if depth < 8 {
+                                        if depth < round1_depth {
                                             next.push((
                                                 fs_class_idx_after_move,
                                                 twist_after_move_and_symmetry,
