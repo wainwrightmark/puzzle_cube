@@ -13,7 +13,6 @@ use strum::IntoEnumIterator;
 use log::debug;
 
 pub struct SolveSettings {
-    pub max_moves: u8,
     pub stopping_length: u8,
     pub max_iterations: usize,
 }
@@ -21,9 +20,8 @@ pub struct SolveSettings {
 impl Default for SolveSettings {
     fn default() -> Self {
         Self {
-            max_moves: 24,
             stopping_length: 20,
-            max_iterations: 100000,
+            max_iterations: 10000,
         }
     }
 }
@@ -75,8 +73,8 @@ impl Solver {
         let mut coordinator = SerialSolveCoordinator {
             data_source,
             solution: None,
-            max_moves: settings.max_moves,
             seen: HashMap::new(),
+            max_moves: None,
             queue,
         };
 
@@ -219,7 +217,7 @@ impl SearchState {
                 cornslice_depth,
                 corners_ud_edges_depth_mod3,
             } => {
-                if cornslice_depth >= (coordinator.max_moves - self.moves).min(11) {
+                if coordinator.max_moves.is_some() && cornslice_depth >= (coordinator.max_moves.unwrap() - self.moves).min(11) {
                     return None;
                 }
 
@@ -286,7 +284,7 @@ pub enum PreviousState {
 pub struct SerialSolveCoordinator {
     pub data_source: Rc<DataSource>,
     pub solution: Option<SearchState>,
-    pub max_moves: u8,
+    pub max_moves: Option<u8>,
     pub queue: BinaryHeap<SearchState>,
     pub seen: HashMap<CoordinateCube, u8>,
 }
@@ -337,7 +335,7 @@ impl SerialSolveCoordinator {
             }
         }
 
-        self.max_moves = state.moves - 1;
+        self.max_moves = Some(state.moves - 1);
         self.solution = Some(state);
         true
     }
