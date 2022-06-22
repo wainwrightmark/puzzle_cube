@@ -27,7 +27,7 @@ pub struct CoordinateCube {
 #[derive(Debug, PartialEq, Eq, serde::Serialize, serde::Deserialize, Clone, Default, Hash)]
 pub enum PhaseData {
     Phase1 {
-        flip_slice_twist_depth_mod3: u8,
+        flip_slice_twist_depth_mod3: Option<u8>,
     },
     Phase2 {
         cornslice_depth: u8,

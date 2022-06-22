@@ -143,13 +143,20 @@ impl SearchState {
     pub fn get_priority(&self) -> u8 {
         match self.phase_data {
             PhaseData::Phase1 {
-                flip_slice_twist_depth_mod3: _,
+                flip_slice_twist_depth_mod3: fsm,
             } => {
-                if self.deepening {
-                    100 - self.moves.max(40)
-                } else {
-                    50 - self.moves.max(40)
+
+                if fsm.is_some(){
+                    if self.deepening {
+                        100 - self.moves.max(40)
+                    } else {
+                        50 - self.moves.max(40)
+                    }
+                }else{
+                    10 - self.moves.max(10)
                 }
+
+               
             }
             PhaseData::Phase2 {
                 cornslice_depth,
@@ -164,11 +171,7 @@ impl SearchState {
             PhaseData::Phase1 {
                 flip_slice_twist_depth_mod3,
             } => {
-                let next_depth = (flip_slice_twist_depth_mod3 + 2) % 3;
-
-                if next_depth + 1 + self.moves >= coordinator.max_moves {
-                    return None;
-                } //no way to solve in time
+                let next_depth = flip_slice_twist_depth_mod3.map(|x|(x + 2) % 3);
 
                 let next_previous_state = Arc::new(self.clone());
 
@@ -180,7 +183,12 @@ impl SearchState {
                     let next_is_deepening = match next_phase {
                         PhaseData::Phase1 {
                             flip_slice_twist_depth_mod3,
-                        } => flip_slice_twist_depth_mod3 == next_depth,
+                        } =>{
+                            match next_depth {
+                                Some(nd) => flip_slice_twist_depth_mod3.map(|f|f ==nd).unwrap_or(false),
+                                None => true,
+                            }
+                        } 
                         PhaseData::Phase2 {
                             cornslice_depth: _,
                             corners_ud_edges_depth_mod3: _,

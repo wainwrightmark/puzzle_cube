@@ -20,7 +20,7 @@ impl DataState {
         } else {
             debug!("Generating solve data");
             let start_instant = instant::Instant::now();
-            let data = DataSource::create();
+            let data = DataSource::create(true);
             let diff = instant::Instant::now() - start_instant;
 
             debug!("Solve generated in {:?}", diff);

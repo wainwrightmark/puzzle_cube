@@ -233,7 +233,16 @@ fn test_phase_one_pruning() {
     let moves_source = MovesSource::create();
     let flip_slice_source = FlipSliceSource::create();
 
-    let table = DataSource::create_phase_1_pruning(&moves_source, &flip_slice_source);
+    let table = DataSource::create_phase_1_pruning(false, &moves_source, &flip_slice_source);
+    insta::assert_debug_snapshot!(table);
+}
+
+#[test]
+fn test_phase_one_pruning_quick() {
+    let moves_source = MovesSource::create();
+    let flip_slice_source = FlipSliceSource::create();
+
+    let table = DataSource::create_phase_1_pruning(true, &moves_source, &flip_slice_source);
     insta::assert_debug_snapshot!(table);
 }
 
@@ -328,7 +337,7 @@ fn test_inverse_cubes2() {
 
 #[test]
 fn test_solve_cubes() {
-    let data_source = Rc::new(DataSource::create());
+    let data_source = Rc::new(DataSource::create(true));
 
     for m in Move::ALLMOVES {
         let base_cube = m.get_cube();

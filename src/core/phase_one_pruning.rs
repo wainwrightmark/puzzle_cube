@@ -18,6 +18,7 @@ impl DataSource {
     }
 
     pub fn create_phase_1_pruning(
+        quick: bool,
         moves_source: &MovesSource,
         flip_slice_source: &FlipSliceSource,
     ) -> Vec<u32> {
@@ -102,6 +103,10 @@ impl DataSource {
                 }
             }
             depth += 1;
+        }
+
+        if quick{
+            return table;
         }
 
         while done < total {

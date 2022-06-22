@@ -29,14 +29,14 @@ pub struct FlipSliceSource {
 }
 
 impl DataSource {
-    pub fn create() -> Self {
+    pub fn create(quick: bool) -> Self {
         let moves_source = MovesSource::create();
         let corners_source = CornerSymmetriesSource::create();
         let flip_slice_source = FlipSliceSource::create();
         let phase_2_edge_merge = Self::create_phase_2_edge_merge();
         let corner_slice_depth = Self::create_corner_slice_depth(&moves_source);
         let phase_2_pruning = Self::create_phase_2_pruning(&moves_source, &corners_source);
-        let phase_1_pruning = Self::create_phase_1_pruning(&moves_source, &flip_slice_source);
+        let phase_1_pruning = Self::create_phase_1_pruning(quick, &moves_source, &flip_slice_source);
 
         Self {
             moves_source,
@@ -49,7 +49,7 @@ impl DataSource {
         }
     }
 
-    pub fn get_flip_slice_twist_depth_mod_3(&self, flip: u16, twist: u16, slice_sorted: u16) -> u8 {
+    pub fn get_flip_slice_twist_depth_mod_3(&self, flip: u16, twist: u16, slice_sorted: u16) -> Option<u8> {
         let slice = slice_sorted / 24;
         let flip_slice = (NFLIP * (slice as usize)) + (flip as usize);
 
@@ -64,7 +64,8 @@ impl DataSource {
         y >>= (ix % 16) * 2;
         let r = y & 3;
 
-        r as u8
+        if r == 3{None}
+        else {Some(r as u8)}        
     }
 
     pub fn get_ud_edges(&self, u_edges: u16, d_edges: u16) -> u16 {

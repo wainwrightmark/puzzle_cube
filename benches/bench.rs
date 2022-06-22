@@ -56,12 +56,13 @@ fn bench_create_phase_1_pruning(c: &mut Criterion) {
     let mut group = c.benchmark_group("phase one pruning");
     group.sample_size(10);
     group.measurement_time(instant::Duration::new(100, 0));
-    group.bench_function("create phase one pruning", |bench|bench.iter(||create_phase_1_pruning(&moves_source, &flip_slice_source)));
+    group.bench_function("create phase one pruning slow", |bench|bench.iter(||create_phase_1_pruning(false,&moves_source, &flip_slice_source)));
+    group.bench_function("create phase one pruning quick", |bench|bench.iter(||create_phase_1_pruning(true,&moves_source, &flip_slice_source)));
     group.finish()
 }
 
 fn bench_solver(c: &mut Criterion) {
-    let data_source = Rc::new(DataSource::create());
+    let data_source = Rc::new(DataSource::create(true));
 
     let mut group = c.benchmark_group("solver");
     group.sample_size(10);
@@ -97,10 +98,11 @@ fn create_phase_2_pruning(
 }
 
 fn create_phase_1_pruning(
+    quick: bool,
     move_source: &MovesSource,
     flip_slice_source: &FlipSliceSource,
 ) -> Vec<u32> {
-    DataSource::create_phase_1_pruning(move_source, flip_slice_source)
+    DataSource::create_phase_1_pruning(quick, move_source, flip_slice_source)
 }
 
 fn solve(data_source: Rc<DataSource>, number: u64) {
